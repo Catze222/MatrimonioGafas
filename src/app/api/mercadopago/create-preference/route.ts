@@ -69,7 +69,7 @@ export async function POST(request: NextRequest) {
       preferenceId: response.id,
       initPoint: response.init_point, // URL para producción
       sandboxInitPoint: response.sandbox_init_point, // URL para pruebas
-      checkoutUrl: response.sandbox_init_point || response.init_point // Usar sandbox para pruebas
+      checkoutUrl: response.init_point || response.sandbox_init_point // Usar producción por defecto
     })
 
   } catch (error: unknown) {
