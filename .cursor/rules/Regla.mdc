@@ -1,0 +1,119 @@
+---
+alwaysApply: true
+---
+
+# Wedding App Development Rules
+
+## ✅ 1. Responsive Design
+- All views must be mobile-friendly
+- Use Tailwind's responsive utilities (sm:, md:, lg:, xl:)
+- Test UI on mobile viewport before considering complete
+- Wedding guests will primarily access from mobile devices
+
+## ✅ 2. Code Quality & Simplicity
+- Keep it simple - avoid over-engineering
+- Reuse components when possible
+- Remove unused imports and dead code
+- Use clear, descriptive naming
+- Prefer composition over abstraction
+- Never mix business logic in UI components
+
+## ✅ 3. File Structure
+```
+/components     - Reusable UI components
+/pages         - Next.js routes
+/lib           - Utilities and helpers
+/types         - TypeScript definitions
+/supabase      - Database migrations and schema
+```
+
+## ✅ 4. Database Schema Documentation
+**MANDATORY**: Always update `/supabase/schema.md` when:
+- Tables are created, modified, or deleted
+- Columns are added/removed
+- Relationships change
+- Indexes or constraints are modified
+
+This file is the single source of truth for database structure.
+
+## ✅ 5. Environment Variables
+Always use environment variables for:
+- Supabase URL and keys
+- Admin password
+- Any external API credentials
+- Frontend/backend domains
+
+🚫 Never hardcode secrets or URLs
+
+## ✅ 6. Wedding-Specific UX Guidelines
+- **Elegant & Modern Design**: Think Zola, The Knot, modern wedding sites
+- **Guest-Friendly**: Simple navigation, clear CTAs
+- **Mobile-First**: Most guests use phones
+- **Spanish Language**: All user-facing text in Spanish
+- **Photo-Centric**: Images are key for wedding apps
+
+## ✅ 7. Component Patterns
+Create reusable components for:
+- Cards (guest cards, gift cards)
+- Forms (RSVP, admin forms)
+- Modals and overlays
+- Loading states
+- Error boundaries
+
+Use `/components/ui/` for base elements.
+
+## ✅ 8. Data Loading Pattern
+For pages with Supabase data, use this simple pattern:
+
+```typescript
+const [data, setData] = useState([])
+const [loading, setLoading] = useState(true)
+const [error, setError] = useState(null)
+
+useEffect(() => {
+  const loadData = async () => {
+    try {
+      const { data, error } = await supabase.from('table').select()
+      if (error) throw error
+      setData(data)
+    } catch (err) {
+      setError(err.message)
+    } finally {
+      setLoading(false)
+    }
+  }
+  
+  loadData()
+}, [])
+```
+
+## ✅ 9. Admin Protection
+- Simple password protection (no complex auth)
+- Use environment variable for admin password
+- Protect admin routes with middleware or client-side check
+- Clear admin vs guest user experience
+
+## ✅ 10. Wedding Data Guidelines
+- **Guests**: Support couples (nombre_1, nombre_2)
+- **Images**: Always use Supabase Storage
+- **Slugs**: Generate SEO-friendly, unique slugs for guests
+- **RSVP**: Handle partial responses (one person confirms, other doesn't)
+- **Gifts**: Flexible amounts, personal messages
+
+## ❌ Don't:
+- Over-engineer simple features
+- Add unnecessary animations or complexity
+- Break mobile experience
+- Expose sensitive data
+- Create complex authentication flows
+- Add features not requested
+
+## 🎯 Project Focus
+This is a **wedding webapp** - prioritize:
+1. **Guest experience** (easy RSVP, gift giving)
+2. **Couple's admin panel** (manage guests, view responses)
+3. **Beautiful presentation** (photos, elegant design)
+4. **Mobile-first approach** (guests use phones)
+
+Keep it simple, elegant, and functional.
+
