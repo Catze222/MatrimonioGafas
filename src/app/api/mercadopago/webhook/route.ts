@@ -70,8 +70,7 @@ export async function POST(request: NextRequest) {
               .from('pagos')
               .update({ 
                 estado,
-                mercadopago_payment_id: paymentId.toString(),
-                updated_at: new Date().toISOString()
+                mercadopago_payment_id: paymentId.toString()
               })
               .eq('id', paymentData.external_reference)
               .select()
