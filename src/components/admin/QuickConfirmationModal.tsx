@@ -88,7 +88,7 @@ export default function QuickConfirmationModal({
     }
   ]
 
-  const statusToUpdate = selectedStatus || currentStatus
+  // const statusToUpdate = selectedStatus || currentStatus
 
   return (
     <Modal
@@ -182,7 +182,7 @@ export default function QuickConfirmationModal({
           </button>
           <button
             onClick={handleConfirm}
-            disabled={updating || (!selectedStatus && currentStatus)}
+                disabled={updating || (!selectedStatus)}
             className={`flex-1 px-4 py-2 text-sm rounded-lg font-medium transition-all disabled:opacity-50 ${
               selectedStatus && selectedStatus !== currentStatus
                 ? 'bg-gradient-to-r from-rose-500 to-pink-500 text-white hover:from-rose-600 hover:to-pink-600 shadow-md'

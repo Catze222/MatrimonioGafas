@@ -37,7 +37,7 @@ export async function PATCH(
 
     // Allowed fields to update
     const allowedFields = ['titulo', 'descripcion', 'imagen_url']
-    const updateData: { [key: string]: any } = {}
+    const updateData: Record<string, unknown> = {}
     
     for (const field of allowedFields) {
       if (body[field] !== undefined) {
@@ -59,9 +59,9 @@ export async function PATCH(
     if (error) throw error
 
     return NextResponse.json({ data })
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Error updating producto:', error)
-    return NextResponse.json({ error: error.message }, { status: 500 })
+    return NextResponse.json({ error: error instanceof Error ? error.message : 'Unknown error' }, { status: 500 })
   }
 }
 
@@ -85,8 +85,8 @@ export async function DELETE(
     if (error) throw error
 
     return NextResponse.json({ success: true })
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Error deleting producto:', error)
-    return NextResponse.json({ error: error.message }, { status: 500 })
+    return NextResponse.json({ error: error instanceof Error ? error.message : 'Unknown error' }, { status: 500 })
   }
 }

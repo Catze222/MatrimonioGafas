@@ -44,7 +44,7 @@ export default function EditProductoModal({ isOpen, onClose, onSuccess, producto
       onSuccess()
       onClose()
       return { success: true }
-    } catch (error) {
+    } catch {
       return { success: false, error: 'Network error' }
     } finally {
       setLoading(false)

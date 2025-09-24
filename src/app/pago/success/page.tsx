@@ -4,7 +4,7 @@
  */
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
@@ -20,7 +20,7 @@ type Pago = {
   }
 }
 
-export default function PaymentSuccess() {
+function PaymentSuccessContent() {
   const searchParams = useSearchParams()
   // MercadoPago puede enviar el pago_id de diferentes maneras
   const pagoId = searchParams.get('pago_id') || 
@@ -29,16 +29,7 @@ export default function PaymentSuccess() {
   const [pago, setPago] = useState<Pago | null>(null)
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    // Debug: mostrar todos los parámetros que envía MP
-    console.log('🔍 MP Success URL params:', Object.fromEntries(searchParams.entries()))
-    
-    if (pagoId) {
-      loadPagoDetails()
-    }
-  }, [pagoId])
-
-  const loadPagoDetails = async () => {
+  const loadPagoDetails = useCallback(async () => {
     try {
       const { data, error } = await supabase
         .from('pagos')
@@ -53,13 +44,22 @@ export default function PaymentSuccess() {
         .single()
 
       if (error) throw error
-      setPago(data)
+      setPago(data as unknown as Pago)
     } catch (error) {
       console.error('Error loading payment details:', error)
     } finally {
       setLoading(false)
     }
-  }
+  }, [pagoId])
+
+  useEffect(() => {
+    // Debug: mostrar todos los parámetros que envía MP
+    console.log('🔍 MP Success URL params:', Object.fromEntries(searchParams.entries()))
+    
+    if (pagoId) {
+      loadPagoDetails()
+    }
+  }, [pagoId, loadPagoDetails, searchParams])
 
   const formatCurrency = (amount: number): string => {
     return new Intl.NumberFormat('es-CO', {
@@ -126,7 +126,7 @@ export default function PaymentSuccess() {
                 {pago.mensaje && (
                   <div className="pt-3 border-t border-green-200">
                     <p className="text-gray-700 italic text-left">
-                      <span className="font-medium">Mensaje:</span> "{pago.mensaje}"
+                      <span className="font-medium">Mensaje:</span> &quot;{pago.mensaje}&quot;
                     </p>
                   </div>
                 )}
@@ -163,5 +163,20 @@ export default function PaymentSuccess() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function PaymentSuccess() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-rose-500 mx-auto mb-4"></div>
+          <p className="text-gray-600">Cargando información del pago...</p>
+        </div>
+      </div>
+    }>
+      <PaymentSuccessContent />
+    </Suspense>
   )
 }

@@ -216,7 +216,7 @@ export default function RSVPPage() {
                           name="asistencia_1"
                           value={option}
                           checked={formData.asistencia_1 === option}
-                          onChange={(e) => setFormData(prev => ({ ...prev, asistencia_1: e.target.value as any }))}
+                          onChange={(e) => setFormData(prev => ({ ...prev, asistencia_1: e.target.value as 'pendiente' | 'si' | 'no' }))}
                           className="sr-only"
                         />
                         <div className={`p-3 text-center rounded-lg border-2 cursor-pointer transition-colors ${
@@ -265,7 +265,7 @@ export default function RSVPPage() {
                               name="asistencia_2"
                               value={option}
                               checked={formData.asistencia_2 === option}
-                              onChange={(e) => setFormData(prev => ({ ...prev, asistencia_2: e.target.value as any }))}
+                              onChange={(e) => setFormData(prev => ({ ...prev, asistencia_2: e.target.value as 'pendiente' | 'si' | 'no' }))}
                               className="sr-only"
                             />
                             <div className={`p-3 text-center rounded-lg border-2 cursor-pointer transition-colors ${

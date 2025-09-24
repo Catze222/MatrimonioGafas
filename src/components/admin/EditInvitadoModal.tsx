@@ -6,7 +6,7 @@
 import { useState } from 'react'
 import Modal from '@/components/ui/Modal'
 import Button from '@/components/ui/Button'
-import InvitadoForm from './InvitadoForm'
+import InvitadoForm, { InvitadoFormData } from './InvitadoForm'
 import { Invitado } from '@/types'
 
 interface EditInvitadoModalProps {
@@ -19,7 +19,7 @@ interface EditInvitadoModalProps {
 export default function EditInvitadoModal({ isOpen, onClose, onSuccess, invitado }: EditInvitadoModalProps) {
   const [loading, setLoading] = useState(false)
 
-  const updateInvitado = async (formData: any): Promise<{ success: boolean; error?: string }> => {
+  const updateInvitado = async (formData: InvitadoFormData): Promise<{ success: boolean; error?: string }> => {
     if (!invitado) return { success: false, error: 'No invitado selected' }
     
     setLoading(true)
@@ -53,7 +53,7 @@ export default function EditInvitadoModal({ isOpen, onClose, onSuccess, invitado
       onSuccess()
       onClose()
       return { success: true }
-    } catch (error) {
+    } catch {
       return { success: false, error: 'Network error' }
     } finally {
       setLoading(false)

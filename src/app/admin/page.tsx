@@ -11,7 +11,6 @@ import { useAdminAuth } from '@/hooks/useAdminAuth'
 import { Invitado, Producto, Pago } from '@/types'
 import Button from '@/components/ui/Button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
-import Modal from '@/components/ui/Modal'
 import AddInvitadoModal from '@/components/admin/AddInvitadoModal'
 import EditInvitadoModal from '@/components/admin/EditInvitadoModal'
 import QuickConfirmationModal from '@/components/admin/QuickConfirmationModal'
@@ -283,7 +282,7 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
   }
 
   const stats = getPersonStats()
-  const totalGifts = getTotalGifts()
+  // const totalGifts = getTotalGifts()
 
   if (loading) {
     return (
@@ -393,7 +392,7 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
               ].map(tab => (
                 <button
                   key={tab.key}
-                  onClick={() => setActiveTab(tab.key as any)}
+                  onClick={() => setActiveTab(tab.key as 'invitados' | 'productos' | 'pagos')}
                   className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
                     activeTab === tab.key
                       ? 'border-rose-500 text-rose-600'
@@ -464,13 +463,13 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
                   <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
                     <p className="text-sm text-blue-700">
                       Mostrando {filteredInvitados.length} de {invitados.length} invitados
-                      {searchTerm && <span className="font-medium"> que coinciden con "{searchTerm}"</span>}
+                      {searchTerm && <span className="font-medium"> que coinciden con &quot;{searchTerm}&quot;</span>}
                       {statusFilter !== 'all' && !searchTerm && (
-                        <span className="font-medium"> en el filtro "{
+                        <span className="font-medium"> en el filtro &quot;{
                           statusFilter === 'confirmados' ? 'Confirmados' :
                           statusFilter === 'pendientes' ? 'Pendientes' :
                           statusFilter === 'no-asisten' ? 'No Asisten' : ''
-                        }"</span>
+                        }&quot;</span>
                       )}
                     </p>
                   </div>
@@ -916,7 +915,7 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
                               <td className="px-4 py-3 text-sm text-gray-600 max-w-[200px]">
                                 {pago.mensaje ? (
                                   <div className="truncate" title={pago.mensaje}>
-                                    "{pago.mensaje}"
+                                    &quot;{pago.mensaje}&quot;
                                   </div>
                                 ) : (
                                   <span className="text-gray-400 italic">Sin mensaje</span>
@@ -984,7 +983,7 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
                               {pago.mensaje && (
                                 <div className="pt-2 border-t border-gray-100">
                                   <p className="text-xs text-gray-600 italic">
-                                    "{pago.mensaje}"
+                                    &quot;{pago.mensaje}&quot;
                                   </p>
                                 </div>
                               )}

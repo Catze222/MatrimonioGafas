@@ -40,7 +40,7 @@ export default function AddProductoModal({ isOpen, onClose, onSuccess }: AddProd
       onSuccess()
       onClose()
       return { success: true }
-    } catch (error) {
+    } catch {
       return { success: false, error: 'Network error' }
     } finally {
       setLoading(false)

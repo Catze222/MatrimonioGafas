@@ -4,13 +4,13 @@
  */
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { uploadImage, generateFilePath } from '@/lib/storage'
 import { generateSlug } from '@/lib/utils'
 import { Invitado } from '@/types'
 import Image from 'next/image'
 
-interface InvitadoFormData {
+export interface InvitadoFormData {
   nombre_1: string
   nombre_2: string
   slug: string
@@ -118,7 +118,7 @@ export default function InvitadoForm({ initialData, onSubmit, loading, submitLab
       }
       
       return result.url || null
-    } catch (error) {
+    } catch {
       setError('Error al procesar la imagen')
       return null
     } finally {
@@ -163,7 +163,7 @@ export default function InvitadoForm({ initialData, onSubmit, loading, submitLab
       if (!result.success) {
         setError(result.error || 'Error al procesar')
       }
-    } catch (error) {
+    } catch {
       console.error('Error in handleSubmit:', error)
       setError('Error inesperado. Intenta de nuevo.')
     }

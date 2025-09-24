@@ -6,7 +6,7 @@
 import { useState } from 'react'
 import Modal from '@/components/ui/Modal'
 import Button from '@/components/ui/Button'
-import InvitadoForm from './InvitadoForm'
+import InvitadoForm, { InvitadoFormData } from './InvitadoForm'
 
 interface AddInvitadoModalProps {
   isOpen: boolean
@@ -17,7 +17,7 @@ interface AddInvitadoModalProps {
 export default function AddInvitadoModal({ isOpen, onClose, onSuccess }: AddInvitadoModalProps) {
   const [loading, setLoading] = useState(false)
 
-  const createInvitado = async (formData: any): Promise<{ success: boolean; error?: string }> => {
+  const createInvitado = async (formData: InvitadoFormData): Promise<{ success: boolean; error?: string }> => {
     setLoading(true)
     try {
       const adminPassword = process.env.NEXT_PUBLIC_ADMIN_PASSWORD || 'admin123'
@@ -49,7 +49,7 @@ export default function AddInvitadoModal({ isOpen, onClose, onSuccess }: AddInvi
       onSuccess()
       onClose()
       return { success: true }
-    } catch (error) {
+    } catch {
       return { success: false, error: 'Network error' }
     } finally {
       setLoading(false)

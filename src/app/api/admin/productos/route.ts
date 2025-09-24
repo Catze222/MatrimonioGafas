@@ -76,8 +76,8 @@ export async function POST(request: NextRequest) {
     if (error) throw error
 
     return NextResponse.json({ data })
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Error creating producto:', error)
-    return NextResponse.json({ error: error.message }, { status: 500 })
+    return NextResponse.json({ error: error instanceof Error ? error.message : 'Unknown error' }, { status: 500 })
   }
 }

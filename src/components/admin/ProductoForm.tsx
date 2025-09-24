@@ -6,7 +6,7 @@
 import { useState, useRef } from 'react'
 import Image from 'next/image'
 import Button from '@/components/ui/Button'
-import { Card, CardContent } from '@/components/ui/Card'
+// import { Card, CardContent } from '@/components/ui/Card'
 import { uploadImage } from '@/lib/storage'
 import { Producto } from '@/types'
 
@@ -91,7 +91,7 @@ export default function ProductoForm({ initialData, onSubmit, loading, submitLab
         return null
       }
       return result.url || null
-    } catch (error) {
+    } catch {
       setError('Error inesperado al subir la imagen')
       return null
     } finally {
@@ -117,7 +117,7 @@ export default function ProductoForm({ initialData, onSubmit, loading, submitLab
       if (!result.success) {
         setError(result.error || 'Error al procesar')
       }
-    } catch (error) {
+    } catch {
       console.error('Error in handleSubmit:', error)
       setError('Error inesperado. Intenta de nuevo.')
     }

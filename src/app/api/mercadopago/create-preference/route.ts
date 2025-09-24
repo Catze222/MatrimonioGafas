@@ -72,16 +72,17 @@ export async function POST(request: NextRequest) {
       checkoutUrl: response.sandbox_init_point || response.init_point // Usar sandbox para pruebas
     })
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('❌ Error creating MP preference:', error)
     
     // Log detallado del error para debug
-    if (error.response) {
-      console.error('❌ MP API Error Response:', error.response.status)
-      console.error('❌ MP API Error Data:', JSON.stringify(error.response.data, null, 2))
+    if (error && typeof error === 'object' && 'response' in error) {
+      const errorWithResponse = error as { response: { status: number; data: unknown } }
+      console.error('❌ MP API Error Response:', errorWithResponse.response.status)
+      console.error('❌ MP API Error Data:', JSON.stringify(errorWithResponse.response.data, null, 2))
     }
     
-    if (error.message) {
+    if (error instanceof Error) {
       console.error('❌ Error Message:', error.message)
     }
 
@@ -94,7 +95,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       { 
         error: 'Error creating payment preference',
-        details: process.env.NODE_ENV === 'development' ? error.message : undefined,
+        details: process.env.NODE_ENV === 'development' ? (error instanceof Error ? error.message : 'Unknown error') : undefined,
         debugInfo: process.env.NODE_ENV === 'development' ? {
           hasAccessToken: !!process.env.MERCADOPAGO_ACCESS_TOKEN,
           tokenPrefix: process.env.MERCADOPAGO_ACCESS_TOKEN?.substring(0, 10),

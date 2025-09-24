@@ -30,10 +30,10 @@ export async function GET() {
         appUrlValid: hasAppUrl && (process.env.NEXT_PUBLIC_APP_URL?.startsWith('http'))
       }
     })
-  } catch (error: any) {
+  } catch (error: unknown) {
     return NextResponse.json({
       error: 'Configuration error',
-      message: error.message
+      message: error instanceof Error ? error.message : 'Unknown error'
     }, { status: 500 })
   }
 }

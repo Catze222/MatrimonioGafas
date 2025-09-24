@@ -7,7 +7,7 @@ import { useState } from 'react'
 import Image from 'next/image'
 import Modal from '@/components/ui/Modal'
 import Button from '@/components/ui/Button'
-import { Card, CardContent } from '@/components/ui/Card'
+// import { Card, CardContent } from '@/components/ui/Card'
 import { supabase } from '@/lib/supabase'
 import { Producto } from '@/types'
 
@@ -83,7 +83,7 @@ export default function ContribucionModal({ isOpen, onClose, producto }: Contrib
       // Guardar el ID del pago creado
       setCreatedPagoId(data.id)
       setSuccess(true)
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error creating pago:', error)
       setError('Error al procesar tu contribución. Intenta de nuevo.')
     } finally {
@@ -123,7 +123,7 @@ export default function ContribucionModal({ isOpen, onClose, producto }: Contrib
       // Redirigir a MercadoPago
       window.location.href = checkoutUrl
       
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error creating MP preference:', error)
       setError('Error al procesar el pago con MercadoPago. Intenta de nuevo.')
     } finally {
@@ -300,7 +300,7 @@ export default function ContribucionModal({ isOpen, onClose, producto }: Contrib
                 </div>
                 {formData.mensaje && (
                   <div className="pt-3 border-t border-green-200">
-                    <p className="text-gray-700 italic">"{formData.mensaje}"</p>
+                    <p className="text-gray-700 italic">&quot;{formData.mensaje}&quot;</p>
                   </div>
                 )}
               </div>

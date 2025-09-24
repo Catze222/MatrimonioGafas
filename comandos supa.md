@@ -7,7 +7,9 @@ git status
 git add .
 
 # Hacer commit
-git commit -m "Agregué nueva funcionalidad de login"
+git commit -m "commit"
 
 # Subir a GitHub
 git push
+
+npx tsc --noEmit

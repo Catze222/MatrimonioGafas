@@ -48,7 +48,7 @@ export async function PATCH(
       .reduce((obj, key) => {
         obj[key] = body[key]
         return obj
-      }, {} as any)
+      }, {} as Record<string, unknown>)
 
     // Add updated_at timestamp
     updateData.updated_at = new Date().toISOString()
