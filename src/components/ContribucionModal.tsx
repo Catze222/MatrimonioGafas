@@ -22,7 +22,6 @@ export default function ContribucionModal({ isOpen, onClose, producto }: Contrib
     monto: '',
     quien_regala: '',
     email: '',
-    telefono: '',
     mensaje: ''
   })
   const [loading, setLoading] = useState(false)
@@ -31,7 +30,7 @@ export default function ContribucionModal({ isOpen, onClose, producto }: Contrib
   if (!producto) return null
 
   const resetForm = () => {
-    setFormData({ monto: '', quien_regala: '', email: '', telefono: '', mensaje: '' })
+    setFormData({ monto: '', quien_regala: '', email: '', mensaje: '' })
     setError(null)
   }
 
@@ -58,14 +57,6 @@ export default function ContribucionModal({ isOpen, onClose, producto }: Contrib
       return false
     }
     
-    // Validar teléfono solo si se proporciona (opcional)
-    if (formData.telefono.trim()) {
-      const phoneRegex = /^[0-9]{10}$/
-      if (!phoneRegex.test(formData.telefono.replace(/\s/g, ''))) {
-        setError('Por favor ingresa un teléfono válido (10 dígitos)')
-        return false
-      }
-    }
     
     const monto = parseFloat(formData.monto)
     if (!formData.monto || isNaN(monto) || monto <= 0) {
@@ -109,8 +100,7 @@ export default function ContribucionModal({ isOpen, onClose, producto }: Contrib
           titulo: producto.titulo,
           descripcion: producto.descripcion,
           contribuyente: formData.quien_regala.trim(),
-          email: formData.email.trim(),
-          telefono: formData.telefono.trim()
+          email: formData.email.trim()
         })
       })
 
@@ -152,10 +142,10 @@ export default function ContribucionModal({ isOpen, onClose, producto }: Contrib
       size="lg"
       showCloseButton={false}
     >
-      <div className="p-6">
-        {/* Header with Product Info */}
-        <div className="text-center mb-8">
-          <div className="w-20 h-20 mx-auto mb-4 relative rounded-xl overflow-hidden ring-4 ring-white shadow-lg">
+      <div className="p-4">
+        {/* Header with Product Info - Más compacto */}
+        <div className="text-center mb-6">
+          <div className="w-16 h-16 mx-auto mb-3 relative rounded-lg overflow-hidden ring-2 ring-white shadow-md">
             <Image
               src={producto.imagen_url}
               alt={producto.titulo}
@@ -163,20 +153,17 @@ export default function ContribucionModal({ isOpen, onClose, producto }: Contrib
               className="object-cover"
             />
           </div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">
+          <h2 className="text-xl font-bold text-gray-900 mb-1">
             Contribuir a: {producto.titulo}
           </h2>
-          <p className="text-gray-600">
-            {producto.descripcion}
-          </p>
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-4">
           {/* Amount Input */}
           <div>
-            <label htmlFor="monto" className="block text-sm font-semibold text-gray-900 mb-2">
-              ¿Cuánto te gustaría aportar? <span className="text-red-500">*</span>
+            <label htmlFor="monto" className="block text-sm font-medium text-gray-900 mb-1">
+              Monto a contribuir <span className="text-red-500">*</span>
             </label>
             <div className="relative">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 font-medium">
@@ -187,7 +174,7 @@ export default function ContribucionModal({ isOpen, onClose, producto }: Contrib
                 id="monto"
                 value={formData.monto}
                 onChange={(e) => setFormData(prev => ({ ...prev, monto: e.target.value }))}
-                className="w-full pl-8 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-lg"
+                className="w-full pl-8 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                 placeholder="50000"
                 min="1000"
                 step="1000"
@@ -195,84 +182,57 @@ export default function ContribucionModal({ isOpen, onClose, producto }: Contrib
               />
             </div>
             {formData.monto && !isNaN(parseFloat(formData.monto)) && (
-              <p className="mt-2 text-sm text-purple-600 font-medium">
+              <p className="mt-1 text-sm text-purple-600 font-medium">
                 {formatCurrency(formData.monto)}
               </p>
             )}
-            <p className="mt-2 text-xs text-gray-500">
-              Puedes aportar cualquier cantidad que desees. Tu contribución nos ayudará muchísimo.
-            </p>
           </div>
 
-              {/* Name Input */}
-              <div>
-                <label htmlFor="quien_regala" className="block text-sm font-semibold text-gray-900 mb-2">
-                  Tu nombre completo <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  id="quien_regala"
-                  value={formData.quien_regala}
-                  onChange={(e) => setFormData(prev => ({ ...prev, quien_regala: e.target.value }))}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                  placeholder="Ej: María Fernanda González"
-                  required
-                />
-              </div>
+          {/* Name Input */}
+          <div>
+            <label htmlFor="quien_regala" className="block text-sm font-medium text-gray-900 mb-1">
+              Tu nombre completo <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="text"
+              id="quien_regala"
+              value={formData.quien_regala}
+              onChange={(e) => setFormData(prev => ({ ...prev, quien_regala: e.target.value }))}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+              placeholder="Ej: María Fernanda González"
+              required
+            />
+          </div>
 
-              {/* Email Input */}
-              <div>
-                <label htmlFor="email" className="block text-sm font-semibold text-gray-900 mb-2">
-                  Tu email <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="email"
-                  id="email"
-                  value={formData.email}
-                  onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                  placeholder="Ej: maria@gmail.com"
-                  required
-                />
-                <p className="mt-2 text-xs text-gray-500">
-                  Necesario para enviarte la confirmación del regalo
-                </p>
-              </div>
+          {/* Email Input */}
+          <div>
+            <label htmlFor="email" className="block text-sm font-medium text-gray-900 mb-1">
+              Tu email <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="email"
+              id="email"
+              value={formData.email}
+              onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+              placeholder="Ej: maria@gmail.com"
+              required
+            />
+          </div>
 
-              {/* Phone Input */}
-              <div>
-                <label htmlFor="telefono" className="block text-sm font-semibold text-gray-900 mb-2">
-                  Tu teléfono (opcional)
-                </label>
-                <input
-                  type="tel"
-                  id="telefono"
-                  value={formData.telefono}
-                  onChange={(e) => {
-                    // Solo permitir números y formatear
-                    const value = e.target.value.replace(/\D/g, '').slice(0, 10)
-                    setFormData(prev => ({ ...prev, telefono: value }))
-                  }}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                  placeholder="Ej: 3001234567"
-                />
-                <p className="mt-2 text-xs text-gray-500">
-                  10 dígitos sin espacios (ej: 3001234567)
-                </p>
-              </div>
 
           {/* Message Input */}
           <div>
-            <label htmlFor="mensaje" className="block text-sm font-semibold text-gray-900 mb-2">
+            <label htmlFor="mensaje" className="block text-sm font-medium text-gray-900 mb-1">
               Mensaje para los novios (opcional)
             </label>
             <textarea
               id="mensaje"
               value={formData.mensaje}
               onChange={(e) => setFormData(prev => ({ ...prev, mensaje: e.target.value }))}
-              rows={3}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none"
-              placeholder="Ej: ¡Felicidades! Que disfruten mucho este regalo..."
+              rows={2}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none"
+              placeholder="¡Felicidades! Que disfruten mucho este regalo..."
             />
           </div>
 
@@ -287,7 +247,7 @@ export default function ContribucionModal({ isOpen, onClose, producto }: Contrib
           )}
 
           {/* Action Buttons */}
-          <div className="flex space-x-4 pt-4">
+          <div className="flex space-x-3 pt-3">
             <Button
               type="button"
               variant="ghost"

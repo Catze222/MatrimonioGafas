@@ -8,12 +8,12 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Ana & Carlos - Boda 2025",
-  description: "¡Nos casamos! Celebra con nosotros este día tan especial - 15 de Febrero, 2025",
-  keywords: "boda, matrimonio, Ana, Carlos, 2025, invitación, RSVP",
-  authors: [{ name: "Ana & Carlos" }],
+  title: "Alejandra & Jaime - Boda 2025",
+  description: "¡Nos casamos! Celebra con nosotros este día tan especial - 13 de Diciembre, 2025",
+  keywords: "boda, matrimonio, Alejandra, Jaime, 2025, invitación, RSVP",
+  authors: [{ name: "Alejandra & Jaime" }],
   openGraph: {
-    title: "Ana & Carlos - Boda 2025",
+    title: "Alejandra & Jaime - Boda 2025",
     description: "¡Nos casamos! Celebra con nosotros este día tan especial",
     type: "website",
     locale: "es_CO",
