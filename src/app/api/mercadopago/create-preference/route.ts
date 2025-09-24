@@ -7,12 +7,12 @@ import { preference } from '@/lib/mercadopago'
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { pagoId, monto, titulo, descripcion, contribuyente } = body
+    const { pagoId, monto, titulo, descripcion, contribuyente, email, telefono } = body
 
     // Validar datos requeridos
-    if (!pagoId || !monto || !titulo || !contribuyente) {
+    if (!pagoId || !monto || !titulo || !contribuyente || !email) {
       return NextResponse.json(
-        { error: 'Missing required fields: pagoId, monto, titulo, contribuyente' },
+        { error: 'Missing required fields: pagoId, monto, titulo, contribuyente, email' },
         { status: 400 }
       )
     }
@@ -28,16 +28,28 @@ export async function POST(request: NextRequest) {
 
     console.log('Creating MP preference for:', { pagoId, amount, titulo, contribuyente })
 
-    // Crear preferencia MÍNIMA según documentación oficial 2024
+    // Crear preferencia con datos del usuario
     const preferenceData = {
       items: [
         {
+          id: `regalo-${pagoId}`,
           title: titulo,
           quantity: 1,
           unit_price: amount,
           currency_id: 'COP'
         }
       ],
+      payer: {
+        name: contribuyente.split(' ')[0] || contribuyente,
+        surname: contribuyente.split(' ').slice(1).join(' ') || '',
+        email: email,
+        ...(telefono && telefono.trim() && {
+          phone: {
+            area_code: '57', // Código de Colombia
+            number: telefono
+          }
+        })
+      },
       back_urls: {
         success: `${process.env.NEXT_PUBLIC_APP_URL}/pago/success`,
         failure: `${process.env.NEXT_PUBLIC_APP_URL}/pago/failure`,
@@ -57,7 +69,6 @@ export async function POST(request: NextRequest) {
     console.log('- Sandbox Point (TEST):', response.sandbox_init_point)
     console.log('- Collector ID:', response.collector_id)
     console.log('- Client ID:', response.client_id)
-    console.log('- Status:', response.status)
 
     return NextResponse.json({
       preferenceId: response.id,

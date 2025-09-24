@@ -9,38 +9,91 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
     console.log('🔔 MP Webhook received:', JSON.stringify(body, null, 2))
+    console.log('🔔 Webhook timestamp:', new Date().toISOString())
 
     // MercadoPago envía diferentes tipos de notificaciones
     if (body.type === 'payment') {
       const paymentId = body.data?.id
-      const externalReference = body.external_reference
+      
+      console.log('💳 Payment notification for ID:', paymentId)
 
-      console.log('💳 Payment notification:', { paymentId, externalReference })
-
-      if (externalReference) {
-        // En un entorno real, consultarías la API de MP para obtener el estado exacto del pago
-        // Por ahora, asumimos que si llegó el webhook, el pago fue procesado
-        
-        // Simular diferentes estados para testing
-        const estado = 'aprobado' // En producción esto vendría de MP API
-        
-        // Actualizar estado en nuestra base de datos
-        const { data, error } = await supabase
-          .from('pagos')
-          .update({ 
-            estado,
-            mercadopago_payment_id: paymentId?.toString(),
-            updated_at: new Date().toISOString()
+      if (paymentId) {
+        // Consultar la API de MercadoPago para obtener el estado real del pago
+        try {
+          const mpResponse = await fetch(`https://api.mercadopago.com/v1/payments/${paymentId}`, {
+            headers: {
+              'Authorization': `Bearer ${process.env.MERCADOPAGO_ACCESS_TOKEN}`
+            }
           })
-          .eq('id', externalReference)
-          .select()
 
-        if (error) {
-          console.error('❌ Error updating payment in DB:', error)
-          return NextResponse.json({ error: 'Database error' }, { status: 500 })
+          if (!mpResponse.ok) {
+            console.error('❌ Error querying MP API:', mpResponse.status)
+            return NextResponse.json({ error: 'MP API error' }, { status: 500 })
+          }
+
+          const paymentData = await mpResponse.json()
+          console.log('💳 Payment data from MP:', {
+            id: paymentData.id,
+            status: paymentData.status,
+            external_reference: paymentData.external_reference,
+            transaction_amount: paymentData.transaction_amount
+          })
+
+          // Mapear estados de MercadoPago a nuestros estados
+          let estado = 'pendiente'
+          switch (paymentData.status) {
+            case 'approved':
+              estado = 'aprobado'
+              break
+            case 'rejected':
+              estado = 'rechazado'
+              break
+            case 'cancelled':
+              estado = 'cancelado'
+              break
+            case 'pending':
+            case 'in_process':
+              estado = 'pendiente'
+              break
+            default:
+              estado = 'pendiente'
+          }
+
+          // Actualizar estado en nuestra base de datos usando external_reference
+          if (paymentData.external_reference) {
+            console.log('🔄 Attempting to update payment in DB:')
+            console.log('- Payment ID:', paymentId)
+            console.log('- External Reference:', paymentData.external_reference)
+            console.log('- New Status:', estado)
+            
+            const { data, error } = await supabase
+              .from('pagos')
+              .update({ 
+                estado,
+                mercadopago_payment_id: paymentId.toString(),
+                updated_at: new Date().toISOString()
+              })
+              .eq('id', paymentData.external_reference)
+              .select()
+
+            if (error) {
+              console.error('❌ Error updating payment in DB:', error)
+              console.error('❌ Supabase error details:', JSON.stringify(error, null, 2))
+              // NO fallar el webhook - responder 200 para que MP no reintente
+              console.log('⚠️ Responding 200 to MP despite DB error')
+            } else {
+              console.log('✅ Payment updated successfully:', data)
+              console.log('✅ Updated rows:', data?.length || 0)
+            }
+          } else {
+            console.warn('⚠️ No external_reference found in payment data')
+          }
+
+        } catch (mpError) {
+          console.error('❌ Error querying MercadoPago API:', mpError)
+          // NO fallar el webhook por error de MP API - responder 200 para que MP no reintente
+          console.log('⚠️ Responding 200 to MP despite API error')
         }
-
-        console.log('✅ Payment updated successfully:', data)
       }
     }
 

@@ -21,6 +21,8 @@ export default function ContribucionModal({ isOpen, onClose, producto }: Contrib
   const [formData, setFormData] = useState({
     monto: '',
     quien_regala: '',
+    email: '',
+    telefono: '',
     mensaje: ''
   })
   const [loading, setLoading] = useState(false)
@@ -29,7 +31,7 @@ export default function ContribucionModal({ isOpen, onClose, producto }: Contrib
   if (!producto) return null
 
   const resetForm = () => {
-    setFormData({ monto: '', quien_regala: '', mensaje: '' })
+    setFormData({ monto: '', quien_regala: '', email: '', telefono: '', mensaje: '' })
     setError(null)
   }
 
@@ -42,6 +44,27 @@ export default function ContribucionModal({ isOpen, onClose, producto }: Contrib
     if (!formData.quien_regala.trim()) {
       setError('Por favor ingresa tu nombre')
       return false
+    }
+    
+    if (!formData.email.trim()) {
+      setError('Por favor ingresa tu email')
+      return false
+    }
+    
+    // Validar formato de email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(formData.email)) {
+      setError('Por favor ingresa un email válido')
+      return false
+    }
+    
+    // Validar teléfono solo si se proporciona (opcional)
+    if (formData.telefono.trim()) {
+      const phoneRegex = /^[0-9]{10}$/
+      if (!phoneRegex.test(formData.telefono.replace(/\s/g, ''))) {
+        setError('Por favor ingresa un teléfono válido (10 dígitos)')
+        return false
+      }
     }
     
     const monto = parseFloat(formData.monto)
@@ -85,7 +108,9 @@ export default function ContribucionModal({ isOpen, onClose, producto }: Contrib
           monto: formData.monto,
           titulo: producto.titulo,
           descripcion: producto.descripcion,
-          contribuyente: formData.quien_regala.trim()
+          contribuyente: formData.quien_regala.trim(),
+          email: formData.email.trim(),
+          telefono: formData.telefono.trim()
         })
       })
 
@@ -179,21 +204,62 @@ export default function ContribucionModal({ isOpen, onClose, producto }: Contrib
             </p>
           </div>
 
-          {/* Name Input */}
-          <div>
-            <label htmlFor="quien_regala" className="block text-sm font-semibold text-gray-900 mb-2">
-              Tu nombre completo <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="text"
-              id="quien_regala"
-              value={formData.quien_regala}
-              onChange={(e) => setFormData(prev => ({ ...prev, quien_regala: e.target.value }))}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-              placeholder="Ej: María Fernanda González"
-              required
-            />
-          </div>
+              {/* Name Input */}
+              <div>
+                <label htmlFor="quien_regala" className="block text-sm font-semibold text-gray-900 mb-2">
+                  Tu nombre completo <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  id="quien_regala"
+                  value={formData.quien_regala}
+                  onChange={(e) => setFormData(prev => ({ ...prev, quien_regala: e.target.value }))}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  placeholder="Ej: María Fernanda González"
+                  required
+                />
+              </div>
+
+              {/* Email Input */}
+              <div>
+                <label htmlFor="email" className="block text-sm font-semibold text-gray-900 mb-2">
+                  Tu email <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="email"
+                  id="email"
+                  value={formData.email}
+                  onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  placeholder="Ej: maria@gmail.com"
+                  required
+                />
+                <p className="mt-2 text-xs text-gray-500">
+                  Necesario para enviarte la confirmación del regalo
+                </p>
+              </div>
+
+              {/* Phone Input */}
+              <div>
+                <label htmlFor="telefono" className="block text-sm font-semibold text-gray-900 mb-2">
+                  Tu teléfono (opcional)
+                </label>
+                <input
+                  type="tel"
+                  id="telefono"
+                  value={formData.telefono}
+                  onChange={(e) => {
+                    // Solo permitir números y formatear
+                    const value = e.target.value.replace(/\D/g, '').slice(0, 10)
+                    setFormData(prev => ({ ...prev, telefono: value }))
+                  }}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  placeholder="Ej: 3001234567"
+                />
+                <p className="mt-2 text-xs text-gray-500">
+                  10 dígitos sin espacios (ej: 3001234567)
+                </p>
+              </div>
 
           {/* Message Input */}
           <div>
