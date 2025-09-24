@@ -28,42 +28,36 @@ export async function POST(request: NextRequest) {
 
     console.log('Creating MP preference for:', { pagoId, amount, titulo, contribuyente })
 
-    // Crear preferencia en MercadoPago
+    // Crear preferencia MÍNIMA según documentación oficial 2024
     const preferenceData = {
       items: [
         {
-          id: `regalo-${pagoId}`,
           title: titulo,
-          description: descripcion || `Contribución para ${titulo}`,
-          picture_url: undefined, // Podríamos agregar la imagen del producto aquí
-          category_id: 'others',
           quantity: 1,
           unit_price: amount,
           currency_id: 'COP'
         }
       ],
-      payer: {
-        name: contribuyente,
-        surname: '',
-        email: 'test@test.com'
-      },
       back_urls: {
         success: `${process.env.NEXT_PUBLIC_APP_URL}/pago/success`,
         failure: `${process.env.NEXT_PUBLIC_APP_URL}/pago/failure`,
         pending: `${process.env.NEXT_PUBLIC_APP_URL}/pago/pending`
       },
       external_reference: pagoId,
-      expires: false,
-      payment_methods: {
-        installments: 12
-      }
+      auto_return: 'approved'
     }
 
     console.log('📤 Sending to MP:', JSON.stringify(preferenceData, null, 2))
 
     const response = await preference.create({ body: preferenceData })
 
-    console.log('MP preference created:', response.id)
+    console.log('✅ MP preference created successfully:')
+    console.log('- ID:', response.id)
+    console.log('- Init Point (PROD):', response.init_point)
+    console.log('- Sandbox Point (TEST):', response.sandbox_init_point)
+    console.log('- Collector ID:', response.collector_id)
+    console.log('- Client ID:', response.client_id)
+    console.log('- Status:', response.status)
 
     return NextResponse.json({
       preferenceId: response.id,
