@@ -20,6 +20,8 @@ export interface InvitadoFormData {
   restriccion_1: string
   restriccion_2: string
   mensaje: string
+  de_quien: 'jaime' | 'alejandra' | ''
+  invitacion_enviada: boolean
 }
 
 interface InvitadoFormProps {
@@ -39,7 +41,9 @@ export default function InvitadoForm({ initialData, onSubmit, loading, submitLab
     asistencia_2: initialData?.asistencia_2 || 'pendiente',
     restriccion_1: initialData?.restriccion_1 || '',
     restriccion_2: initialData?.restriccion_2 || '',
-    mensaje: initialData?.mensaje || ''
+    mensaje: initialData?.mensaje || '',
+    de_quien: initialData?.de_quien || '',
+    invitacion_enviada: initialData?.invitacion_enviada || false
   })
   
   const [imageFile, setImageFile] = useState<File | null>(null)
@@ -430,6 +434,49 @@ export default function InvitadoForm({ initialData, onSubmit, loading, submitLab
               placeholder="ana-carlos-2025"
               required
             />
+          </div>
+        </div>
+      </div>
+
+      {/* Gestión de Invitación */}
+      <div className="border border-gray-200 rounded-lg p-3">
+        <div className="flex items-center mb-3">
+          <span className="mr-2">📱</span>
+          <h3 className="text-sm font-medium text-gray-900">Gestión de Invitación</h3>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          {/* De Quién */}
+          <div>
+            <label htmlFor="de_quien" className="block text-xs font-medium text-gray-700 mb-1">
+              Invitado de <span className="text-red-500">*</span>
+            </label>
+            <select
+              id="de_quien"
+              value={formData.de_quien}
+              onChange={(e) => setFormData(prev => ({ ...prev, de_quien: e.target.value as 'jaime' | 'alejandra' | '' }))}
+              className="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:ring-1 focus:ring-blue-500 focus:border-transparent"
+              required
+            >
+              <option value="">Seleccionar...</option>
+              <option value="jaime">Jaime</option>
+              <option value="alejandra">Alejandra</option>
+            </select>
+          </div>
+
+          {/* Invitación Enviada */}
+          <div className="flex items-center">
+            <label className="flex items-center space-x-2 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={formData.invitacion_enviada}
+                onChange={(e) => setFormData(prev => ({ ...prev, invitacion_enviada: e.target.checked }))}
+                className="w-4 h-4 text-green-600 border-gray-300 rounded focus:ring-green-500"
+              />
+              <span className="text-xs font-medium text-gray-700">
+                Invitación enviada por WhatsApp
+              </span>
+            </label>
           </div>
         </div>
       </div>

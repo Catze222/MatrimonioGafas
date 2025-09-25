@@ -36,18 +36,18 @@ export default function VestimentaPage() {
 
         const sectionsData: VestimentaSection[] = [
           {
-            title: 'Hombres',
-            subtitle: 'Casual Elegante',
-            category: 'hombres',
-            images: hombresResult.images,
-            description: 'Sugerimos camisa de vestir, pantalón formal y opcionalmente blazer. Colores neutros preferidos.'
-          },
-          {
             title: 'Mujeres',
             subtitle: 'Vestido Largo',
             category: 'mujeres',
             images: mujeresResult.images,
             description: 'Vestidos largos elegantes, evitar blanco y colores muy vibrantes. Colores pasteles y tonos tierra son perfectos.'
+          },
+          {
+            title: 'Hombres',
+            subtitle: 'Casual Elegante',
+            category: 'hombres',
+            images: hombresResult.images,
+            description: 'Sugerimos camisa de vestir, pantalón formal y opcionalmente blazer. Colores neutros preferidos.'
           }
         ]
 

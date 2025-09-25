@@ -1,5 +1,5 @@
 /**
- * API Route for admin invitado operations
+ * API Route for admin lista_espera operations
  * Uses service role key server-side for secure admin operations
  */
 import { NextRequest, NextResponse } from 'next/server'
@@ -23,7 +23,7 @@ function isValidAdminRequest(request: NextRequest): boolean {
   return adminPassword === expectedPassword
 }
 
-// GET - List all invitados
+// GET - List all lista_espera entries
 export async function GET(request: NextRequest) {
   if (!isValidAdminRequest(request)) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -31,7 +31,7 @@ export async function GET(request: NextRequest) {
 
   try {
     const { data, error } = await supabaseAdmin
-      .from('invitados')
+      .from('lista_espera')
       .select('*')
       .order('created_at', { ascending: false })
 
@@ -39,12 +39,12 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ data })
   } catch (error) {
-    console.error('Error fetching invitados:', error)
+    console.error('Error fetching lista_espera:', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }
 
-// POST - Create new invitado
+// POST - Create new lista_espera entry
 export async function POST(request: NextRequest) {
   if (!isValidAdminRequest(request)) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -52,45 +52,25 @@ export async function POST(request: NextRequest) {
 
   try {
     const body = await request.json()
-    const { nombre_1, nombre_2, slug, foto_url, asistencia_1, asistencia_2, restriccion_1, restriccion_2, mensaje, de_quien, invitacion_enviada } = body
+    const { nombre_1, nombre_2, de_quien, notas, prioridad } = body
 
     // Validation
-    if (!nombre_1 || !slug || !de_quien) {
+    if (!nombre_1 || !de_quien) {
       return NextResponse.json(
-        { error: 'nombre_1, slug, and de_quien are required' },
+        { error: 'nombre_1 and de_quien are required' },
         { status: 400 }
       )
     }
 
-    // Check if slug already exists
-    const { data: existing } = await supabaseAdmin
-      .from('invitados')
-      .select('id')
-      .eq('slug', slug)
-      .single()
-
-    if (existing) {
-      return NextResponse.json(
-        { error: 'Slug already exists' },
-        { status: 409 }
-      )
-    }
-
-    // Create invitado
+    // Create lista_espera entry
     const { data, error } = await supabaseAdmin
-      .from('invitados')
+      .from('lista_espera')
       .insert({
         nombre_1: nombre_1.trim(),
         nombre_2: nombre_2?.trim() || null,
-        slug: slug.trim(),
-        foto_url: foto_url || null,
-        asistencia_1: asistencia_1 || 'pendiente',
-        asistencia_2: asistencia_2 || 'pendiente',
-        restriccion_1: restriccion_1?.trim() || null,
-        restriccion_2: restriccion_2?.trim() || null,
-        mensaje: mensaje?.trim() || null,
         de_quien: de_quien,
-        invitacion_enviada: invitacion_enviada || false
+        notas: notas?.trim() || null,
+        prioridad: prioridad || 'media'
       })
       .select()
       .single()
@@ -99,7 +79,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ data })
   } catch (error) {
-    console.error('Error creating invitado:', error)
+    console.error('Error creating lista_espera:', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

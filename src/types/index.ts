@@ -14,6 +14,8 @@ export type Invitado = {
   restriccion_1?: string | null
   restriccion_2?: string | null
   mensaje?: string | null
+  de_quien?: 'jaime' | 'alejandra'
+  invitacion_enviada?: boolean
   created_at?: string
   updated_at?: string
 }
@@ -36,6 +38,16 @@ export type Pago = {
   created_at?: string
   // Include producto details when joining
   producto?: Producto
+}
+
+export type ListaEspera = {
+  id: string
+  nombre_1: string
+  nombre_2?: string | null
+  de_quien: 'jaime' | 'alejandra'
+  notas?: string | null
+  prioridad: 'alta' | 'media' | 'baja'
+  created_at?: string
 }
 
 // Form types for user input

@@ -20,6 +20,8 @@ export type Invitado = {
   restriccion_1?: string
   restriccion_2?: string
   mensaje?: string
+  de_quien?: 'jaime' | 'alejandra'
+  invitacion_enviada?: boolean
   created_at?: string
   updated_at?: string
 }
@@ -39,5 +41,15 @@ export type Pago = {
   mensaje?: string
   monto: number
   estado: 'pendiente' | 'aprobado' | 'rechazado'
+  created_at?: string
+}
+
+export type ListaEspera = {
+  id: string
+  nombre_1: string
+  nombre_2?: string
+  de_quien: 'jaime' | 'alejandra'
+  notas?: string
+  prioridad: 'alta' | 'media' | 'baja'
   created_at?: string
 }

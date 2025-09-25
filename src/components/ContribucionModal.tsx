@@ -26,11 +26,13 @@ export default function ContribucionModal({ isOpen, onClose, producto }: Contrib
   })
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [displayMonto, setDisplayMonto] = useState('') // Para mostrar formato con separadores
 
   if (!producto) return null
 
   const resetForm = () => {
     setFormData({ monto: '', quien_regala: '', email: '', mensaje: '' })
+    setDisplayMonto('')
     setError(null)
   }
 
@@ -63,6 +65,11 @@ export default function ContribucionModal({ isOpen, onClose, producto }: Contrib
       setError('Por favor ingresa un monto válido mayor a 0')
       return false
     }
+    
+    if (monto < 1000) {
+      setError('El monto mínimo es de $1.000')
+      return false
+    }
 
     return true
   }
@@ -91,12 +98,15 @@ export default function ContribucionModal({ isOpen, onClose, producto }: Contrib
       if (error) throw error
 
       // Inmediatamente crear preferencia en MercadoPago y redirigir
+      const montoOriginal = parseFloat(formData.monto)
+      const montoTotal = calculateTotal(montoOriginal)
+      
       const mpResponse = await fetch('/api/mercadopago/create-preference', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           pagoId: data.id,
-          monto: formData.monto,
+          monto: montoTotal, // Enviar monto total con comisión
           titulo: producto.titulo,
           descripcion: producto.descripcion,
           contribuyente: formData.quien_regala.trim(),
@@ -132,6 +142,38 @@ export default function ContribucionModal({ isOpen, onClose, producto }: Contrib
       currency: 'COP',
       minimumFractionDigits: 0
     }).format(num)
+  }
+
+  // Formatear número con separadores de miles
+  const formatNumber = (value: string): string => {
+    // Remover caracteres no numéricos excepto punto decimal
+    const cleanValue = value.replace(/[^\d.]/g, '')
+    if (!cleanValue) return ''
+    
+    const number = parseFloat(cleanValue)
+    if (isNaN(number)) return ''
+    
+    return new Intl.NumberFormat('es-CO').format(number)
+  }
+
+  // Calcular comisión (4%)
+  const calculateCommission = (amount: number): number => {
+    return Math.round(amount * 0.04)
+  }
+
+  // Calcular total con comisión
+  const calculateTotal = (amount: number): number => {
+    return amount + calculateCommission(amount)
+  }
+
+  // Manejar cambio en el input de monto
+  const handleMontoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value
+    // Remover caracteres no numéricos
+    const cleanValue = value.replace(/[^\d]/g, '')
+    
+    setFormData(prev => ({ ...prev, monto: cleanValue }))
+    setDisplayMonto(formatNumber(cleanValue))
   }
 
   return (
@@ -170,21 +212,30 @@ export default function ContribucionModal({ isOpen, onClose, producto }: Contrib
                 $
               </span>
               <input
-                type="number"
+                type="text"
                 id="monto"
-                value={formData.monto}
-                onChange={(e) => setFormData(prev => ({ ...prev, monto: e.target.value }))}
+                value={displayMonto}
+                onChange={handleMontoChange}
                 className="w-full pl-8 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                placeholder="50000"
-                min="1000"
-                step="1000"
+                placeholder="50.000"
                 required
               />
             </div>
             {formData.monto && !isNaN(parseFloat(formData.monto)) && (
-              <p className="mt-1 text-sm text-purple-600 font-medium">
-                {formatCurrency(formData.monto)}
-              </p>
+              <div className="mt-2 space-y-1">
+                <p className="text-sm text-purple-600 font-medium">
+                  Tu contribución: {formatCurrency(formData.monto)}
+                </p>
+                <p className="text-sm text-orange-600">
+                  Comisión bancaria: {formatCurrency(calculateCommission(parseFloat(formData.monto)).toString())}
+                </p>
+                <p className="text-sm font-semibold text-gray-900 border-t pt-1">
+                  Total a pagar: {formatCurrency(calculateTotal(parseFloat(formData.monto)).toString())}
+                </p>
+                <p className="text-xs text-gray-600 italic">
+                  🙏 Perdón por esta comisión bancaria, pero no queremos que el banco se vaya de luna de miel con nosotros 😅
+                </p>
+              </div>
             )}
           </div>
 

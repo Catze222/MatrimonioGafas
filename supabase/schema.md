@@ -17,14 +17,19 @@ Stores information about wedding guests and their RSVP status.
 | restriccion_1 | TEXT | NULLABLE | Dietary restrictions for first person |
 | restriccion_2 | TEXT | NULLABLE | Dietary restrictions for second person |
 | mensaje | TEXT | NULLABLE | Optional message from guests to couple |
+| de_quien | TEXT | NULLABLE, CHECK | Indicates whose guest this is ('jaime' or 'alejandra') |
+| invitacion_enviada | BOOLEAN | DEFAULT FALSE | Whether WhatsApp invitation has been sent |
 | created_at | TIMESTAMP | DEFAULT NOW() | Record creation time |
 | updated_at | TIMESTAMP | DEFAULT NOW() | Last update time |
 
 **Enums:**
 - `asistencia_1`, `asistencia_2`: 'pendiente' | 'si' | 'no'
+- `de_quien`: 'jaime' | 'alejandra'
 
 **Indexes:**
 - `idx_invitados_slug` ON slug
+- `idx_invitados_de_quien` ON de_quien
+- `idx_invitados_invitacion_enviada` ON invitacion_enviada
 
 ### `productos` - Gift Products
 Catalog of symbolic gifts that guests can contribute to.
@@ -59,6 +64,28 @@ Records of guest contributions to gift products.
 
 **Foreign Keys:**
 - `producto_id` → `productos.id` (CASCADE DELETE)
+
+### `lista_espera` - Waiting List
+Manages potential guests before converting to official invitados.
+
+| Column | Type | Constraints | Description |
+|--------|------|-------------|-------------|
+| id | UUID | PRIMARY KEY, DEFAULT gen_random_uuid() | Unique identifier |
+| nombre_1 | TEXT | NOT NULL | First person's name |
+| nombre_2 | TEXT | NULLABLE | Second person's name (for couples) |
+| de_quien | TEXT | NOT NULL, CHECK | Indicates whose guest this is ('jaime' or 'alejandra') |
+| notas | TEXT | NULLABLE | Internal notes or observations |
+| prioridad | TEXT | NOT NULL, DEFAULT 'media', CHECK | Priority level for invitation |
+| created_at | TIMESTAMP | DEFAULT NOW() | Record creation time |
+
+**Enums:**
+- `de_quien`: 'jaime' | 'alejandra'
+- `prioridad`: 'alta' | 'media' | 'baja'
+
+**Indexes:**
+- `idx_lista_espera_de_quien` ON de_quien
+- `idx_lista_espera_prioridad` ON prioridad
+- `idx_lista_espera_created_at` ON created_at
 
 ## Row Level Security (RLS)
 
@@ -102,5 +129,5 @@ Automatically updates the `updated_at` field when an invitado record is modified
 
 ---
 
-**Last Updated:** Added vestimenta storage bucket
-**Migration:** 003_create_vestimenta_storage.sql
+**Last Updated:** Added lista_espera (waiting list) functionality
+**Migration:** 005_create_lista_espera.sql

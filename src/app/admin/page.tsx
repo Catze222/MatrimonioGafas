@@ -8,7 +8,7 @@ import { useEffect, useState } from 'react'
 import Image from 'next/image'
 import { supabase } from '@/lib/supabase'
 import { useAdminAuth } from '@/hooks/useAdminAuth'
-import { Invitado, Producto, Pago } from '@/types'
+import { Invitado, Producto, Pago, ListaEspera } from '@/types'
 import Button from '@/components/ui/Button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import AddInvitadoModal from '@/components/admin/AddInvitadoModal'
@@ -16,6 +16,8 @@ import EditInvitadoModal from '@/components/admin/EditInvitadoModal'
 import QuickConfirmationModal from '@/components/admin/QuickConfirmationModal'
 import AddProductoModal from '@/components/admin/AddProductoModal'
 import EditProductoModal from '@/components/admin/EditProductoModal'
+import AddListaEsperaForm from '@/components/admin/AddListaEsperaForm'
+import { generateWhatsAppMessage, copyToClipboard, generateRSVPUrl } from '@/lib/whatsapp'
 
 // Login Component
 function AdminLogin({ onLogin }: { onLogin: (password: string) => boolean }) {
@@ -78,8 +80,9 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
   const [invitados, setInvitados] = useState<Invitado[]>([])
   const [productos, setProductos] = useState<Producto[]>([])
   const [pagos, setPagos] = useState<(Pago & { producto?: Producto })[]>([])
+  const [listaEspera, setListaEspera] = useState<ListaEspera[]>([])
   const [loading, setLoading] = useState(true)
-  const [activeTab, setActiveTab] = useState<'invitados' | 'productos' | 'pagos'>('invitados')
+  const [activeTab, setActiveTab] = useState<'invitados' | 'productos' | 'pagos' | 'lista-espera'>('invitados')
   const [showAddInvitado, setShowAddInvitado] = useState(false)
   const [showEditInvitado, setShowEditInvitado] = useState(false)
   const [editingInvitado, setEditingInvitado] = useState<Invitado | null>(null)
@@ -90,9 +93,19 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
   }>({ invitado: null, person: 'persona1' })
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setStatusFilter] = useState<'all' | 'confirmados' | 'pendientes' | 'no-asisten'>('all')
+  const [whatsappFilter, setWhatsappFilter] = useState<'all' | 'enviadas' | 'pendientes'>('all')
+  const [listaEsperaSearchTerm, setListaEsperaSearchTerm] = useState('')
+  const [priorityFilter, setPriorityFilter] = useState<'all' | 'alta' | 'media' | 'baja'>('all')
   const [showAddProducto, setShowAddProducto] = useState(false)
   const [showEditProducto, setShowEditProducto] = useState(false)
   const [editingProducto, setEditingProducto] = useState<Producto | null>(null)
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null)
+  const [showWhatsAppModal, setShowWhatsAppModal] = useState(false)
+  const [selectedInvitado, setSelectedInvitado] = useState<Invitado | null>(null)
+  const [showAddListaEspera, setShowAddListaEspera] = useState(false)
+  const [showConvertModal, setShowConvertModal] = useState(false)
+  const [convertingItem, setConvertingItem] = useState<any>(null)
+  const [loadingActions, setLoadingActions] = useState<{[key: string]: boolean}>({})
 
   useEffect(() => {
     loadData()
@@ -133,6 +146,18 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
       `).order('created_at', { ascending: false })
 
       if (!pagosRes.error) setPagos(pagosRes.data || [])
+
+      // Load lista de espera via API
+      const listaEsperaResponse = await fetch('/api/admin/lista-espera', {
+        headers: {
+          'x-admin-password': adminPassword
+        }
+      })
+      
+      if (listaEsperaResponse.ok) {
+        const listaEsperaData = await listaEsperaResponse.json()
+        setListaEspera(listaEsperaData.data || [])
+      }
       
     } catch (error) {
       console.error('Error loading admin data:', error)
@@ -167,6 +192,10 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
   const handleProductoUpdated = () => {
     loadData() // Reload data after updating producto
     setEditingProducto(null)
+  }
+
+  const handleListaEsperaAdded = () => {
+    loadData() // Reload data after adding new lista espera item
   }
 
   const handleDeleteProducto = async (producto: Producto) => {
@@ -214,13 +243,190 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
       }
     }
 
-    return matchesSearch && matchesStatus
+    // WhatsApp filter
+    let matchesWhatsApp = true
+    if (whatsappFilter !== 'all') {
+      if (whatsappFilter === 'enviadas') {
+        matchesWhatsApp = invitado.invitacion_enviada === true
+      } else if (whatsappFilter === 'pendientes') {
+        matchesWhatsApp = invitado.invitacion_enviada !== true
+      }
+    }
+
+    return matchesSearch && matchesStatus && matchesWhatsApp
+  })
+
+  // Filtered lista espera
+  const filteredListaEspera = listaEspera.filter((item) => {
+    // Search filter
+    let matchesSearch = true
+    if (listaEsperaSearchTerm) {
+      const searchLower = listaEsperaSearchTerm.toLowerCase()
+      matchesSearch = (
+        item.nombre_1.toLowerCase().includes(searchLower) ||
+        (item.nombre_2 && item.nombre_2.toLowerCase().includes(searchLower)) ||
+        (item.notas && item.notas.toLowerCase().includes(searchLower)) ||
+        item.de_quien.toLowerCase().includes(searchLower) ||
+        item.prioridad.toLowerCase().includes(searchLower)
+      )
+    }
+
+    // Priority filter
+    let matchesPriority = true
+    if (priorityFilter !== 'all') {
+      matchesPriority = item.prioridad === priorityFilter
+    }
+
+    return matchesSearch && matchesPriority
   })
 
   // Quick confirmation modal
   const openQuickConfirmation = (invitado: Invitado, person: 'persona1' | 'persona2') => {
     setConfirmationData({ invitado, person })
     setShowQuickConfirmation(true)
+  }
+
+  // WhatsApp functions
+  const handleOpenWhatsAppModal = (invitado: Invitado) => {
+    setSelectedInvitado(invitado)
+    setShowWhatsAppModal(true)
+  }
+
+  const handleCopyWhatsAppMessage = async (invitado: Invitado) => {
+    try {
+      const message = generateWhatsAppMessage({ slug: invitado.slug })
+      await copyToClipboard(message)
+      showToast('Mensaje de WhatsApp copiado al portapapeles', 'success')
+    } catch (error) {
+      console.error('Error copying WhatsApp message:', error)
+      showToast('Error al copiar el mensaje', 'error')
+    }
+  }
+
+  const handleCopyRSVPUrl = async (slug: string) => {
+    try {
+      const url = generateRSVPUrl(slug)
+      await copyToClipboard(url)
+      showToast('Link de confirmación copiado', 'success')
+    } catch (error) {
+      console.error('Error copying RSVP URL:', error)
+      showToast('Error al copiar el link', 'error')
+    }
+  }
+
+  const handleToggleInvitacionEnviada = async (invitado: Invitado) => {
+    try {
+      const newStatus = !invitado.invitacion_enviada
+      
+      const response = await fetch(`/api/admin/invitados/${invitado.id}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-admin-password': process.env.NEXT_PUBLIC_ADMIN_PASSWORD || 'admin123'
+        },
+        body: JSON.stringify({
+          invitacion_enviada: newStatus
+        })
+      })
+
+      if (!response.ok) throw new Error('Failed to update invitation status')
+
+      // Update local state
+      setInvitados(prev => prev.map(inv => 
+        inv.id === invitado.id 
+          ? { ...inv, invitacion_enviada: newStatus }
+          : inv
+      ))
+
+      showToast(
+        newStatus ? 'Marcado como enviado' : 'Marcado como no enviado', 
+        'success'
+      )
+    } catch (error) {
+      console.error('Error updating invitation status:', error)
+      showToast('Error al actualizar estado', 'error')
+    }
+  }
+
+  // Toast helper
+  const showToast = (message: string, type: 'success' | 'error') => {
+    setToast({ message, type })
+    setTimeout(() => setToast(null), 3000)
+  }
+
+  // Lista de Espera functions
+  const handleOpenConvertModal = (item: ListaEspera) => {
+    setConvertingItem(item)
+    setShowConvertModal(true)
+  }
+
+  const handleConvertToInvitado = async (listaEsperaItem: ListaEspera) => {
+    const actionKey = `convert-${listaEsperaItem.id}`
+    setLoadingActions(prev => ({ ...prev, [actionKey]: true }))
+
+    try {
+      const adminPassword = process.env.NEXT_PUBLIC_ADMIN_PASSWORD || 'admin123'
+      
+      const response = await fetch(`/api/admin/lista-espera/${listaEsperaItem.id}`, {
+        method: 'POST',
+        headers: {
+          'x-admin-password': adminPassword
+        }
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error || 'Error converting to invitado')
+      }
+
+      const result = await response.json()
+      
+      // Refresh data
+      loadData()
+      setShowConvertModal(false)
+      setConvertingItem(null)
+      
+      showToast(`${listaEsperaItem.nombre_1} convertido a invitado exitosamente`, 'success')
+    } catch (error) {
+      console.error('Error converting to invitado:', error)
+      showToast('Error al convertir a invitado', 'error')
+    } finally {
+      setLoadingActions(prev => ({ ...prev, [actionKey]: false }))
+    }
+  }
+
+  const handleDeleteFromListaEspera = async (id: string) => {
+    if (!confirm('¿Estás seguro de eliminar este elemento de la lista de espera?')) {
+      return
+    }
+
+    const actionKey = `delete-${id}`
+    setLoadingActions(prev => ({ ...prev, [actionKey]: true }))
+
+    try {
+      const adminPassword = process.env.NEXT_PUBLIC_ADMIN_PASSWORD || 'admin123'
+      
+      const response = await fetch(`/api/admin/lista-espera/${id}`, {
+        method: 'DELETE',
+        headers: {
+          'x-admin-password': adminPassword
+        }
+      })
+
+      if (!response.ok) {
+        throw new Error('Error deleting from lista espera')
+      }
+      
+      // Refresh data
+      loadData()
+      
+      showToast('Eliminado de lista de espera', 'success')
+    } catch (error) {
+      console.error('Error deleting from lista espera:', error)
+      showToast('Error al eliminar', 'error')
+    } finally {
+      setLoadingActions(prev => ({ ...prev, [actionKey]: false }))
+    }
   }
 
   const handleQuickConfirmation = async (status: 'pendiente' | 'si' | 'no') => {
@@ -311,75 +517,6 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
 
       <div className="container mx-auto px-4 py-8">
         {/* Stats Overview - Mejoradas */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-          <Card 
-            className={`cursor-pointer transition-all hover:shadow-md ${statusFilter === 'all' ? 'ring-2 ring-blue-500 bg-blue-50' : ''}`}
-            onClick={() => setStatusFilter('all')}
-          >
-            <CardContent className="p-4">
-              <div className="flex items-center space-x-2">
-                <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                  👥
-                </div>
-                <div>
-                  <div className="text-2xl font-bold text-blue-600">{stats.totalPersonas}</div>
-                  <p className="text-xs text-gray-600">Total Personas</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card 
-            className={`cursor-pointer transition-all hover:shadow-md ${statusFilter === 'confirmados' ? 'ring-2 ring-green-500 bg-green-50' : ''}`}
-            onClick={() => setStatusFilter('confirmados')}
-          >
-            <CardContent className="p-4">
-              <div className="flex items-center space-x-2">
-                <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                  ✅
-                </div>
-                <div>
-                  <div className="text-2xl font-bold text-green-600">{stats.confirmados}</div>
-                  <p className="text-xs text-gray-600">Confirmados</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card 
-            className={`cursor-pointer transition-all hover:shadow-md ${statusFilter === 'pendientes' ? 'ring-2 ring-yellow-500 bg-yellow-50' : ''}`}
-            onClick={() => setStatusFilter('pendientes')}
-          >
-            <CardContent className="p-4">
-              <div className="flex items-center space-x-2">
-                <div className="w-8 h-8 bg-yellow-100 rounded-full flex items-center justify-center">
-                  🟡
-                </div>
-                <div>
-                  <div className="text-2xl font-bold text-yellow-600">{stats.pendientes}</div>
-                  <p className="text-xs text-gray-600">Pendientes</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card 
-            className={`cursor-pointer transition-all hover:shadow-md ${statusFilter === 'no-asisten' ? 'ring-2 ring-red-500 bg-red-50' : ''}`}
-            onClick={() => setStatusFilter('no-asisten')}
-          >
-            <CardContent className="p-4">
-              <div className="flex items-center space-x-2">
-                <div className="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center">
-                  ❌
-                </div>
-                <div>
-                  <div className="text-2xl font-bold text-red-600">{stats.noAsisten}</div>
-                  <p className="text-xs text-gray-600">No Asisten</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
 
         {/* Tabs Navigation */}
         <div className="bg-white rounded-lg shadow-sm mb-6">
@@ -387,12 +524,13 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
             <nav className="flex space-x-8 px-6">
               {[
                 { key: 'invitados', label: 'Invitados', count: invitados.length },
+                { key: 'lista-espera', label: 'Lista de Espera', count: listaEspera.length },
                 { key: 'productos', label: 'Productos', count: productos.length },
                 { key: 'pagos', label: 'Pagos', count: pagos.length }
               ].map(tab => (
                 <button
                   key={tab.key}
-                  onClick={() => setActiveTab(tab.key as 'invitados' | 'productos' | 'pagos')}
+                  onClick={() => setActiveTab(tab.key as 'invitados' | 'productos' | 'pagos' | 'lista-espera')}
                   className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
                     activeTab === tab.key
                       ? 'border-rose-500 text-rose-600'
@@ -416,26 +554,43 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
                   <div className="flex items-center space-x-4">
                     <h2 className="text-lg font-semibold">Lista de Invitados</h2>
                     
-                    {/* Filter indicator */}
-                    {statusFilter !== 'all' && (
-                      <div className="flex items-center space-x-2">
-                        <span className="text-sm text-gray-500">Filtro:</span>
-                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                          statusFilter === 'confirmados' ? 'bg-green-100 text-green-700' :
-                          statusFilter === 'pendientes' ? 'bg-yellow-100 text-yellow-700' :
-                          statusFilter === 'no-asisten' ? 'bg-red-100 text-red-700' : ''
-                        }`}>
-                          {statusFilter === 'confirmados' ? '✅ Confirmados' :
-                           statusFilter === 'pendientes' ? '🟡 Pendientes' :
-                           statusFilter === 'no-asisten' ? '❌ No Asisten' : ''}
-                        </span>
-                        <button
-                          onClick={() => setStatusFilter('all')}
-                          className="text-xs text-gray-400 hover:text-gray-600"
-                          title="Limpiar filtro"
-                        >
-                          ✕
-                        </button>
+                    {/* Filter indicators */}
+                    {(statusFilter !== 'all' || whatsappFilter !== 'all') && (
+                      <div className="flex items-center flex-wrap gap-2">
+                        <span className="text-sm text-gray-500">Filtros:</span>
+                        
+                        {statusFilter !== 'all' && (
+                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                            statusFilter === 'confirmados' ? 'bg-green-100 text-green-700' :
+                            statusFilter === 'pendientes' ? 'bg-yellow-100 text-yellow-700' :
+                            statusFilter === 'no-asisten' ? 'bg-red-100 text-red-700' : ''
+                          }`}>
+                            {statusFilter === 'confirmados' ? 'Confirmados' :
+                             statusFilter === 'pendientes' ? 'Pendientes' :
+                             statusFilter === 'no-asisten' ? 'No Asisten' : ''}
+                            <button
+                              onClick={() => setStatusFilter('all')}
+                              className="ml-1 text-current hover:text-red-600"
+                            >
+                              ✕
+                            </button>
+                          </span>
+                        )}
+
+                        {whatsappFilter !== 'all' && (
+                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                            whatsappFilter === 'enviadas' ? 'bg-blue-100 text-blue-700' :
+                            whatsappFilter === 'pendientes' ? 'bg-orange-100 text-orange-700' : ''
+                          }`}>
+                            WhatsApp: {whatsappFilter === 'enviadas' ? 'Enviadas' : 'Pendientes'}
+                            <button
+                              onClick={() => setWhatsappFilter('all')}
+                              className="ml-1 text-current hover:text-red-600"
+                            >
+                              ✕
+                            </button>
+                          </span>
+                        )}
                       </div>
                     )}
                   </div>
@@ -457,6 +612,118 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
                       Agregar Invitado
                     </Button>
                   </div>
+                </div>
+
+                {/* Status Filter Cards */}
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                  <Card 
+                    className={`cursor-pointer transition-all hover:shadow-md ${statusFilter === 'all' ? 'ring-2 ring-blue-500 bg-blue-50' : ''}`}
+                    onClick={() => setStatusFilter('all')}
+                  >
+                    <CardContent className="p-4">
+                      <div className="flex items-center space-x-2">
+                        <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                          👥
+                        </div>
+                        <div>
+                          <div className="text-2xl font-bold text-blue-600">{stats.totalPersonas}</div>
+                          <p className="text-xs text-gray-600">Total Personas</p>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  <Card 
+                    className={`cursor-pointer transition-all hover:shadow-md ${statusFilter === 'confirmados' ? 'ring-2 ring-green-500 bg-green-50' : ''}`}
+                    onClick={() => setStatusFilter(statusFilter === 'confirmados' ? 'all' : 'confirmados')}
+                  >
+                    <CardContent className="p-4">
+                      <div className="flex items-center space-x-2">
+                        <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                          ✅
+                        </div>
+                        <div>
+                          <div className="text-2xl font-bold text-green-600">{stats.confirmados}</div>
+                          <p className="text-xs text-gray-600">Confirmados</p>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  <Card 
+                    className={`cursor-pointer transition-all hover:shadow-md ${statusFilter === 'pendientes' ? 'ring-2 ring-yellow-500 bg-yellow-50' : ''}`}
+                    onClick={() => setStatusFilter(statusFilter === 'pendientes' ? 'all' : 'pendientes')}
+                  >
+                    <CardContent className="p-4">
+                      <div className="flex items-center space-x-2">
+                        <div className="w-8 h-8 bg-yellow-100 rounded-full flex items-center justify-center">
+                          🟡
+                        </div>
+                        <div>
+                          <div className="text-2xl font-bold text-yellow-600">{stats.pendientes}</div>
+                          <p className="text-xs text-gray-600">Pendientes</p>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  <Card 
+                    className={`cursor-pointer transition-all hover:shadow-md ${statusFilter === 'no-asisten' ? 'ring-2 ring-red-500 bg-red-50' : ''}`}
+                    onClick={() => setStatusFilter(statusFilter === 'no-asisten' ? 'all' : 'no-asisten')}
+                  >
+                    <CardContent className="p-4">
+                      <div className="flex items-center space-x-2">
+                        <div className="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center">
+                          ❌
+                        </div>
+                        <div>
+                          <div className="text-2xl font-bold text-red-600">{stats.noAsisten}</div>
+                          <p className="text-xs text-gray-600">No Asisten</p>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+
+                {/* WhatsApp Filter Cards */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                  <Card 
+                    className={`cursor-pointer transition-all hover:shadow-md ${whatsappFilter === 'pendientes' ? 'ring-2 ring-orange-500 bg-orange-50' : ''}`}
+                    onClick={() => setWhatsappFilter(whatsappFilter === 'pendientes' ? 'all' : 'pendientes')}
+                  >
+                    <CardContent className="p-4">
+                      <div className="flex items-center space-x-2">
+                        <div className="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center">
+                          ⏳
+                        </div>
+                        <div>
+                          <div className="text-2xl font-bold text-orange-600">
+                            {invitados.filter(inv => !inv.invitacion_enviada).length}
+                          </div>
+                          <p className="text-xs text-gray-600">WhatsApp Pendientes</p>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  <Card 
+                    className={`cursor-pointer transition-all hover:shadow-md ${whatsappFilter === 'enviadas' ? 'ring-2 ring-blue-500 bg-blue-50' : ''}`}
+                    onClick={() => setWhatsappFilter(whatsappFilter === 'enviadas' ? 'all' : 'enviadas')}
+                  >
+                    <CardContent className="p-4">
+                      <div className="flex items-center space-x-2">
+                        <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                          ✓
+                        </div>
+                        <div>
+                          <div className="text-2xl font-bold text-blue-600">
+                            {invitados.filter(inv => inv.invitacion_enviada).length}
+                          </div>
+                          <p className="text-xs text-gray-600">WhatsApp Enviadas</p>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
                 </div>
                 
                 {(searchTerm || statusFilter !== 'all') && (
@@ -484,6 +751,9 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
                           Invitado(s)
                         </th>
                         <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          De Quién
+                        </th>
+                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                           Confirmación
                         </th>
                         <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -501,17 +771,48 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
                       {filteredInvitados.map((invitado) => (
                         <tr key={invitado.id}>
                           <td className="px-4 py-3">
-                            <div className="space-y-1">
+                            <div className="space-y-2">
                               <div className="text-sm font-medium text-gray-900">
                                 {invitado.nombre_1}
                                 {invitado.nombre_2 && (
                                   <span className="text-rose-600"> & {invitado.nombre_2}</span>
                                 )}
                               </div>
-                              <code className="text-xs bg-gray-100 px-1.5 py-0.5 rounded text-gray-500">
-                                /rsvp/{invitado.slug}
-                              </code>
+                              <div className="flex items-center justify-between max-w-[280px]">
+                                <a 
+                                  href={generateRSVPUrl(invitado.slug)}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-xs text-blue-600 hover:text-blue-800 underline truncate flex-1 min-w-0"
+                                  title={generateRSVPUrl(invitado.slug)}
+                                >
+                                  {generateRSVPUrl(invitado.slug)}
+                                </a>
+                                <button
+                                  onClick={() => handleCopyRSVPUrl(invitado.slug)}
+                                  className="text-gray-500 hover:text-gray-700 transition-colors p-1 hover:bg-gray-100 rounded ml-2 flex-shrink-0"
+                                  title="Copiar link de confirmación"
+                                >
+                                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                                  </svg>
+                                </button>
+                              </div>
                             </div>
+                          </td>
+                          {/* De Quién */}
+                          <td className="px-4 py-3">
+                            {invitado.de_quien ? (
+                              <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                                invitado.de_quien === 'jaime' 
+                                  ? 'bg-blue-100 text-blue-800' 
+                                  : 'bg-pink-100 text-pink-800'
+                              }`}>
+                                {invitado.de_quien === 'jaime' ? 'Jaime' : 'Alejandra'}
+                              </span>
+                            ) : (
+                              <span className="text-gray-400 text-xs">Sin asignar</span>
+                            )}
                           </td>
                           <td className="px-4 py-3">
                             <div className="space-y-2">
@@ -603,14 +904,31 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
                             </div>
                           </td>
                           <td className="px-4 py-3 whitespace-nowrap">
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => handleEditInvitado(invitado)}
-                              className="text-xs"
-                            >
-                              Editar
-                            </Button>
+                            <div className="flex space-x-2">
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => handleEditInvitado(invitado)}
+                                className="text-xs"
+                              >
+                                Editar
+                              </Button>
+                              <button
+                                onClick={() => handleOpenWhatsAppModal(invitado)}
+                                className={`text-xs px-2 py-1 rounded transition-colors ${
+                                  invitado.invitacion_enviada 
+                                    ? 'bg-blue-600 hover:bg-blue-700 text-white' 
+                                    : 'bg-green-600 hover:bg-green-700 text-white'
+                                }`}
+                                title={
+                                  invitado.invitacion_enviada 
+                                    ? 'Invitación enviada - Click para reenviar' 
+                                    : 'Enviar invitación por WhatsApp'
+                                }
+                              >
+                                {invitado.invitacion_enviada ? 'Enviada' : 'WhatsApp'}
+                              </button>
+                            </div>
                           </td>
                         </tr>
                       ))}
@@ -624,17 +942,45 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
                     <Card key={invitado.id} className="border border-gray-200">
                       <CardContent className="p-4">
                         <div className="space-y-4">
-                          {/* Names */}
+                          {/* Names and Link */}
                           <div>
-                            <h3 className="font-medium text-gray-900">
-                              {invitado.nombre_1}
-                              {invitado.nombre_2 && (
-                                <span className="text-rose-600"> & {invitado.nombre_2}</span>
+                            <div className="flex items-start justify-between mb-2">
+                              <h3 className="font-medium text-gray-900">
+                                {invitado.nombre_1}
+                                {invitado.nombre_2 && (
+                                  <span className="text-rose-600"> & {invitado.nombre_2}</span>
+                                )}
+                              </h3>
+                              {invitado.de_quien && (
+                                <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                                  invitado.de_quien === 'jaime' 
+                                    ? 'bg-blue-100 text-blue-800' 
+                                    : 'bg-pink-100 text-pink-800'
+                                }`}>
+                                  {invitado.de_quien === 'jaime' ? 'Jaime' : 'Alejandra'}
+                                </span>
                               )}
-                            </h3>
-                            <p className="text-xs text-gray-500 mt-1">
-                              /rsvp/{invitado.slug}
-                            </p>
+                            </div>
+                            <div className="flex items-center justify-between bg-gray-50 rounded-lg p-2">
+                              <a 
+                                href={generateRSVPUrl(invitado.slug)}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-xs text-blue-600 hover:text-blue-800 underline truncate flex-1 min-w-0"
+                                title={generateRSVPUrl(invitado.slug)}
+                              >
+                                {generateRSVPUrl(invitado.slug)}
+                              </a>
+                              <button
+                                onClick={() => handleCopyRSVPUrl(invitado.slug)}
+                                className="text-gray-500 hover:text-gray-700 transition-colors p-1 hover:bg-gray-200 rounded ml-2 flex-shrink-0"
+                                title="Copiar link de confirmación"
+                              >
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                                </svg>
+                              </button>
+                            </div>
                           </div>
 
                           {/* Confirmation Status */}
@@ -702,15 +1048,32 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
                           )}
 
                           {/* Actions */}
-                          <div className="pt-2 border-t border-gray-100">
-                            <Button 
-                              variant="outline" 
-                              size="sm"
-                              onClick={() => handleEditInvitado(invitado)}
-                              className="w-full"
-                            >
-                              Editar Invitado
-                            </Button>
+                          <div className="pt-2 border-t border-gray-100 space-y-2">
+                            <div className="flex space-x-2">
+                              <Button 
+                                variant="outline" 
+                                size="sm"
+                                onClick={() => handleEditInvitado(invitado)}
+                                className="flex-1"
+                              >
+                                Editar
+                              </Button>
+                              <button
+                                onClick={() => handleOpenWhatsAppModal(invitado)}
+                                className={`flex-1 text-xs px-3 py-2 rounded-lg transition-colors ${
+                                  invitado.invitacion_enviada 
+                                    ? 'bg-blue-600 hover:bg-blue-700 text-white' 
+                                    : 'bg-green-600 hover:bg-green-700 text-white'
+                                }`}
+                                title={
+                                  invitado.invitacion_enviada 
+                                    ? 'Invitación enviada - Click para reenviar' 
+                                    : 'Enviar invitación por WhatsApp'
+                                }
+                              >
+                                {invitado.invitacion_enviada ? 'Enviada' : 'WhatsApp'}
+                              </button>
+                            </div>
                           </div>
                         </div>
                       </CardContent>
@@ -996,6 +1359,372 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
                 )}
               </div>
             )}
+
+              {activeTab === 'lista-espera' && (
+                <div>
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
+                  <div>
+                    <h2 className="text-2xl font-bold text-gray-900 mb-2">⏳ Lista de Espera</h2>
+                    <p className="text-gray-600">Gestiona invitados potenciales antes de convertirlos en invitados oficiales</p>
+                  </div>
+                  <Button 
+                    onClick={() => setShowAddListaEspera(true)}
+                    className="bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700"
+                  >
+                    Agregar a Lista de Espera
+                  </Button>
+                </div>
+
+                {/* Search Bar */}
+                <div className="mb-6">
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                      </svg>
+                    </div>
+                    <input
+                      type="text"
+                      placeholder="Buscar por nombre, notas, prioridad..."
+                      value={listaEsperaSearchTerm}
+                      onChange={(e) => setListaEsperaSearchTerm(e.target.value)}
+                      className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-orange-500 focus:border-orange-500"
+                    />
+                  </div>
+                </div>
+
+                {/* Priority Filters - Always visible */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+                  {[
+                    { 
+                      key: 'all', 
+                      label: 'Todos', 
+                      count: listaEspera.length,
+                      color: 'bg-gray-100 text-gray-800',
+                      activeColor: 'bg-gray-600 text-white'
+                    },
+                    { 
+                      key: 'alta', 
+                      label: 'Alta', 
+                      count: listaEspera.filter(item => item.prioridad === 'alta').length,
+                      color: 'bg-red-100 text-red-800',
+                      activeColor: 'bg-red-600 text-white'
+                    },
+                    { 
+                      key: 'media', 
+                      label: 'Media', 
+                      count: listaEspera.filter(item => item.prioridad === 'media').length,
+                      color: 'bg-yellow-100 text-yellow-800',
+                      activeColor: 'bg-yellow-600 text-white'
+                    },
+                    { 
+                      key: 'baja', 
+                      label: 'Baja', 
+                      count: listaEspera.filter(item => item.prioridad === 'baja').length,
+                      color: 'bg-green-100 text-green-800',
+                      activeColor: 'bg-green-600 text-white'
+                    }
+                  ].map(filter => (
+                    <button
+                      key={filter.key}
+                      onClick={() => {
+                        if (priorityFilter === filter.key) {
+                          setPriorityFilter('all')
+                        } else {
+                          setPriorityFilter(filter.key as 'all' | 'alta' | 'media' | 'baja')
+                        }
+                      }}
+                      className={`p-3 rounded-lg border transition-all duration-200 ${
+                        priorityFilter === filter.key
+                          ? `${filter.activeColor} border-transparent shadow-sm`
+                          : `${filter.color} border-gray-200 hover:border-gray-300`
+                      }`}
+                    >
+                      <div className="text-center">
+                        <div className="text-xl font-bold">{filter.count}</div>
+                        <div className="text-xs font-medium">Prioridad {filter.label}</div>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+
+                {/* Summary Statistics */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                  <Card>
+                    <CardContent className="p-4">
+                      <div className="flex items-center space-x-3">
+                        <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                          <span className="text-lg">👥</span>
+                        </div>
+                        <div>
+                          <div className="text-2xl font-bold text-blue-600">
+                            {listaEspera.filter(item => item.de_quien === 'jaime').length} / {listaEspera.filter(item => item.de_quien === 'alejandra').length}
+                          </div>
+                          <p className="text-sm text-gray-600">Jaime / Alejandra</p>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  <Card>
+                    <CardContent className="p-4">
+                      <div className="flex items-center space-x-3">
+                        <div className="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center">
+                          <span className="text-lg">⏳</span>
+                        </div>
+                        <div>
+                          <div className="text-2xl font-bold text-orange-600">{listaEspera.length}</div>
+                          <p className="text-sm text-gray-600">Total en Lista de Espera</p>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+
+                {/* Results info */}
+                {(listaEsperaSearchTerm || priorityFilter !== 'all') && (
+                  <div className="mb-4">
+                    <div className="flex items-center justify-between">
+                      <p className="text-sm text-gray-600">
+                        Mostrando {filteredListaEspera.length} de {listaEspera.length} elementos
+                        {priorityFilter !== 'all' && (
+                          <span className="ml-2">
+                            • Prioridad: <span className="font-medium capitalize">{priorityFilter}</span>
+                          </span>
+                        )}
+                      </p>
+                      {(listaEsperaSearchTerm || priorityFilter !== 'all') && (
+                        <button
+                          onClick={() => {
+                            setListaEsperaSearchTerm('')
+                            setPriorityFilter('all')
+                          }}
+                          className="text-xs text-orange-600 hover:text-orange-700 font-medium"
+                        >
+                          Limpiar filtros
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {filteredListaEspera.length === 0 ? (
+                  <Card>
+                    <CardContent className="p-12 text-center">
+                      <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <span className="text-2xl">⏳</span>
+                      </div>
+                      <h3 className="text-lg font-medium text-gray-900 mb-2">
+                        {listaEspera.length === 0 ? 'Sin elementos en lista de espera' : 'No se encontraron resultados'}
+                      </h3>
+                      <p className="text-gray-500 mb-6">
+                        {listaEspera.length === 0 
+                          ? 'Agrega invitados potenciales para gestionarlos antes de enviar invitaciones'
+                          : 'Intenta con otros términos de búsqueda'
+                        }
+                      </p>
+                      <Button 
+                        onClick={() => setShowAddListaEspera(true)}
+                        className="bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700"
+                      >
+                        Agregar Primer Elemento
+                      </Button>
+                    </CardContent>
+                  </Card>
+                ) : (
+                  <>
+
+                    {/* Desktop Table */}
+                    <div className="hidden lg:block overflow-x-auto bg-white rounded-lg shadow-sm border border-gray-200">
+                      <table className="min-w-full divide-y divide-gray-200">
+                        <thead className="bg-gray-50">
+                          <tr>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                              Invitado(s)
+                            </th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                              De Quién
+                            </th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                              Prioridad
+                            </th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                              Notas
+                            </th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                              Acciones
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody className="bg-white divide-y divide-gray-200">
+                          {filteredListaEspera.map((item) => (
+                            <tr key={item.id} className="hover:bg-gray-50">
+                              <td className="px-6 py-4">
+                                <div className="text-sm font-medium text-gray-900">
+                                  {item.nombre_1}
+                                  {item.nombre_2 && (
+                                    <span className="text-rose-600"> & {item.nombre_2}</span>
+                                  )}
+                                </div>
+                              </td>
+                              <td className="px-6 py-4">
+                                <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                                  item.de_quien === 'jaime' 
+                                    ? 'bg-blue-100 text-blue-800' 
+                                    : 'bg-pink-100 text-pink-800'
+                                }`}>
+                                  {item.de_quien === 'jaime' ? 'Jaime' : 'Alejandra'}
+                                </span>
+                              </td>
+                              <td className="px-6 py-4">
+                                <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                                  item.prioridad === 'alta' ? 'bg-red-100 text-red-800' :
+                                  item.prioridad === 'media' ? 'bg-yellow-100 text-yellow-800' :
+                                  'bg-gray-100 text-gray-800'
+                                }`}>
+                                  {item.prioridad === 'alta' ? 'Alta' : 
+                                   item.prioridad === 'media' ? 'Media' : 'Baja'}
+                                </span>
+                              </td>
+                              <td className="px-6 py-4">
+                                <div className="text-sm text-gray-500 max-w-xs truncate">
+                                  {item.notas || 'Sin notas'}
+                                </div>
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap">
+                                <div className="flex space-x-2">
+                                  <button
+                                    onClick={() => handleOpenConvertModal(item)}
+                                    disabled={loadingActions[`convert-${item.id}`]}
+                                    className="text-xs bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white px-3 py-1 rounded transition-colors flex items-center space-x-1"
+                                    title="Convertir a invitado oficial"
+                                  >
+                                    {loadingActions[`convert-${item.id}`] ? (
+                                      <>
+                                        <svg className="animate-spin h-3 w-3" fill="none" viewBox="0 0 24 24">
+                                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                        </svg>
+                                        <span>Convirtiendo...</span>
+                                      </>
+                                    ) : (
+                                      'Invitar'
+                                    )}
+                                  </button>
+                                  <button
+                                    onClick={() => handleDeleteFromListaEspera(item.id)}
+                                    disabled={loadingActions[`delete-${item.id}`]}
+                                    className="text-xs bg-red-600 hover:bg-red-700 disabled:bg-gray-400 text-white px-3 py-1 rounded transition-colors flex items-center space-x-1"
+                                    title="Eliminar de lista de espera"
+                                  >
+                                    {loadingActions[`delete-${item.id}`] ? (
+                                      <>
+                                        <svg className="animate-spin h-3 w-3" fill="none" viewBox="0 0 24 24">
+                                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                        </svg>
+                                        <span>Eliminando...</span>
+                                      </>
+                                    ) : (
+                                      'Eliminar'
+                                    )}
+                                  </button>
+                                </div>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+
+                    {/* Mobile Cards */}
+                    <div className="lg:hidden space-y-4">
+                      {filteredListaEspera.map((item) => (
+                        <Card key={item.id} className="border border-gray-200">
+                          <CardContent className="p-4">
+                            <div className="space-y-3">
+                              {/* Header with names and badges */}
+                              <div className="flex justify-between items-start">
+                                <div>
+                                  <h3 className="font-medium text-gray-900">
+                                    {item.nombre_1}
+                                    {item.nombre_2 && (
+                                      <span className="text-rose-600"> & {item.nombre_2}</span>
+                                    )}
+                                  </h3>
+                                </div>
+                                <div className="flex space-x-2">
+                                  <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                                    item.de_quien === 'jaime' 
+                                      ? 'bg-blue-100 text-blue-800' 
+                                      : 'bg-pink-100 text-pink-800'
+                                  }`}>
+                                    {item.de_quien === 'jaime' ? 'Jaime' : 'Alejandra'}
+                                  </span>
+                                  <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                                    item.prioridad === 'alta' ? 'bg-red-100 text-red-800' :
+                                    item.prioridad === 'media' ? 'bg-yellow-100 text-yellow-800' :
+                                    'bg-gray-100 text-gray-800'
+                                  }`}>
+                                    {item.prioridad === 'alta' ? 'Alta' : 
+                                     item.prioridad === 'media' ? 'Media' : 'Baja'}
+                                  </span>
+                                </div>
+                              </div>
+
+                              {/* Notes */}
+                              {item.notas && (
+                                <div className="bg-gray-50 rounded-lg p-2">
+                                  <p className="text-sm text-gray-600">{item.notas}</p>
+                                </div>
+                              )}
+
+                              {/* Actions */}
+                              <div className="flex space-x-2 pt-2 border-t border-gray-100">
+                                <button
+                                  onClick={() => handleOpenConvertModal(item)}
+                                  disabled={loadingActions[`convert-${item.id}`]}
+                                  className="flex-1 text-sm bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white px-3 py-2 rounded transition-colors flex items-center justify-center space-x-1"
+                                >
+                                  {loadingActions[`convert-${item.id}`] ? (
+                                    <>
+                                      <svg className="animate-spin h-3 w-3" fill="none" viewBox="0 0 24 24">
+                                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                      </svg>
+                                      <span>Convirtiendo...</span>
+                                    </>
+                                  ) : (
+                                    'Convertir a Invitado'
+                                  )}
+                                </button>
+                                <button
+                                  onClick={() => handleDeleteFromListaEspera(item.id)}
+                                  disabled={loadingActions[`delete-${item.id}`]}
+                                  className="text-sm bg-red-600 hover:bg-red-700 disabled:bg-gray-400 text-white px-3 py-2 rounded transition-colors flex items-center justify-center space-x-1"
+                                >
+                                  {loadingActions[`delete-${item.id}`] ? (
+                                    <>
+                                      <svg className="animate-spin h-3 w-3" fill="none" viewBox="0 0 24 24">
+                                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                      </svg>
+                                      <span>Eliminando...</span>
+                                    </>
+                                  ) : (
+                                    'Eliminar'
+                                  )}
+                                </button>
+                              </div>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      ))}
+                    </div>
+                  </>
+                )}
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -1044,6 +1773,194 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
         onSuccess={handleProductoUpdated}
         producto={editingProducto}
       />
+
+      {/* WhatsApp Modal */}
+      {showWhatsAppModal && selectedInvitado && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg max-w-md w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-lg font-semibold text-gray-900">
+                  Invitación WhatsApp
+                </h2>
+                <button
+                  onClick={() => setShowWhatsAppModal(false)}
+                  className="text-gray-400 hover:text-gray-600"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+              
+              <div className="space-y-4">
+                <div>
+                  <p className="text-sm text-gray-600 mb-2">
+                    Para: <span className="font-medium text-gray-900">
+                      {selectedInvitado.nombre_1}
+                      {selectedInvitado.nombre_2 && ` & ${selectedInvitado.nombre_2}`}
+                    </span>
+                  </p>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Mensaje a copiar:
+                  </label>
+                  <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 text-sm whitespace-pre-line">
+                    {generateWhatsAppMessage({ slug: selectedInvitado.slug })}
+                  </div>
+                </div>
+
+                <div className="flex space-x-3">
+                  <button
+                    onClick={() => handleCopyWhatsAppMessage(selectedInvitado)}
+                    className="flex-1 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors"
+                  >
+                    Copiar Mensaje
+                  </button>
+                  <button
+                    onClick={() => setShowWhatsAppModal(false)}
+                    className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                  >
+                    Cancelar
+                  </button>
+                </div>
+
+                <div className="border-t pt-4">
+                  <label className="flex items-center space-x-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={selectedInvitado.invitacion_enviada || false}
+                      onChange={() => {
+                        handleToggleInvitacionEnviada(selectedInvitado)
+                        setShowWhatsAppModal(false)
+                      }}
+                      className="w-4 h-4 text-green-600 border-gray-300 rounded focus:ring-green-500"
+                    />
+                    <span className="text-sm text-gray-700">
+                      Marcar como enviada
+                    </span>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Add Lista Espera Modal */}
+      {showAddListaEspera && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg max-w-md w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-lg font-semibold text-gray-900">
+                  Agregar a Lista de Espera
+                </h2>
+                <button
+                  onClick={() => setShowAddListaEspera(false)}
+                  className="text-gray-400 hover:text-gray-600"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+              
+              <AddListaEsperaForm 
+                onSuccess={() => {
+                  setShowAddListaEspera(false)
+                  handleListaEsperaAdded()
+                }}
+                onCancel={() => setShowAddListaEspera(false)}
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Convert to Invitado Confirmation Modal */}
+      {showConvertModal && convertingItem && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg max-w-md w-full">
+            <div className="p-6">
+              <div className="flex items-center justify-center w-12 h-12 mx-auto bg-orange-100 rounded-full mb-4">
+                <svg className="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              
+              <div className="text-center mb-6">
+                <h3 className="text-lg font-medium text-gray-900 mb-2">
+                  Convertir a Invitado Oficial
+                </h3>
+                <p className="text-sm text-gray-600 mb-4">
+                  ¿Estás seguro que quieres convertir a <strong>{convertingItem.nombre_1}</strong>
+                  {convertingItem.nombre_2 && <span> y <strong>{convertingItem.nombre_2}</strong></span>} 
+                  en invitado oficial?
+                </p>
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4">
+                  <div className="flex">
+                    <svg className="w-5 h-5 text-blue-400 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <div className="text-left">
+                      <p className="text-sm text-blue-800 font-medium">¿Qué pasará?</p>
+                      <ul className="text-xs text-blue-700 mt-1 space-y-1">
+                        <li>• Se creará un nuevo invitado en la lista oficial</li>
+                        <li>• Se generará automáticamente su slug único</li>
+                        <li>• Se eliminará de la lista de espera</li>
+                        <li>• El estado RSVP será "Pendiente"</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex space-x-3">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => {
+                    setShowConvertModal(false)
+                    setConvertingItem(null)
+                  }}
+                  className="flex-1"
+                  disabled={loadingActions[`convert-${convertingItem.id}`]}
+                >
+                  Cancelar
+                </Button>
+                <Button
+                  onClick={() => handleConvertToInvitado(convertingItem)}
+                  loading={loadingActions[`convert-${convertingItem.id}`]}
+                  className="flex-1 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800"
+                >
+                  {loadingActions[`convert-${convertingItem.id}`] ? 'Convirtiendo...' : 'Sí, Convertir'}
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Toast Notification */}
+      {toast && (
+        <div className="fixed top-4 right-4 z-50 max-w-sm">
+          <div className={`p-4 rounded-lg shadow-lg ${
+            toast.type === 'success' 
+              ? 'bg-green-50 border border-green-200 text-green-800' 
+              : 'bg-red-50 border border-red-200 text-red-800'
+          }`}>
+            <div className="flex items-center space-x-2">
+              <span className="text-sm">
+                {toast.type === 'success' ? 'Listo' : 'Error'}
+              </span>
+              <span className="text-sm font-medium">{toast.message}</span>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

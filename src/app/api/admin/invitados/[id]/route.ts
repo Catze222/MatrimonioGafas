@@ -39,7 +39,8 @@ export async function PATCH(
     const allowedFields = [
       'nombre_1', 'nombre_2', 'slug', 'foto_url',
       'asistencia_1', 'asistencia_2', 
-      'restriccion_1', 'restriccion_2', 'mensaje'
+      'restriccion_1', 'restriccion_2', 'mensaje',
+      'de_quien', 'invitacion_enviada'
     ]
 
     // Filter only allowed fields
