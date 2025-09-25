@@ -78,8 +78,22 @@ All tables have RLS enabled with the following policies:
 ### Buckets
 - `avatars` - Guest profile photos
 - `productos` - Gift product images
+- `vestimenta` - Dress code reference images
 
-Both buckets allow public read access and authenticated upload.
+All buckets allow public read access and authenticated upload.
+
+### Vestimenta Structure
+```
+vestimenta/
+├── hombres/          - Men's dress code reference images
+│   ├── casual-1.jpg
+│   ├── casual-2.jpg
+│   └── ...
+└── mujeres/          - Women's dress code reference images
+    ├── vestido-1.jpg
+    ├── vestido-2.jpg
+    └── ...
+```
 
 ## Triggers
 
@@ -88,5 +102,5 @@ Automatically updates the `updated_at` field when an invitado record is modified
 
 ---
 
-**Last Updated:** Initial creation
-**Migration:** 001_create_wedding_tables.sql
+**Last Updated:** Added vestimenta storage bucket
+**Migration:** 003_create_vestimenta_storage.sql
