@@ -177,7 +177,7 @@ export default function VestimentaPage() {
 
           {/* Vestimenta Sections */}
           <div className="space-y-16 md:space-y-20">
-            {sections.map((section, sectionIndex) => (
+            {sections.map((section) => (
               <section key={section.category} className="w-full">
                 {/* Section Header */}
                 <div className="text-center mb-8 md:mb-12">

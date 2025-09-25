@@ -104,7 +104,7 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
   const [selectedInvitado, setSelectedInvitado] = useState<Invitado | null>(null)
   const [showAddListaEspera, setShowAddListaEspera] = useState(false)
   const [showConvertModal, setShowConvertModal] = useState(false)
-  const [convertingItem, setConvertingItem] = useState<any>(null)
+  const [convertingItem, setConvertingItem] = useState<ListaEspera | null>(null)
   const [loadingActions, setLoadingActions] = useState<{[key: string]: boolean}>({})
 
   useEffect(() => {
@@ -379,8 +379,6 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
         throw new Error(errorData.error || 'Error converting to invitado')
       }
 
-      const result = await response.json()
-      
       // Refresh data
       loadData()
       setShowConvertModal(false)
@@ -481,10 +479,6 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
     })
     
     return { totalPersonas, confirmados, pendientes, noAsisten }
-  }
-
-  const getTotalGifts = () => {
-    return pagos.reduce((total, pago) => total + pago.monto, 0)
   }
 
   const stats = getPersonStats()
@@ -1911,7 +1905,7 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
                         <li>• Se creará un nuevo invitado en la lista oficial</li>
                         <li>• Se generará automáticamente su slug único</li>
                         <li>• Se eliminará de la lista de espera</li>
-                        <li>• El estado RSVP será "Pendiente"</li>
+                        <li>• El estado RSVP será &quot;Pendiente&quot;</li>
                       </ul>
                     </div>
                   </div>

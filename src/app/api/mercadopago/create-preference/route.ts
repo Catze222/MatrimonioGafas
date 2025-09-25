@@ -7,7 +7,7 @@ import { preference } from '@/lib/mercadopago'
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { pagoId, monto, titulo, descripcion, contribuyente, email, telefono } = body
+    const { pagoId, monto, titulo, contribuyente, email, telefono } = body
 
     // Validar datos requeridos
     if (!pagoId || !monto || !titulo || !contribuyente || !email) {
