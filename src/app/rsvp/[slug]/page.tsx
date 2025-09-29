@@ -30,19 +30,6 @@ export default function RSVPPage() {
     restriccion_2: ''
   })
 
-  // Función para verificar si debe redirigir
-  const shouldRedirect = (data: Invitado): boolean => {
-    const { asistencia_1, asistencia_2, nombre_2 } = data
-    
-    // Si solo hay una persona
-    if (!nombre_2) {
-      return asistencia_1 !== 'pendiente' // Redirigir si ya confirmó (si/no)
-    }
-    
-    // Si hay dos personas
-    // Redirigir si ambas ya confirmaron (ninguna está pendiente)
-    return asistencia_1 !== 'pendiente' && asistencia_2 !== 'pendiente'
-  }
 
   useEffect(() => {
     const loadInvitado = async () => {
@@ -59,12 +46,6 @@ export default function RSVPPage() {
           } else {
             throw error
           }
-          return
-        }
-
-        // Verificar si debe redirigir
-        if (shouldRedirect(data)) {
-          router.push('/')
           return
         }
 
@@ -197,7 +178,7 @@ export default function RSVPPage() {
               fontSize: 'clamp(24px, 4vw, 32px)',
               marginBottom: '8px'
             }}>
-              Confirma tu Asistencia
+              Confirma tu asistencia
             </h1>
             <p className="text-gray-600" style={{ fontFamily: '"Libre Baskerville", serif', fontSize: '14px' }}>
               Tu presencia hace que este día sea aún más especial
@@ -225,7 +206,7 @@ export default function RSVPPage() {
             </h2>
             
             <p className="text-gray-600 text-sm" style={{ fontFamily: '"Libre Baskerville", serif' }}>
-              Esperamos celebrar contigo este día tan especial
+              Esperamos celebrar {invitado.nombre_2 ? 'con ustedes' : 'contigo'} este día tan especial
             </p>
           </div>
 
@@ -245,7 +226,7 @@ export default function RSVPPage() {
           <div className="bg-white border border-gray-100 p-6">
             <div className="text-center mb-6">
               <h3 className="font-medium text-gray-900 mb-2" style={{ fontFamily: '"EB Garamond", serif', fontWeight: 400 }}>
-                Detalles de Asistencia
+                Detalles de asistencia
               </h3>
               <div className="w-8 h-px bg-gray-300 mx-auto"></div>
             </div>
@@ -269,13 +250,13 @@ export default function RSVPPage() {
                     <div className={`text-sm mt-2 ${
                       invitado.asistencia_1 === 'si' ? 'text-green-700' : 'text-red-700'
                     }`} style={{ fontFamily: '"Libre Baskerville", serif' }}>
-                      {invitado.asistencia_1 === 'si' ? '✓ Confirmaste que sí asistirás' : '✗ Confirmaste que no podrás asistir'}
+                        {invitado.asistencia_1 === 'si' ? '✓ Confirmó que sí asistirá' : '✗ Confirmó que no podrá asistir'}
                     </div>
                   )}
                 </label>
                 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  {(['si', 'no', 'pendiente'] as const).map((option) => (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {(['si', 'no'] as const).map((option) => (
                     <label key={option} className="relative">
                       <input
                         type="radio"
@@ -293,9 +274,8 @@ export default function RSVPPage() {
                             ? 'border-black bg-black text-white cursor-pointer'
                             : 'border-gray-300 hover:border-gray-500 cursor-pointer'
                       }`} style={{ fontFamily: '"Libre Baskerville", serif' }}>
-                        {option === 'si' && 'Sí, asistiré'}
-                        {option === 'no' && 'No podré asistir'}
-                        {option === 'pendiente' && 'Sin confirmar'}
+                        {option === 'si' && (invitado.nombre_2 ? '✓ Sí, asistiremos' : '✓ Sí, asistiré')}
+                        {option === 'no' && (invitado.nombre_2 ? '✗ No podremos asistir' : '✗ No podré asistir')}
                       </div>
                     </label>
                   ))}
@@ -303,10 +283,13 @@ export default function RSVPPage() {
                 
                 {/* Restricciones primera persona */}
                 {formData.asistencia_1 === 'si' && (
-                  <div className="mt-4">
-                    <label htmlFor="restriccion_1" className="block font-medium text-gray-900 mb-3" style={{ fontFamily: '"Libre Baskerville", serif' }}>
-                      Restricciones alimentarias (opcional)
-                    </label>
+                  <div className="mt-4 p-4 bg-green-50 border-l-4 border-green-400 rounded-r-lg">
+                    <div className="flex items-center mb-3">
+                      <span className="text-green-600 mr-2">🍽️</span>
+                      <label htmlFor="restriccion_1" className="block font-semibold text-green-800" style={{ fontFamily: '"Libre Baskerville", serif' }}>
+                        Restricciones alimentarias (opcional)
+                      </label>
+                    </div>
                     <input
                       type="text"
                       id="restriccion_1"
@@ -314,12 +297,12 @@ export default function RSVPPage() {
                       onChange={(e) => setFormData(prev => ({ ...prev, restriccion_1: e.target.value }))}
                       disabled={invitado.asistencia_1 !== 'pendiente'}
                       placeholder="Ej: Vegetariano, sin gluten, alergias..."
-                      className={`w-full px-4 py-3 border focus:ring-2 focus:ring-black focus:border-transparent ${
+                      className={`w-full px-4 py-3 border-2 focus:ring-2 focus:ring-green-300 focus:border-green-400 rounded-lg ${
                         invitado.asistencia_1 !== 'pendiente' 
                           ? 'bg-gray-100 text-gray-500 cursor-not-allowed border-gray-200' 
-                          : 'border-gray-300'
+                          : 'border-green-300 bg-white'
                       }`}
-                      style={{ fontFamily: '"Libre Baskerville", serif', borderRadius: '0' }}
+                      style={{ fontFamily: '"Libre Baskerville", serif' }}
                     />
                   </div>
                 )}
@@ -345,13 +328,13 @@ export default function RSVPPage() {
                       <div className={`text-sm mt-2 ${
                         invitado.asistencia_2 === 'si' ? 'text-green-700' : 'text-red-700'
                       }`} style={{ fontFamily: '"Libre Baskerville", serif' }}>
-                        {invitado.asistencia_2 === 'si' ? '✓ Confirmaste que sí asistirás' : '✗ Confirmaste que no podrás asistir'}
+                        {invitado.asistencia_2 === 'si' ? '✓ Confirmó que sí asistirá' : '✗ Confirmó que no podrá asistir'}
                       </div>
                     )}
                   </label>
                   
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    {(['si', 'no', 'pendiente'] as const).map((option) => (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {(['si', 'no'] as const).map((option) => (
                       <label key={option} className="relative">
                         <input
                           type="radio"
@@ -369,9 +352,8 @@ export default function RSVPPage() {
                               ? 'border-black bg-black text-white cursor-pointer'
                               : 'border-gray-300 hover:border-gray-500 cursor-pointer'
                         }`} style={{ fontFamily: '"Libre Baskerville", serif' }}>
-                          {option === 'si' && 'Sí, asistiré'}
-                          {option === 'no' && 'No podré asistir'}
-                          {option === 'pendiente' && 'Sin confirmar'}
+                          {option === 'si' && '✓ Sí, asistiré'}
+                          {option === 'no' && '✗ No podré asistir'}
                         </div>
                       </label>
                     ))}
@@ -379,10 +361,13 @@ export default function RSVPPage() {
                     
                     {/* Restricciones segunda persona */}
                     {formData.asistencia_2 === 'si' && (
-                      <div className="mt-4">
-                        <label htmlFor="restriccion_2" className="block font-medium text-gray-900 mb-3" style={{ fontFamily: '"Libre Baskerville", serif' }}>
-                          Restricciones alimentarias (opcional)
-                        </label>
+                      <div className="mt-4 p-4 bg-green-50 border-l-4 border-green-400 rounded-r-lg">
+                        <div className="flex items-center mb-3">
+                          <span className="text-green-600 mr-2">🍽️</span>
+                          <label htmlFor="restriccion_2" className="block font-semibold text-green-800" style={{ fontFamily: '"Libre Baskerville", serif' }}>
+                            Restricciones alimentarias (opcional)
+                          </label>
+                        </div>
                         <input
                           type="text"
                           id="restriccion_2"
@@ -390,12 +375,12 @@ export default function RSVPPage() {
                           onChange={(e) => setFormData(prev => ({ ...prev, restriccion_2: e.target.value }))}
                           disabled={invitado.asistencia_2 !== 'pendiente'}
                           placeholder="Ej: Vegetariano, sin gluten, alergias..."
-                          className={`w-full px-4 py-3 border focus:ring-2 focus:ring-black focus:border-transparent ${
+                          className={`w-full px-4 py-3 border-2 focus:ring-2 focus:ring-green-300 focus:border-green-400 rounded-lg ${
                             invitado.asistencia_2 !== 'pendiente' 
                               ? 'bg-gray-100 text-gray-500 cursor-not-allowed border-gray-200' 
-                              : 'border-gray-300'
+                              : 'border-green-300 bg-white'
                           }`}
-                          style={{ fontFamily: '"Libre Baskerville", serif', borderRadius: '0' }}
+                          style={{ fontFamily: '"Libre Baskerville", serif' }}
                         />
                       </div>
                     )}
@@ -431,7 +416,7 @@ export default function RSVPPage() {
                       e.currentTarget.style.backgroundColor = '#86EFAC'
                     }}
                   >
-                    {saving ? 'Guardando confirmación...' : 'Confirmar mi Asistencia'}
+                    {saving ? 'Guardando confirmación...' : (invitado.nombre_2 ? 'Confirmar nuestra asistencia' : 'Confirmar mi asistencia')}
                   </Button>
                 </div>
               )}
@@ -458,11 +443,11 @@ export default function RSVPPage() {
                         
                         let mensaje = ""
                         if (asistiran.length > 0) {
-                          mensaje += `${asistiran.join(' y ')} confirmó${asistiran.length > 1 ? 'n' : ''} asistencia`
+                          mensaje += `${asistiran.join(' y ')} ${asistiran.length > 1 ? 'confirmaron' : 'confirmó'} asistencia`
                         }
                         if (noAsistiran.length > 0) {
                           if (mensaje) mensaje += ". "
-                          mensaje += `${noAsistiran.join(' y ')} no podrá${noAsistiran.length > 1 ? 'n' : ''} asistir`
+                          mensaje += `${noAsistiran.join(' y ')} no ${noAsistiran.length > 1 ? 'podrán' : 'podrá'} asistir`
                         }
                         if (asistiran.length > 0) {
                           mensaje += ". ¡Nos vemos el 13 de diciembre!"
@@ -478,7 +463,7 @@ export default function RSVPPage() {
                         Inicio
                       </Link>
                       <Link href="/ceremonia" className="text-gray-700 hover:text-black underline px-2 py-1" style={{ fontFamily: '"Libre Baskerville", serif' }}>
-                        Día del Evento
+                        Día del evento
                       </Link>
                       <Link href="/regalos" className="text-gray-700 hover:text-black underline px-2 py-1" style={{ fontFamily: '"Libre Baskerville", serif' }}>
                         Regalos
@@ -499,7 +484,7 @@ export default function RSVPPage() {
                       Inicio
                     </Link>
                     <Link href="/ceremonia" className="text-gray-700 hover:text-black underline px-2 py-1" style={{ fontFamily: '"Libre Baskerville", serif' }}>
-                      Día del Evento
+                      Día del evento
                     </Link>
                     <Link href="/regalos" className="text-gray-700 hover:text-black underline px-2 py-1" style={{ fontFamily: '"Libre Baskerville", serif' }}>
                       Regalos
@@ -516,10 +501,10 @@ export default function RSVPPage() {
           {/* Event Info Footer - Fecha corregida */}
           <div className="text-center mt-8 p-4 bg-gray-50">
             <h3 className="font-medium text-gray-900 mb-3" style={{ fontFamily: '"EB Garamond", serif', fontWeight: 400 }}>
-              Información del Evento
+              Información del evento
             </h3>
             <div className="space-y-1 text-gray-600 text-sm" style={{ fontFamily: '"Libre Baskerville", serif' }}>
-              <p><strong>Fecha:</strong> 13 de Diciembre, 2025 • <strong>Hora:</strong> 3:30 PM</p>
+              <p><strong>Fecha:</strong> 13 de diciembre de 2025 • <strong>Hora:</strong> 3:30 PM</p>
               <p><strong>Lugar:</strong> Hacienda San Rafael, Bogotá</p>
               <p><strong>Celebración:</strong> Hasta las 3:00 AM</p>
             </div>
@@ -527,27 +512,6 @@ export default function RSVPPage() {
         </div>
       </main>
 
-      {/* Footer - Súper compacto */}
-      <footer className="bg-white py-8 text-center border-t border-gray-100" style={{ backgroundColor: '#FFFFFF' }}>
-        <div className="max-w-4xl mx-auto px-4">
-          <div className="mb-4">
-            <div className="w-20 h-10 mx-auto mb-3 flex items-center justify-center">
-              <svg viewBox="0 0 200 50" className="w-full h-full">
-                <text x="100" y="30" textAnchor="middle" style={{ fontFamily: '"EB Garamond", serif', fontSize: '18px', fontWeight: 400, letterSpacing: '2px', fill: '#000000' }}>
-                  A &amp; J
-                </text>
-              </svg>
-            </div>
-            <p className="text-gray-600 mb-3" style={{ fontFamily: '"Libre Baskerville", serif', fontSize: '11px', fontWeight: 400 }}>
-              Para todos los días del camino
-            </p>
-          </div>
-          
-          <div className="text-xs text-gray-500">
-            <p>© 2025 Alejandra &amp; Jaime • 13 de Diciembre, 2025 • Con amor desde Bogotá</p>
-          </div>
-        </div>
-      </footer>
     </div>
   )
 }

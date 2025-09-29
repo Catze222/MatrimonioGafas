@@ -94,8 +94,10 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setStatusFilter] = useState<'all' | 'confirmados' | 'pendientes' | 'no-asisten'>('all')
   const [whatsappFilter, setWhatsappFilter] = useState<'all' | 'enviadas' | 'pendientes'>('all')
+  const [personFilter, setPersonFilter] = useState<'all' | 'jaime' | 'alejandra'>('all')
   const [listaEsperaSearchTerm, setListaEsperaSearchTerm] = useState('')
   const [priorityFilter, setPriorityFilter] = useState<'all' | 'alta' | 'media' | 'baja'>('all')
+  const [listaEsperaPersonFilter, setListaEsperaPersonFilter] = useState<'all' | 'jaime' | 'alejandra'>('all')
   const [showAddProducto, setShowAddProducto] = useState(false)
   const [showEditProducto, setShowEditProducto] = useState(false)
   const [editingProducto, setEditingProducto] = useState<Producto | null>(null)
@@ -253,7 +255,13 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
       }
     }
 
-    return matchesSearch && matchesStatus && matchesWhatsApp
+    // Person filter (Jaime/Alejandra)
+    let matchesPerson = true
+    if (personFilter !== 'all') {
+      matchesPerson = invitado.de_quien?.toLowerCase() === personFilter
+    }
+
+    return matchesSearch && matchesStatus && matchesWhatsApp && matchesPerson
   })
 
   // Filtered lista espera
@@ -274,11 +282,25 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
     // Priority filter
     let matchesPriority = true
     if (priorityFilter !== 'all') {
-      matchesPriority = item.prioridad === priorityFilter
+      matchesPriority = item.prioridad?.toLowerCase() === priorityFilter
     }
 
-    return matchesSearch && matchesPriority
+    // Person filter for lista espera
+    let matchesListaEsperaPerson = true
+    if (listaEsperaPersonFilter !== 'all') {
+      matchesListaEsperaPerson = item.de_quien?.toLowerCase() === listaEsperaPersonFilter
+    }
+
+    return matchesSearch && matchesPriority && matchesListaEsperaPerson
   })
+
+  // Function to count total people in lista espera (not just records)
+  const countPeopleInListaEspera = (items: ListaEspera[]) => {
+    return items.reduce((total, item) => {
+      // Count person 1 + person 2 (if exists)
+      return total + 1 + (item.nombre_2 ? 1 : 0)
+    }, 0)
+  }
 
   // Quick confirmation modal
   const openQuickConfirmation = (invitado: Invitado, person: 'persona1' | 'persona2') => {
@@ -719,8 +741,68 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
                     </CardContent>
                   </Card>
                 </div>
+
+                {/* Person Filter (Jaime/Alejandra) */}
+                <div className="mb-6">
+                  <h3 className="text-sm font-medium text-gray-700 mb-3">Filtrar por persona:</h3>
+                  <div className="flex flex-wrap gap-3">
+                    <label className="flex items-center cursor-pointer">
+                      <input
+                        type="radio"
+                        name="personFilter"
+                        value="all"
+                        checked={personFilter === 'all'}
+                        onChange={(e) => setPersonFilter(e.target.value as 'all' | 'jaime' | 'alejandra')}
+                        className="sr-only"
+                      />
+                      <div className={`px-4 py-2 rounded-lg border-2 transition-all ${
+                        personFilter === 'all' 
+                          ? 'border-gray-500 bg-gray-100 text-gray-800 font-medium' 
+                          : 'border-gray-200 hover:border-gray-300'
+                      }`}>
+                        Todos ({invitados.length})
+                      </div>
+                    </label>
+                    
+                    <label className="flex items-center cursor-pointer">
+                      <input
+                        type="radio"
+                        name="personFilter"
+                        value="jaime"
+                        checked={personFilter === 'jaime'}
+                        onChange={(e) => setPersonFilter(e.target.value as 'all' | 'jaime' | 'alejandra')}
+                        className="sr-only"
+                      />
+                      <div className={`px-4 py-2 rounded-lg border-2 transition-all ${
+                        personFilter === 'jaime' 
+                          ? 'border-blue-500 bg-blue-100 text-blue-800 font-medium' 
+                          : 'border-gray-200 hover:border-blue-300'
+                      }`}>
+                        Jaime ({invitados.filter(inv => inv.de_quien?.toLowerCase() === 'jaime').length})
+                      </div>
+                    </label>
+                    
+                    <label className="flex items-center cursor-pointer">
+                      <input
+                        type="radio"
+                        name="personFilter"
+                        value="alejandra"
+                        checked={personFilter === 'alejandra'}
+                        onChange={(e) => setPersonFilter(e.target.value as 'all' | 'jaime' | 'alejandra')}
+                        className="sr-only"
+                      />
+                      <div className={`px-4 py-2 rounded-lg border-2 transition-all ${
+                        personFilter === 'alejandra' 
+                          ? 'border-pink-500 bg-pink-100 text-pink-800 font-medium' 
+                          : 'border-gray-200 hover:border-pink-300'
+                      }`}>
+                        Alejandra ({invitados.filter(inv => inv.de_quien?.toLowerCase() === 'alejandra').length})
+                      </div>
+                    </label>
+                  </div>
+                </div>
                 
-                {(searchTerm || statusFilter !== 'all') && (
+                {(searchTerm || statusFilter !== 'all' || personFilter !== 'all') && (
                   <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
                     <p className="text-sm text-blue-700">
                       Mostrando {filteredInvitados.length} de {invitados.length} invitados
@@ -731,6 +813,9 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
                           statusFilter === 'pendientes' ? 'Pendientes' :
                           statusFilter === 'no-asisten' ? 'No Asisten' : ''
                         }&quot;</span>
+                      )}
+                      {personFilter !== 'all' && (
+                        <span className="font-medium"> de {personFilter === 'jaime' ? 'Jaime' : 'Alejandra'}</span>
                       )}
                     </p>
                   </div>
@@ -798,11 +883,11 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
                           <td className="px-4 py-3">
                             {invitado.de_quien ? (
                               <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                                invitado.de_quien === 'jaime' 
+                                invitado.de_quien?.toLowerCase() === 'jaime' 
                                   ? 'bg-blue-100 text-blue-800' 
                                   : 'bg-pink-100 text-pink-800'
                               }`}>
-                                {invitado.de_quien === 'jaime' ? 'Jaime' : 'Alejandra'}
+                                {invitado.de_quien?.toLowerCase() === 'jaime' ? 'Jaime' : 'Alejandra'}
                               </span>
                             ) : (
                               <span className="text-gray-400 text-xs">Sin asignar</span>
@@ -947,11 +1032,11 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
                               </h3>
                               {invitado.de_quien && (
                                 <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                                  invitado.de_quien === 'jaime' 
+                                  invitado.de_quien?.toLowerCase() === 'jaime' 
                                     ? 'bg-blue-100 text-blue-800' 
                                     : 'bg-pink-100 text-pink-800'
                                 }`}>
-                                  {invitado.de_quien === 'jaime' ? 'Jaime' : 'Alejandra'}
+                                  {invitado.de_quien?.toLowerCase() === 'jaime' ? 'Jaime' : 'Alejandra'}
                                 </span>
                               )}
                             </div>
@@ -1400,21 +1485,21 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
                     { 
                       key: 'alta', 
                       label: 'Alta', 
-                      count: listaEspera.filter(item => item.prioridad === 'alta').length,
+                      count: listaEspera.filter(item => item.prioridad?.toLowerCase() === 'alta').length,
                       color: 'bg-red-100 text-red-800',
                       activeColor: 'bg-red-600 text-white'
                     },
                     { 
                       key: 'media', 
                       label: 'Media', 
-                      count: listaEspera.filter(item => item.prioridad === 'media').length,
+                      count: listaEspera.filter(item => item.prioridad?.toLowerCase() === 'media').length,
                       color: 'bg-yellow-100 text-yellow-800',
                       activeColor: 'bg-yellow-600 text-white'
                     },
                     { 
                       key: 'baja', 
                       label: 'Baja', 
-                      count: listaEspera.filter(item => item.prioridad === 'baja').length,
+                      count: listaEspera.filter(item => item.prioridad?.toLowerCase() === 'baja').length,
                       color: 'bg-green-100 text-green-800',
                       activeColor: 'bg-green-600 text-white'
                     }
@@ -1442,6 +1527,66 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
                   ))}
                 </div>
 
+                {/* Person Filter for Lista Espera */}
+                <div className="mb-6">
+                  <h3 className="text-sm font-medium text-gray-700 mb-3">Filtrar por persona:</h3>
+                  <div className="flex flex-wrap gap-3">
+                    <label className="flex items-center cursor-pointer">
+                      <input
+                        type="radio"
+                        name="listaEsperaPersonFilter"
+                        value="all"
+                        checked={listaEsperaPersonFilter === 'all'}
+                        onChange={(e) => setListaEsperaPersonFilter(e.target.value as 'all' | 'jaime' | 'alejandra')}
+                        className="sr-only"
+                      />
+                      <div className={`px-4 py-2 rounded-lg border-2 transition-all ${
+                        listaEsperaPersonFilter === 'all' 
+                          ? 'border-gray-500 bg-gray-100 text-gray-800 font-medium' 
+                          : 'border-gray-200 hover:border-gray-300'
+                      }`}>
+                        Todos ({countPeopleInListaEspera(listaEspera)} personas)
+                      </div>
+                    </label>
+                    
+                    <label className="flex items-center cursor-pointer">
+                      <input
+                        type="radio"
+                        name="listaEsperaPersonFilter"
+                        value="jaime"
+                        checked={listaEsperaPersonFilter === 'jaime'}
+                        onChange={(e) => setListaEsperaPersonFilter(e.target.value as 'all' | 'jaime' | 'alejandra')}
+                        className="sr-only"
+                      />
+                      <div className={`px-4 py-2 rounded-lg border-2 transition-all ${
+                        listaEsperaPersonFilter === 'jaime' 
+                          ? 'border-blue-500 bg-blue-100 text-blue-800 font-medium' 
+                          : 'border-gray-200 hover:border-blue-300'
+                      }`}>
+                        Jaime ({countPeopleInListaEspera(listaEspera.filter(item => item.de_quien?.toLowerCase() === 'jaime'))} personas)
+                      </div>
+                    </label>
+                    
+                    <label className="flex items-center cursor-pointer">
+                      <input
+                        type="radio"
+                        name="listaEsperaPersonFilter"
+                        value="alejandra"
+                        checked={listaEsperaPersonFilter === 'alejandra'}
+                        onChange={(e) => setListaEsperaPersonFilter(e.target.value as 'all' | 'jaime' | 'alejandra')}
+                        className="sr-only"
+                      />
+                      <div className={`px-4 py-2 rounded-lg border-2 transition-all ${
+                        listaEsperaPersonFilter === 'alejandra' 
+                          ? 'border-pink-500 bg-pink-100 text-pink-800 font-medium' 
+                          : 'border-gray-200 hover:border-pink-300'
+                      }`}>
+                        Alejandra ({countPeopleInListaEspera(listaEspera.filter(item => item.de_quien?.toLowerCase() === 'alejandra'))} personas)
+                      </div>
+                    </label>
+                  </div>
+                </div>
+
                 {/* Summary Statistics */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                   <Card>
@@ -1452,7 +1597,7 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
                         </div>
                         <div>
                           <div className="text-2xl font-bold text-blue-600">
-                            {listaEspera.filter(item => item.de_quien === 'jaime').length} / {listaEspera.filter(item => item.de_quien === 'alejandra').length}
+                            {listaEspera.filter(item => item.de_quien?.toLowerCase() === 'jaime').length} / {listaEspera.filter(item => item.de_quien?.toLowerCase() === 'alejandra').length}
                           </div>
                           <p className="text-sm text-gray-600">Jaime / Alejandra</p>
                         </div>
@@ -1467,8 +1612,8 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
                           <span className="text-lg">⏳</span>
                         </div>
                         <div>
-                          <div className="text-2xl font-bold text-orange-600">{listaEspera.length}</div>
-                          <p className="text-sm text-gray-600">Total en Lista de Espera</p>
+                          <div className="text-2xl font-bold text-orange-600">{countPeopleInListaEspera(listaEspera)}</div>
+                          <p className="text-sm text-gray-600">Total Personas en Lista</p>
                         </div>
                       </div>
                     </CardContent>
@@ -1487,11 +1632,12 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
                           </span>
                         )}
                       </p>
-                      {(listaEsperaSearchTerm || priorityFilter !== 'all') && (
+                      {(listaEsperaSearchTerm || priorityFilter !== 'all' || listaEsperaPersonFilter !== 'all') && (
                         <button
                           onClick={() => {
                             setListaEsperaSearchTerm('')
                             setPriorityFilter('all')
+                            setListaEsperaPersonFilter('all')
                           }}
                           className="text-xs text-orange-600 hover:text-orange-700 font-medium"
                         >
@@ -1563,21 +1709,21 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
                               </td>
                               <td className="px-6 py-4">
                                 <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                                  item.de_quien === 'jaime' 
+                                  item.de_quien?.toLowerCase() === 'jaime' 
                                     ? 'bg-blue-100 text-blue-800' 
                                     : 'bg-pink-100 text-pink-800'
                                 }`}>
-                                  {item.de_quien === 'jaime' ? 'Jaime' : 'Alejandra'}
+                                  {item.de_quien?.toLowerCase() === 'jaime' ? 'Jaime' : 'Alejandra'}
                                 </span>
                               </td>
                               <td className="px-6 py-4">
                                 <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                                  item.prioridad === 'alta' ? 'bg-red-100 text-red-800' :
-                                  item.prioridad === 'media' ? 'bg-yellow-100 text-yellow-800' :
+                                  item.prioridad?.toLowerCase() === 'alta' ? 'bg-red-100 text-red-800' :
+                                  item.prioridad?.toLowerCase() === 'media' ? 'bg-yellow-100 text-yellow-800' :
                                   'bg-gray-100 text-gray-800'
                                 }`}>
-                                  {item.prioridad === 'alta' ? 'Alta' : 
-                                   item.prioridad === 'media' ? 'Media' : 'Baja'}
+                                  {item.prioridad?.toLowerCase() === 'alta' ? 'Alta' : 
+                                   item.prioridad?.toLowerCase() === 'media' ? 'Media' : 'Baja'}
                                 </span>
                               </td>
                               <td className="px-6 py-4">
@@ -1649,19 +1795,19 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
                                 </div>
                                 <div className="flex space-x-2">
                                   <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                                    item.de_quien === 'jaime' 
+                                    item.de_quien?.toLowerCase() === 'jaime' 
                                       ? 'bg-blue-100 text-blue-800' 
                                       : 'bg-pink-100 text-pink-800'
                                   }`}>
-                                    {item.de_quien === 'jaime' ? 'Jaime' : 'Alejandra'}
+                                    {item.de_quien?.toLowerCase() === 'jaime' ? 'Jaime' : 'Alejandra'}
                                   </span>
                                   <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                                    item.prioridad === 'alta' ? 'bg-red-100 text-red-800' :
-                                    item.prioridad === 'media' ? 'bg-yellow-100 text-yellow-800' :
+                                    item.prioridad?.toLowerCase() === 'alta' ? 'bg-red-100 text-red-800' :
+                                    item.prioridad?.toLowerCase() === 'media' ? 'bg-yellow-100 text-yellow-800' :
                                     'bg-gray-100 text-gray-800'
                                   }`}>
-                                    {item.prioridad === 'alta' ? 'Alta' : 
-                                     item.prioridad === 'media' ? 'Media' : 'Baja'}
+                                    {item.prioridad?.toLowerCase() === 'alta' ? 'Alta' : 
+                                     item.prioridad?.toLowerCase() === 'media' ? 'Media' : 'Baja'}
                                   </span>
                                 </div>
                               </div>

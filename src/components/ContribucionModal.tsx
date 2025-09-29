@@ -88,6 +88,7 @@ export default function ContribucionModal({ isOpen, onClose, producto }: Contrib
         .insert({
           producto_id: producto.id,
           quien_regala: formData.quien_regala.trim(),
+          email: formData.email.trim(),
           mensaje: formData.mensaje.trim() || null,
           monto: parseFloat(formData.monto),
           estado: 'pendiente'

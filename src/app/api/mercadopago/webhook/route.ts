@@ -4,6 +4,7 @@
  */
 import { NextRequest, NextResponse } from 'next/server'
 import { supabase } from '@/lib/supabase'
+import { enviarCorreoAgradecimiento } from '@/lib/email'
 
 export async function POST(request: NextRequest) {
   try {
@@ -73,7 +74,14 @@ export async function POST(request: NextRequest) {
                 mercadopago_payment_id: paymentId.toString()
               })
               .eq('id', paymentData.external_reference)
-              .select()
+              .select(`
+                id,
+                quien_regala,
+                monto,
+                mensaje,
+                email,
+                producto:productos(titulo)
+              `)
 
             if (error) {
               console.error('❌ Error updating payment in DB:', error)
@@ -83,6 +91,31 @@ export async function POST(request: NextRequest) {
             } else {
               console.log('✅ Payment updated successfully:', data)
               console.log('✅ Updated rows:', data?.length || 0)
+
+              // 📧 Enviar correo de agradecimiento si el pago fue aprobado
+              if (estado === 'aprobado' && data && data.length > 0) {
+                const pago = data[0] as { id: string; quien_regala: string; email?: string | null; producto?: { titulo: string } }
+                console.log('💌 Enviando correo de agradecimiento para pago aprobado:', pago.id)
+                
+                try {
+                  const emailEnviado = await enviarCorreoAgradecimiento({
+                    quien_regala: pago.quien_regala,
+                    email_contribuyente: pago.email,
+                    producto_titulo: pago.producto?.titulo || 'Regalo de bodas',
+                    monto: pago.monto,
+                    mensaje: pago.mensaje
+                  })
+
+                  if (emailEnviado) {
+                    console.log('✅ Correo de agradecimiento enviado exitosamente')
+                  } else {
+                    console.log('⚠️ No se pudo enviar el correo de agradecimiento')
+                  }
+                } catch (emailError) {
+                  console.error('❌ Error enviando correo de agradecimiento:', emailError)
+                  // No fallar el webhook por error de email
+                }
+              }
             }
           } else {
             console.warn('⚠️ No external_reference found in payment data')

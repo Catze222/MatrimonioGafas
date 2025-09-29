@@ -13,3 +13,4 @@ git commit -m "commit"
 git push
 
 npx tsc --noEmit
+npx eslint . --ext .ts,.tsx

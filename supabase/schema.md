@@ -8,7 +8,7 @@ Stores information about wedding guests and their RSVP status.
 | Column | Type | Constraints | Description |
 |--------|------|-------------|-------------|
 | id | UUID | PRIMARY KEY, DEFAULT gen_random_uuid() | Unique identifier |
-| slug | TEXT | UNIQUE, NOT NULL | URL-friendly unique identifier for guest access |
+| slug | TEXT | UNIQUE, NOT NULL (AUTO-GENERATED) | URL-friendly unique identifier for guest access |
 | nombre_1 | TEXT | NOT NULL | First person's name |
 | nombre_2 | TEXT | NULLABLE | Second person's name (for couples) |
 | foto_url | TEXT | NULLABLE | Profile photo URL from Supabase Storage |
@@ -24,7 +24,7 @@ Stores information about wedding guests and their RSVP status.
 
 **Enums:**
 - `asistencia_1`, `asistencia_2`: 'pendiente' | 'si' | 'no'
-- `de_quien`: 'jaime' | 'alejandra'
+- `de_quien`: 'jaime' | 'alejandra' | 'Jaime' | 'Alejandra'
 
 **Indexes:**
 - `idx_invitados_slug` ON slug
@@ -50,6 +50,7 @@ Records of guest contributions to gift products.
 | id | UUID | PRIMARY KEY, DEFAULT gen_random_uuid() | Unique identifier |
 | producto_id | UUID | NOT NULL, FK to productos.id | Reference to gift product |
 | quien_regala | TEXT | NOT NULL | Name of person giving the gift |
+| email | TEXT | NULLABLE | Email address of contributor for thank you emails |
 | mensaje | TEXT | NULLABLE | Optional message to the couple |
 | monto | DECIMAL(10,2) | NOT NULL, CHECK > 0 | Amount contributed |
 | estado | TEXT | DEFAULT 'pendiente', CHECK | Payment status |
@@ -61,6 +62,7 @@ Records of guest contributions to gift products.
 **Indexes:**
 - `idx_pagos_producto_id` ON producto_id
 - `idx_pagos_estado` ON estado
+- `idx_pagos_email` ON email
 
 **Foreign Keys:**
 - `producto_id` → `productos.id` (CASCADE DELETE)
@@ -79,8 +81,8 @@ Manages potential guests before converting to official invitados.
 | created_at | TIMESTAMP | DEFAULT NOW() | Record creation time |
 
 **Enums:**
-- `de_quien`: 'jaime' | 'alejandra'
-- `prioridad`: 'alta' | 'media' | 'baja'
+- `de_quien`: 'jaime' | 'alejandra' | 'Jaime' | 'Alejandra'
+- `prioridad`: 'alta' | 'media' | 'baja' | 'Alta' | 'Media' | 'Baja'
 
 **Indexes:**
 - `idx_lista_espera_de_quien` ON de_quien
@@ -129,5 +131,5 @@ Automatically updates the `updated_at` field when an invitado record is modified
 
 ---
 
-**Last Updated:** Added lista_espera (waiting list) functionality
-**Migration:** 005_create_lista_espera.sql
+**Last Updated:** Added email field to pagos table for thank you emails
+**Migration:** 013_add_email_to_pagos.sql

@@ -29,9 +29,10 @@ interface InvitadoFormProps {
   onSubmit: (data: InvitadoFormData) => Promise<{ success: boolean; error?: string }>
   loading: boolean
   submitLabel: string
+  isEditing?: boolean
 }
 
-export default function InvitadoForm({ initialData, onSubmit, loading, submitLabel }: InvitadoFormProps) {
+export default function InvitadoForm({ initialData, onSubmit, loading, submitLabel, isEditing = false }: InvitadoFormProps) {
   const [formData, setFormData] = useState<InvitadoFormData>({
     nombre_1: initialData?.nombre_1 || '',
     nombre_2: initialData?.nombre_2 || '',
@@ -42,7 +43,7 @@ export default function InvitadoForm({ initialData, onSubmit, loading, submitLab
     restriccion_1: initialData?.restriccion_1 || '',
     restriccion_2: initialData?.restriccion_2 || '',
     mensaje: initialData?.mensaje || '',
-    de_quien: initialData?.de_quien || '',
+    de_quien: initialData?.de_quien?.toLowerCase() || '',
     invitacion_enviada: initialData?.invitacion_enviada || false
   })
   
@@ -52,11 +53,11 @@ export default function InvitadoForm({ initialData, onSubmit, loading, submitLab
   const [error, setError] = useState<string | null>(null)
   const [slugManuallyEdited, setSlugManuallyEdited] = useState(false)
 
-  // Auto-generate slug when names change
+  // Auto-generate slug when names change (only in create mode)
   const handleNombre1Change = (value: string) => {
     setFormData(prev => {
       const newData = { ...prev, nombre_1: value }
-      if (!slugManuallyEdited) {
+      if (!slugManuallyEdited && !isEditing) {
         const baseSlug = prev.nombre_2 
           ? generateSlug(`${value} ${prev.nombre_2}`)
           : generateSlug(value)
@@ -69,7 +70,7 @@ export default function InvitadoForm({ initialData, onSubmit, loading, submitLab
   const handleNombre2Change = (value: string) => {
     setFormData(prev => {
       const newData = { ...prev, nombre_2: value }
-      if (!slugManuallyEdited) {
+      if (!slugManuallyEdited && !isEditing) {
         const baseSlug = value 
           ? generateSlug(`${prev.nombre_1} ${value}`)
           : generateSlug(prev.nombre_1)
@@ -420,6 +421,7 @@ export default function InvitadoForm({ initialData, onSubmit, loading, submitLab
         <div>
           <label htmlFor="slug" className="block text-xs font-medium text-gray-700 mb-1">
             Identificador <span className="text-red-500">*</span>
+            {isEditing && <span className="text-gray-500 font-normal ml-2">(no se puede modificar)</span>}
           </label>
           <div className="flex">
             <span className="inline-flex items-center px-2 rounded-l border border-r-0 border-gray-300 bg-gray-100 text-gray-600 text-xs">
@@ -430,9 +432,13 @@ export default function InvitadoForm({ initialData, onSubmit, loading, submitLab
               id="slug"
               value={formData.slug}
               onChange={(e) => handleSlugChange(e.target.value)}
-              className="flex-1 px-3 py-2 border border-gray-300 rounded-r text-sm focus:ring-1 focus:ring-rose-500 focus:border-transparent"
+              className={`flex-1 px-3 py-2 border border-gray-300 rounded-r text-sm focus:ring-1 focus:ring-rose-500 focus:border-transparent ${
+                isEditing ? 'bg-gray-100 text-gray-500 cursor-not-allowed' : ''
+              }`}
               placeholder="ana-carlos-2025"
               required
+              readOnly={isEditing}
+              disabled={isEditing}
             />
           </div>
         </div>

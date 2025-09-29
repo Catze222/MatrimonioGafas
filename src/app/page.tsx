@@ -53,7 +53,7 @@ export default function Home() {
           <nav className="flex justify-center items-center py-2 md:py-4">
             <ul className="flex flex-wrap justify-center gap-2 md:gap-4 lg:gap-8 text-xs md:text-sm lg:text-base" style={{ fontFamily: '"Libre Baskerville", serif', fontWeight: 400, lineHeight: 1.6, letterSpacing: 'normal' }}>
               <li><Link href="/" className="text-black hover:text-gray-600 transition-colors underline px-1 md:px-2 py-1">Inicio</Link></li>
-              <li><Link href="/ceremonia" className="text-black hover:text-gray-600 transition-colors px-1 md:px-2 py-1">Día del Evento</Link></li>
+              <li><Link href="/ceremonia" className="text-black hover:text-gray-600 transition-colors px-1 md:px-2 py-1">Día del evento</Link></li>
               <li><Link href="/regalos" className="text-black hover:text-gray-600 transition-colors px-1 md:px-2 py-1">Regalos</Link></li>
               <li><Link href="/vestimenta" className="text-black hover:text-gray-600 transition-colors px-1 md:px-2 py-1">Vestimenta</Link></li>
             </ul>
@@ -95,15 +95,15 @@ export default function Home() {
               Alejandra Vidaurre
             </h1>
             <div className="my-4 md:my-6" style={{ 
-              fontFamily: '"Libre Baskerville", serif', 
+              fontFamily: '"EB Garamond", serif', 
               color: '#000000', 
               fontWeight: 400, 
               textTransform: 'none', 
               lineHeight: 1.6, 
               letterSpacing: 'normal', 
-              fontSize: 'clamp(14px, 3vw, 16px)' 
+              fontSize: 'clamp(24px, 6vw, 48px)' 
             }}>
-              and
+              &
             </div>
             <h1 style={{ 
               fontFamily: '"EB Garamond", serif', 
@@ -129,7 +129,7 @@ export default function Home() {
               letterSpacing: '2px', 
               fontSize: 'clamp(24px, 5vw, 40px)' 
             }}>
-              Diciembre 13, 2025
+              13 DE DICIEMBRE DE 2025
             </h3>
           </div>
           

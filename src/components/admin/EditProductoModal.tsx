@@ -21,7 +21,7 @@ export default function EditProductoModal({ isOpen, onClose, onSuccess, producto
 
   if (!producto) return null
 
-  const updateProducto = async (formData: ProductoFormData, _imageFile: File | null): Promise<{ success: boolean; error?: string }> => {
+  const updateProducto = async (formData: ProductoFormData): Promise<{ success: boolean; error?: string }> => {
     setLoading(true)
 
     try {

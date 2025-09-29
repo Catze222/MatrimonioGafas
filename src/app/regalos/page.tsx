@@ -62,7 +62,7 @@ export default function RegalosPage() {
           <nav className="flex justify-center items-center py-2 md:py-4">
             <ul className="flex flex-wrap justify-center gap-2 md:gap-4 lg:gap-8 text-xs md:text-sm lg:text-base" style={{ fontFamily: '"Libre Baskerville", serif', fontWeight: 400, lineHeight: 1.6, letterSpacing: 'normal' }}>
               <li><Link href="/" className="text-black hover:text-gray-600 transition-colors px-1 md:px-2 py-1">Inicio</Link></li>
-              <li><Link href="/ceremonia" className="text-black hover:text-gray-600 transition-colors px-1 md:px-2 py-1">Día del Evento</Link></li>
+              <li><Link href="/ceremonia" className="text-black hover:text-gray-600 transition-colors px-1 md:px-2 py-1">Día del evento</Link></li>
               <li><Link href="/regalos" className="text-black hover:text-gray-600 transition-colors underline px-1 md:px-2 py-1">Regalos</Link></li>
               <li><Link href="/vestimenta" className="text-black hover:text-gray-600 transition-colors px-1 md:px-2 py-1">Vestimenta</Link></li>
             </ul>
@@ -89,7 +89,7 @@ export default function RegalosPage() {
             </h1>
             <div className="w-24 h-px bg-black mx-auto mb-8"></div>
             <p className="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed" style={{ fontFamily: '"Libre Baskerville", serif', fontWeight: 400 }}>
-              Tu presencia es nuestro mejor regalo, pero si deseas contribuir a nuestro futuro juntos, 
+              <strong>Tu presencia es nuestro mejor regalo</strong>, pero si deseas contribuir a nuestro futuro juntos, 
               aquí encontrarás algunos proyectos especiales que tenemos en mente.
             </p>
           </div>
@@ -184,15 +184,6 @@ export default function RegalosPage() {
             </div>
           )}
 
-          {/* Footer Note */}
-          {productos.length > 0 && (
-            <div className="text-center mt-20 pt-16 border-t border-gray-100">
-              <p className="text-gray-600 max-w-2xl mx-auto leading-relaxed" style={{ fontFamily: '"Libre Baskerville", serif', fontSize: '16px' }}>
-                Puedes contribuir con el monto que desees. Cada aporte, sin importar el tamaño, 
-                nos ayuda a construir nuestros sueños juntos. <strong>¡Tu generosidad nos emociona muchísimo!</strong>
-              </p>
-            </div>
-          )}
         </div>
       </main>
 

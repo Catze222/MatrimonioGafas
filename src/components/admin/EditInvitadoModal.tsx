@@ -41,7 +41,9 @@ export default function EditInvitadoModal({ isOpen, onClose, onSuccess, invitado
           asistencia_2: formData.asistencia_2,
           restriccion_1: formData.restriccion_1?.trim() || null,
           restriccion_2: formData.restriccion_2?.trim() || null,
-          mensaje: formData.mensaje?.trim() || null
+          mensaje: formData.mensaje?.trim() || null,
+          de_quien: formData.de_quien,
+          invitacion_enviada: formData.invitacion_enviada
         })
       })
 
@@ -87,6 +89,7 @@ export default function EditInvitadoModal({ isOpen, onClose, onSuccess, invitado
           onSubmit={updateInvitado}
           loading={loading}
           submitLabel="Actualizar Invitado"
+          isEditing={true}
         />
 
         {/* Cancel Button */}

@@ -6,6 +6,7 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { getVestimentaImages } from '@/lib/storage'
 
 interface VestimentaSection {
@@ -74,7 +75,7 @@ export default function VestimentaPage() {
             <nav className="flex justify-center items-center py-2 md:py-4">
               <ul className="flex flex-wrap justify-center gap-2 md:gap-4 lg:gap-8 text-xs md:text-sm lg:text-base" style={{ fontFamily: '"Libre Baskerville", serif' }}>
                 <li><Link href="/" className="text-black hover:text-gray-600 transition-colors px-1 md:px-2 py-1">Inicio</Link></li>
-                <li><Link href="/ceremonia" className="text-black hover:text-gray-600 transition-colors px-1 md:px-2 py-1">Día del Evento</Link></li>
+                <li><Link href="/ceremonia" className="text-black hover:text-gray-600 transition-colors px-1 md:px-2 py-1">Día del evento</Link></li>
                 <li><Link href="/regalos" className="text-black hover:text-gray-600 transition-colors px-1 md:px-2 py-1">Regalos</Link></li>
                 <li><Link href="/vestimenta" className="text-black hover:text-gray-600 transition-colors underline px-1 md:px-2 py-1">Vestimenta</Link></li>
               </ul>
@@ -105,7 +106,7 @@ export default function VestimentaPage() {
             <nav className="flex justify-center items-center py-2 md:py-4">
               <ul className="flex flex-wrap justify-center gap-2 md:gap-4 lg:gap-8 text-xs md:text-sm lg:text-base" style={{ fontFamily: '"Libre Baskerville", serif' }}>
                 <li><Link href="/" className="text-black hover:text-gray-600 transition-colors px-1 md:px-2 py-1">Inicio</Link></li>
-                <li><Link href="/ceremonia" className="text-black hover:text-gray-600 transition-colors px-1 md:px-2 py-1">Día del Evento</Link></li>
+                <li><Link href="/ceremonia" className="text-black hover:text-gray-600 transition-colors px-1 md:px-2 py-1">Día del evento</Link></li>
                 <li><Link href="/regalos" className="text-black hover:text-gray-600 transition-colors px-1 md:px-2 py-1">Regalos</Link></li>
                 <li><Link href="/vestimenta" className="text-black hover:text-gray-600 transition-colors underline px-1 md:px-2 py-1">Vestimenta</Link></li>
               </ul>
@@ -140,7 +141,7 @@ export default function VestimentaPage() {
           <nav className="flex justify-center items-center py-2 md:py-4">
             <ul className="flex flex-wrap justify-center gap-2 md:gap-4 lg:gap-8 text-xs md:text-sm lg:text-base" style={{ fontFamily: '"Libre Baskerville", serif' }}>
               <li><Link href="/" className="text-black hover:text-gray-600 transition-colors px-1 md:px-2 py-1">Inicio</Link></li>
-              <li><Link href="/ceremonia" className="text-black hover:text-gray-600 transition-colors px-1 md:px-2 py-1">Día del Evento</Link></li>
+              <li><Link href="/ceremonia" className="text-black hover:text-gray-600 transition-colors px-1 md:px-2 py-1">Día del evento</Link></li>
               <li><Link href="/regalos" className="text-black hover:text-gray-600 transition-colors px-1 md:px-2 py-1">Regalos</Link></li>
               <li><Link href="/vestimenta" className="text-black hover:text-gray-600 transition-colors underline px-1 md:px-2 py-1">Vestimenta</Link></li>
             </ul>
@@ -171,7 +172,7 @@ export default function VestimentaPage() {
                 lineHeight: 1.6 
               }}
             >
-              Te sugerimos estos estilos para acompañarnos en nuestro día especial
+              <strong>Te sugerimos estos estilos</strong> para acompañarnos en nuestro día especial
             </p>
           </div>
 
@@ -260,11 +261,12 @@ export default function VestimentaPage() {
                     
                     {section.images.map((imageUrl, imageIndex) => (
                       <div key={imageIndex} className="masonry-item">
-                        <img
+                        <Image
                           src={imageUrl}
                           alt={`${section.title} - Referencia ${imageIndex + 1}`}
-                          loading="lazy"
-                          className="shadow-md"
+                          width={400}
+                          height={600}
+                          className="shadow-md w-full h-auto"
                         />
                       </div>
                     ))}

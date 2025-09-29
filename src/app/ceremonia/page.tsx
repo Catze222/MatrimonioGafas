@@ -5,6 +5,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 
 export default function CeremoniaPage() {
   return (
@@ -21,7 +22,7 @@ export default function CeremoniaPage() {
           <nav className="flex justify-center items-center py-2 md:py-4">
             <ul className="flex flex-wrap justify-center gap-2 md:gap-4 lg:gap-8 text-xs md:text-sm lg:text-base" style={{ fontFamily: '"Libre Baskerville", serif', fontWeight: 400, lineHeight: 1.6, letterSpacing: 'normal' }}>
               <li><Link href="/" className="text-black hover:text-gray-600 transition-colors px-1 md:px-2 py-1">Inicio</Link></li>
-              <li><Link href="/ceremonia" className="text-black hover:text-gray-600 transition-colors underline px-1 md:px-2 py-1">Día del Evento</Link></li>
+              <li><Link href="/ceremonia" className="text-black hover:text-gray-600 transition-colors underline px-1 md:px-2 py-1">Día del evento</Link></li>
               <li><Link href="/regalos" className="text-black hover:text-gray-600 transition-colors px-1 md:px-2 py-1">Regalos</Link></li>
               <li><Link href="/vestimenta" className="text-black hover:text-gray-600 transition-colors px-1 md:px-2 py-1">Vestimenta</Link></li>
             </ul>
@@ -44,22 +45,22 @@ export default function CeremoniaPage() {
               fontSize: 'clamp(32px, 6vw, 48px)',
               marginBottom: '32px'
             }}>
-              Día del Evento
+              Día del evento
             </h1>
             <div className="w-24 h-px bg-black mx-auto mb-8"></div>
             <p className="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed" style={{ fontFamily: '"Libre Baskerville", serif', fontWeight: 400 }}>
-              ¡Nos fugamos! Pero primero haremos una fiesta épica. 
-              Acompáñanos en este día tan especial en uno de los lugares más hermosos de Bogotá.
+              <strong>¡Nos casamos!</strong> Y lo queremos celebrar con una fiesta épica junto a nuestras personas más cercanas, en uno de los lugares más lindos de Bogotá. Porque nada sería igual sin ustedes en este día tan especial.
             </p>
           </div>
 
           {/* Venue Image Section */}
           <div className="mb-16 md:mb-20">
             <div className="relative h-64 md:h-80 lg:h-96 bg-gray-100 rounded-lg overflow-hidden shadow-lg">
-              <img
+              <Image
                 src="https://elhwpjjmfjlkpibyxuje.supabase.co/storage/v1/object/public/productos/san%20rafael%201.png"
                 alt="Hacienda San Rafael - Lugar de la ceremonia"
-                className="w-full h-full object-cover"
+                fill
+                className="object-cover"
               />
               
               {/* Overlay muy sutil */}
@@ -87,7 +88,7 @@ export default function CeremoniaPage() {
                   </svg>
                 </div>
                 <h3 className="text-2xl font-medium text-gray-900 mb-6" style={{ fontFamily: '"EB Garamond", serif', fontWeight: 400 }}>
-                  Horarios del Evento
+                  Horarios del evento
                 </h3>
               </div>
               
@@ -98,9 +99,6 @@ export default function CeremoniaPage() {
                     <p className="font-medium text-gray-900 mb-1" style={{ fontFamily: '"Libre Baskerville", serif' }}>
                       <strong>3:30 PM</strong> - Llegada de invitados
                     </p>
-                    <p className="text-gray-600 text-sm">
-                      Llega puntual, los gafufos empezamos temprano
-                    </p>
                   </div>
                 </div>
                 
@@ -110,9 +108,6 @@ export default function CeremoniaPage() {
                     <p className="font-medium text-gray-900 mb-1" style={{ fontFamily: '"Libre Baskerville", serif' }}>
                       <strong>4:00 PM</strong> - Ceremonia
                     </p>
-                    <p className="text-gray-600 text-sm">
-                      El momento más importante del día
-                    </p>
                   </div>
                 </div>
                 
@@ -120,10 +115,7 @@ export default function CeremoniaPage() {
                   <div className="w-2 h-2 bg-black rounded-full mt-3 flex-shrink-0"></div>
                   <div>
                     <p className="font-medium text-gray-900 mb-1" style={{ fontFamily: '"Libre Baskerville", serif' }}>
-                      <strong>5:00 PM</strong> - Cóctel y fotos
-                    </p>
-                    <p className="text-gray-600 text-sm">
-                      Hora del brindis y las fotos obligatorias
+                      <strong>5:00 PM</strong> - Recepción
                     </p>
                   </div>
                 </div>
@@ -133,9 +125,6 @@ export default function CeremoniaPage() {
                   <div>
                     <p className="font-medium text-gray-900 mb-1" style={{ fontFamily: '"Libre Baskerville", serif' }}>
                       <strong>7:00 PM</strong> - Cena y fiesta
-                    </p>
-                    <p className="text-gray-600 text-sm">
-                      Que comience la rumba hasta las 3:00 AM
                     </p>
                   </div>
                 </div>
@@ -158,17 +147,17 @@ export default function CeremoniaPage() {
               
               <div className="space-y-6">
                 <div>
-                  <p className="font-medium text-gray-900 mb-2" style={{ fontFamily: '"Libre Baskerville", serif' }}>
+                  <p className="font-medium text-gray-900 mb-2 text-sm" style={{ fontFamily: '"Libre Baskerville", serif' }}>
                     Dirección
                   </p>
-                  <p className="text-gray-600 leading-relaxed">
-                    Carrera 57 # 133-00<br />
+                  <p className="text-gray-600 leading-relaxed text-sm">
+                    Carrera 57 No. 133-00<br />
                     Bogotá, Colombia
                   </p>
                 </div>
                 
                 <div>
-                  <p className="font-medium text-gray-900 mb-2" style={{ fontFamily: '"Libre Baskerville", serif' }}>
+                  <p className="font-medium text-gray-900 mb-2 text-sm" style={{ fontFamily: '"Libre Baskerville", serif' }}>
                     Sobre el lugar
                   </p>
                   <p className="text-gray-600 leading-relaxed text-sm">
@@ -178,7 +167,7 @@ export default function CeremoniaPage() {
                 </div>
                 
                 <div>
-                  <p className="font-medium text-gray-900 mb-2" style={{ fontFamily: '"Libre Baskerville", serif' }}>
+                  <p className="font-medium text-gray-900 mb-2 text-sm" style={{ fontFamily: '"Libre Baskerville", serif' }}>
                     Parqueadero
                   </p>
                   <p className="text-gray-600 leading-relaxed text-sm">
@@ -187,7 +176,7 @@ export default function CeremoniaPage() {
                 </div>
                 
                 <div>
-                  <p className="font-medium text-gray-900 mb-2" style={{ fontFamily: '"Libre Baskerville", serif' }}>
+                  <p className="font-medium text-gray-900 mb-2 text-sm" style={{ fontFamily: '"Libre Baskerville", serif' }}>
                     Hasta que el cuerpo aguante
                   </p>
                   <p className="text-gray-600 leading-relaxed text-sm">
@@ -202,25 +191,22 @@ export default function CeremoniaPage() {
           {/* Fun Section */}
           <div className="text-center bg-gray-50 p-12 lg:p-16 rounded-lg mb-16">
             <h3 className="text-3xl font-medium text-gray-900 mb-8" style={{ fontFamily: '"EB Garamond", serif', fontWeight: 400 }}>
-              Datos Curiosos de los Gafufos
+              Datos curiosos de los Gafufos
             </h3>
             <div className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
               <div className="text-center">
                 <p className="text-gray-700 leading-relaxed" style={{ fontFamily: '"Libre Baskerville", serif', fontSize: '16px' }}>
-                  Nos conocimos siendo los más nerds de la universidad. 
-                  El amor se encontró en la biblioteca.
+                  Alejandra come como tres Jaimes juntos… pero cuando se trata de tecnología, sin su ingeniero personal no prende ni el televisor.
                 </p>
               </div>
               <div className="text-center">
                 <p className="text-gray-700 leading-relaxed" style={{ fontFamily: '"Libre Baskerville", serif', fontSize: '16px' }}>
-                  Nuestra primera cita fue jugando videojuegos. 
-                  Alejandra ganó todo. Jaime se enamoró más.
+                  Jaime alguna vez se hizo pasar por merideño para cruzar la frontera a Venezuela. Desde entonces no se baja del veredicto: la arepa es más rica en Venezuela, pero la empanada colombiana rompe a la venezolana sin discusión.
                 </p>
               </div>
               <div className="text-center">
                 <p className="text-gray-700 leading-relaxed" style={{ fontFamily: '"Libre Baskerville", serif', fontSize: '16px' }}>
-                  Prometemos que habrá música para todos los gustos. 
-                  Desde reggaeton hasta música de los 80s.
+                  Nos conocimos gracias a unos amigos que casi arruinan la historia. Y aquí seguimos, porque somos igual de tercos que de inseparables.
                 </p>
               </div>
             </div>

@@ -32,6 +32,7 @@ export type Pago = {
   id: string
   producto_id: string
   quien_regala: string
+  email?: string | null
   mensaje?: string | null
   monto: number
   estado: 'pendiente' | 'aprobado' | 'rechazado'
