@@ -43,7 +43,7 @@ export default function InvitadoForm({ initialData, onSubmit, loading, submitLab
     restriccion_1: initialData?.restriccion_1 || '',
     restriccion_2: initialData?.restriccion_2 || '',
     mensaje: initialData?.mensaje || '',
-    de_quien: initialData?.de_quien?.toLowerCase() || '',
+    de_quien: (initialData?.de_quien?.toLowerCase() || '') as '' | 'jaime' | 'alejandra',
     invitacion_enviada: initialData?.invitacion_enviada || false
   })
   

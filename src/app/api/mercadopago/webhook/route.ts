@@ -94,16 +94,16 @@ export async function POST(request: NextRequest) {
 
               // 📧 Enviar correo de agradecimiento si el pago fue aprobado
               if (estado === 'aprobado' && data && data.length > 0) {
-                const pago = data[0] as { id: string; quien_regala: string; email?: string | null; producto?: { titulo: string } }
+                const pago = data[0] as { id: string; quien_regala: string; email?: string | null; monto: number; mensaje?: string | null; producto?: { titulo: string }[] }
                 console.log('💌 Enviando correo de agradecimiento para pago aprobado:', pago.id)
                 
                 try {
                   const emailEnviado = await enviarCorreoAgradecimiento({
                     quien_regala: pago.quien_regala,
-                    email_contribuyente: pago.email,
-                    producto_titulo: pago.producto?.titulo || 'Regalo de bodas',
+                    email_contribuyente: pago.email || undefined,
+                    producto_titulo: pago.producto?.[0]?.titulo || 'Regalo de bodas',
                     monto: pago.monto,
-                    mensaje: pago.mensaje
+                    mensaje: pago.mensaje || undefined
                   })
 
                   if (emailEnviado) {

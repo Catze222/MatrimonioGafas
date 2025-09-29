@@ -5,7 +5,7 @@
 import nodemailer from 'nodemailer'
 
 // Configurar el transportador de Gmail
-const transporter = nodemailer.createTransporter({
+const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST || 'smtp.gmail.com',
   port: parseInt(process.env.SMTP_PORT || '587'),
   secure: false, // true para 465, false para otros puertos
@@ -17,7 +17,7 @@ const transporter = nodemailer.createTransporter({
 
 // Verificar configuración al inicializar
 if (process.env.NODE_ENV !== 'production') {
-  transporter.verify(function (error) {
+  transporter.verify(function (error: Error | null) {
     if (error) {
       console.log('❌ Error en configuración SMTP:', error)
     } else {
