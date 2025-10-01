@@ -80,7 +80,7 @@ export async function POST(request: NextRequest) {
                 monto,
                 mensaje,
                 email,
-                producto:productos(titulo)
+                productos(titulo)
               `)
 
             if (error) {
@@ -94,14 +94,29 @@ export async function POST(request: NextRequest) {
 
               // 📧 Enviar correo de agradecimiento si el pago fue aprobado
               if (estado === 'aprobado' && data && data.length > 0) {
-                const pago = data[0] as { id: string; quien_regala: string; email?: string | null; monto: number; mensaje?: string | null; producto?: { titulo: string }[] }
+                const pagoRaw = data[0] as Record<string, unknown>
+                const pago = {
+                  id: pagoRaw.id as string,
+                  quien_regala: pagoRaw.quien_regala as string,
+                  email: pagoRaw.email as string | null,
+                  monto: pagoRaw.monto as number,
+                  mensaje: pagoRaw.mensaje as string | null,
+                  productos: pagoRaw.productos as { titulo: string }
+                }
                 console.log('💌 Enviando correo de agradecimiento para pago aprobado:', pago.id)
+                console.log('💌 Datos del pago para email:', {
+                  quien_regala: pago.quien_regala,
+                  email: pago.email,
+                  producto_titulo: pago.productos?.titulo,
+                  monto: pago.monto,
+                  mensaje: pago.mensaje
+                })
                 
                 try {
                   const emailEnviado = await enviarCorreoAgradecimiento({
                     quien_regala: pago.quien_regala,
                     email_contribuyente: pago.email || undefined,
-                    producto_titulo: pago.producto?.[0]?.titulo || 'Regalo de bodas',
+                    producto_titulo: pago.productos?.titulo || 'Regalo de bodas',
                     monto: pago.monto,
                     mensaje: pago.mensaje || undefined
                   })

@@ -131,19 +131,19 @@ export default function VestimentaPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white" style={{ fontFamily: '"EB Garamond", "Libre Baskerville", "Circular", "Helvetica", sans-serif' }}>
+    <div className="min-h-screen" style={{ fontFamily: '"EB Garamond", "Libre Baskerville", "Circular", "Helvetica", sans-serif', backgroundColor: '#f8f6f0', color: '#1e3a8a' }}>
       {/* Navigation Header */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-white shadow-sm">
+      <header className="fixed top-0 left-0 right-0 z-50 shadow-sm" style={{ backgroundColor: '#f8f6f0' }}>
         <div className="max-w-6xl mx-auto px-2 md:px-4">
-          <div className="text-center py-2 text-gray-500 text-xs md:text-sm border-b border-gray-100">
+          <div className="text-center py-2 text-xs md:text-sm border-b border-gray-100" style={{ color: '#1e3a8a' }}>
             Alejandra &amp; Jaime
           </div>
           <nav className="flex justify-center items-center py-2 md:py-4">
-            <ul className="flex flex-wrap justify-center gap-2 md:gap-4 lg:gap-8 text-xs md:text-sm lg:text-base" style={{ fontFamily: '"Libre Baskerville", serif' }}>
-              <li><Link href="/" className="text-black hover:text-gray-600 transition-colors px-1 md:px-2 py-1">Inicio</Link></li>
-              <li><Link href="/ceremonia" className="text-black hover:text-gray-600 transition-colors px-1 md:px-2 py-1">Día del evento</Link></li>
-              <li><Link href="/regalos" className="text-black hover:text-gray-600 transition-colors px-1 md:px-2 py-1">Regalos</Link></li>
-              <li><Link href="/vestimenta" className="text-black hover:text-gray-600 transition-colors underline px-1 md:px-2 py-1">Vestimenta</Link></li>
+            <ul className="flex flex-wrap justify-center gap-2 md:gap-4 lg:gap-8 text-xs md:text-sm lg:text-base" style={{ fontFamily: '"Libre Baskerville", serif', color: '#1e3a8a' }}>
+              <li><Link href="/" className="hover:opacity-70 transition-colors px-1 md:px-2 py-1" style={{ color: '#1e3a8a' }}>Inicio</Link></li>
+              <li><Link href="/ceremonia" className="hover:opacity-70 transition-colors px-1 md:px-2 py-1" style={{ color: '#1e3a8a' }}>Día del evento</Link></li>
+              <li><Link href="/regalos" className="hover:opacity-70 transition-colors px-1 md:px-2 py-1" style={{ color: '#1e3a8a' }}>Regalos</Link></li>
+              <li><Link href="/vestimenta" className="hover:opacity-70 transition-colors underline px-1 md:px-2 py-1" style={{ color: '#1e3a8a' }}>Vestimenta</Link></li>
             </ul>
           </nav>
         </div>
@@ -155,18 +155,19 @@ export default function VestimentaPage() {
           {/* Page Header */}
           <div className="text-center mb-12 md:mb-16">
             <h1 
-              className="text-4xl md:text-5xl lg:text-6xl mb-4 text-black"
+              className="text-4xl md:text-5xl lg:text-6xl mb-4"
               style={{ 
                 fontFamily: '"EB Garamond", serif', 
                 fontWeight: 400, 
                 textTransform: 'uppercase', 
-                letterSpacing: '2px' 
+                letterSpacing: '2px',
+                color: '#1e3a8a' 
               }}
             >
               Código de Vestimenta
             </h1>
             <p 
-              className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto"
+              className="text-lg md:text-xl max-w-2xl mx-auto"
               style={{ 
                 fontFamily: '"Libre Baskerville", serif', 
                 lineHeight: 1.6 
@@ -183,31 +184,34 @@ export default function VestimentaPage() {
                 {/* Section Header */}
                 <div className="text-center mb-8 md:mb-12">
                   <h2 
-                    className="text-3xl md:text-4xl lg:text-5xl mb-2 text-black"
+                    className="text-3xl md:text-4xl lg:text-5xl mb-2"
                     style={{ 
                       fontFamily: '"EB Garamond", serif', 
                       fontWeight: 400, 
                       textTransform: 'uppercase', 
-                      letterSpacing: '2px' 
+                      letterSpacing: '2px',
+                      color: '#1e3a8a' 
                     }}
                   >
                     {section.title}
                   </h2>
                   <h3 
-                    className="text-xl md:text-2xl text-gray-700 mb-4"
+                    className="text-xl md:text-2xl mb-4"
                     style={{ 
                       fontFamily: '"Libre Baskerville", serif', 
                       fontWeight: 400,
-                      fontStyle: 'italic'
+                      fontStyle: 'italic',
+                      color: '#1e3a8a'
                     }}
                   >
                     {section.subtitle}
                   </h3>
                   <p 
-                    className="text-base md:text-lg text-gray-600 max-w-xl mx-auto"
+                    className="text-base md:text-lg max-w-xl mx-auto"
                     style={{ 
                       fontFamily: '"Libre Baskerville", serif', 
-                      lineHeight: 1.6 
+                      lineHeight: 1.6,
+                      color: '#1e3a8a'
                     }}
                   >
                     {section.description}
@@ -273,7 +277,7 @@ export default function VestimentaPage() {
                   </div>
                 ) : (
                   <div className="text-center py-12">
-                    <p className="text-gray-500" style={{ fontFamily: '"Libre Baskerville", serif' }}>
+                    <p style={{ fontFamily: '"Libre Baskerville", serif', color: '#1e3a8a' }}>
                       No hay imágenes disponibles para esta categoría
                     </p>
                   </div>
@@ -285,10 +289,11 @@ export default function VestimentaPage() {
           {/* Footer Note */}
           <div className="text-center mt-16 md:mt-20 pt-8 border-t border-gray-200">
             <p 
-              className="text-gray-600 max-w-2xl mx-auto"
+              className="max-w-2xl mx-auto"
               style={{ 
                 fontFamily: '"Libre Baskerville", serif', 
-                lineHeight: 1.6 
+                lineHeight: 1.6,
+                color: '#1e3a8a'
               }}
             >
               Estas son solo sugerencias para ayudarte a elegir el outfit perfecto. 

@@ -40,42 +40,42 @@ export default function Home() {
   // No necesitamos esta función porque usaremos Link directo
 
   return (
-    <div className="min-h-screen" style={{ fontFamily: '"EB Garamond", "Libre Baskerville", "Circular", "Helvetica", sans-serif', margin: 0, backgroundColor: '#FFFFFF', color: '#000000', boxSizing: 'border-box' }}>
+    <div className="min-h-screen" style={{ fontFamily: '"EB Garamond", "Libre Baskerville", "Circular", "Helvetica", sans-serif', margin: 0, backgroundColor: '#f8f6f0', color: '#1e3a8a', boxSizing: 'border-box' }}>
       {/* Navigation Header - Responsive like Zola */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-white shadow-sm">
+      <header className="fixed top-0 left-0 right-0 z-50 shadow-sm" style={{ backgroundColor: '#f8f6f0' }}>
         <div className="max-w-6xl mx-auto px-2 md:px-4">
           {/* Top brand bar like Zola */}
-          <div className="text-center py-2 text-gray-500 text-xs md:text-sm border-b border-gray-100">
+          <div className="text-center py-2 text-xs md:text-sm border-b border-gray-100" style={{ color: '#1e3a8a' }}>
             Alejandra &amp; Jaime
           </div>
           
           {/* Main navigation */}
           <nav className="flex justify-center items-center py-2 md:py-4">
-            <ul className="flex flex-wrap justify-center gap-2 md:gap-4 lg:gap-8 text-xs md:text-sm lg:text-base" style={{ fontFamily: '"Libre Baskerville", serif', fontWeight: 400, lineHeight: 1.6, letterSpacing: 'normal' }}>
-              <li><Link href="/" className="text-black hover:text-gray-600 transition-colors underline px-1 md:px-2 py-1">Inicio</Link></li>
-              <li><Link href="/ceremonia" className="text-black hover:text-gray-600 transition-colors px-1 md:px-2 py-1">Día del evento</Link></li>
-              <li><Link href="/regalos" className="text-black hover:text-gray-600 transition-colors px-1 md:px-2 py-1">Regalos</Link></li>
-              <li><Link href="/vestimenta" className="text-black hover:text-gray-600 transition-colors px-1 md:px-2 py-1">Vestimenta</Link></li>
+            <ul className="flex flex-wrap justify-center gap-2 md:gap-4 lg:gap-8 text-xs md:text-sm lg:text-base" style={{ fontFamily: '"Libre Baskerville", serif', fontWeight: 400, lineHeight: 1.6, letterSpacing: 'normal', color: '#1e3a8a' }}>
+              <li><Link href="/" className="hover:opacity-70 transition-colors underline px-1 md:px-2 py-1" style={{ color: '#1e3a8a' }}>Inicio</Link></li>
+              <li><Link href="/ceremonia" className="hover:opacity-70 transition-colors px-1 md:px-2 py-1" style={{ color: '#1e3a8a' }}>Día del evento</Link></li>
+              <li><Link href="/regalos" className="hover:opacity-70 transition-colors px-1 md:px-2 py-1" style={{ color: '#1e3a8a' }}>Regalos</Link></li>
+              <li><Link href="/vestimenta" className="hover:opacity-70 transition-colors px-1 md:px-2 py-1" style={{ color: '#1e3a8a' }}>Vestimenta</Link></li>
             </ul>
           </nav>
         </div>
       </header>
 
       {/* Hero Section - Exactly like Zola layout */}
-      <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden" style={{ backgroundColor: '#FFFFFF' }}>
+      <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden" style={{ backgroundColor: '#f8f6f0' }}>
         {/* Decorative floral elements - positioned like Zola */}
         <div className="absolute top-0 right-0 w-80 h-80 opacity-20">
           <svg viewBox="0 0 200 200" className="w-full h-full">
-            <path d="M50,100 Q100,50 150,100 Q100,150 50,100" fill="none" stroke="#000" strokeWidth="1" opacity="0.3"/>
-            <path d="M70,80 Q100,60 130,80 Q100,100 70,80" fill="none" stroke="#000" strokeWidth="0.8" opacity="0.3"/>
-            <path d="M70,120 Q100,140 130,120 Q100,100 70,120" fill="none" stroke="#000" strokeWidth="0.8" opacity="0.3"/>
+            <path d="M50,100 Q100,50 150,100 Q100,150 50,100" fill="none" stroke="#1e3a8a" strokeWidth="1" opacity="0.3"/>
+            <path d="M70,80 Q100,60 130,80 Q100,100 70,80" fill="none" stroke="#1e3a8a" strokeWidth="0.8" opacity="0.3"/>
+            <path d="M70,120 Q100,140 130,120 Q100,100 70,120" fill="none" stroke="#1e3a8a" strokeWidth="0.8" opacity="0.3"/>
           </svg>
         </div>
         
         <div className="absolute bottom-0 left-0 w-64 h-64 opacity-20">
           <svg viewBox="0 0 200 200" className="w-full h-full">
-            <path d="M50,100 Q100,50 150,100 Q100,150 50,100" fill="none" stroke="#000" strokeWidth="1" opacity="0.3"/>
-            <path d="M30,120 Q60,90 90,120 Q60,150 30,120" fill="none" stroke="#000" strokeWidth="0.8" opacity="0.3"/>
+            <path d="M50,100 Q100,50 150,100 Q100,150 50,100" fill="none" stroke="#1e3a8a" strokeWidth="1" opacity="0.3"/>
+            <path d="M30,120 Q60,90 90,120 Q60,150 30,120" fill="none" stroke="#1e3a8a" strokeWidth="0.8" opacity="0.3"/>
           </svg>
         </div>
         
@@ -85,7 +85,7 @@ export default function Home() {
           <div className="mb-6 md:mb-8">
             <h1 className="mb-3 md:mb-4" style={{ 
               fontFamily: '"EB Garamond", serif', 
-              color: '#000000', 
+              color: '#1e3a8a', 
               fontWeight: 400, 
               textTransform: 'uppercase', 
               lineHeight: 1.3, 
@@ -96,7 +96,7 @@ export default function Home() {
             </h1>
             <div className="my-4 md:my-6" style={{ 
               fontFamily: '"EB Garamond", serif', 
-              color: '#000000', 
+              color: '#1e3a8a', 
               fontWeight: 400, 
               textTransform: 'none', 
               lineHeight: 1.6, 
@@ -107,7 +107,7 @@ export default function Home() {
             </div>
             <h1 style={{ 
               fontFamily: '"EB Garamond", serif', 
-              color: '#000000', 
+              color: '#1e3a8a', 
               fontWeight: 400, 
               textTransform: 'uppercase', 
               lineHeight: 1.3, 
@@ -122,7 +122,7 @@ export default function Home() {
           <div className="mb-6 md:mb-8">
             <h3 style={{ 
               fontFamily: '"EB Garamond", serif', 
-              color: '#000000', 
+              color: '#1e3a8a', 
               fontWeight: 400, 
               textTransform: 'uppercase', 
               lineHeight: 1.3, 
@@ -136,7 +136,7 @@ export default function Home() {
           {/* Countdown Timer - Solo días */}
           <div className="mb-8 md:mb-12" style={{ 
             fontFamily: '"Libre Baskerville", serif', 
-            color: '#000000', 
+            color: '#1e3a8a', 
             fontWeight: 400, 
             textTransform: 'none', 
             lineHeight: 1.6, 

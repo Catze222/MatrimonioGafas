@@ -523,47 +523,58 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
       <header className="bg-white shadow-sm border-b">
         <div className="container mx-auto px-4 py-4">
           <div className="flex justify-between items-center">
-            <h1 className="text-2xl font-bold text-gray-900">Panel Administrativo - Boda</h1>
-            <Button variant="outline" onClick={onLogout}>
-              Cerrar Sesión
-            </Button>
+            <div className="flex-1 min-w-0">
+              <h1 className="text-lg md:text-2xl font-bold text-gray-900 truncate">
+                <span className="sm:hidden">Admin - Boda</span>
+                <span className="hidden sm:inline">Panel Administrativo - Boda</span>
+              </h1>
+            </div>
+            <div className="ml-4 flex-shrink-0">
+              <Button variant="outline" onClick={onLogout} className="text-sm px-3 py-1 sm:px-4 sm:py-2">
+                <span className="sm:hidden">Salir</span>
+                <span className="hidden sm:inline">Cerrar Sesión</span>
+              </Button>
+            </div>
           </div>
         </div>
       </header>
 
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-2 sm:px-4 py-4 sm:py-8">
         {/* Stats Overview - Mejoradas */}
 
         {/* Tabs Navigation */}
         <div className="bg-white rounded-lg shadow-sm mb-6">
           <div className="border-b border-gray-200">
-            <nav className="flex space-x-8 px-6">
-              {[
-                { key: 'invitados', label: 'Invitados', count: invitados.length },
-                { key: 'lista-espera', label: 'Lista de Espera', count: listaEspera.length },
-                { key: 'productos', label: 'Productos', count: productos.length },
-                { key: 'pagos', label: 'Pagos', count: pagos.length }
-              ].map(tab => (
-                <button
-                  key={tab.key}
-                  onClick={() => setActiveTab(tab.key as 'invitados' | 'productos' | 'pagos' | 'lista-espera')}
-                  className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
-                    activeTab === tab.key
-                      ? 'border-rose-500 text-rose-600'
-                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                  }`}
-                >
-                  {tab.label}
-                  <span className="ml-2 bg-gray-100 text-gray-900 py-0.5 px-2 rounded-full text-xs">
-                    {tab.count}
-                  </span>
-                </button>
-              ))}
+            <nav className="overflow-x-auto">
+              <div className="flex space-x-1 sm:space-x-4 md:space-x-8 px-4 sm:px-6 min-w-max sm:min-w-0">
+                {[
+                  { key: 'invitados', label: 'Invitados', shortLabel: 'Invitados', count: invitados.length },
+                  { key: 'lista-espera', label: 'Lista de Espera', shortLabel: 'Lista', count: listaEspera.length },
+                  { key: 'productos', label: 'Productos', shortLabel: 'Productos', count: productos.length },
+                  { key: 'pagos', label: 'Pagos', shortLabel: 'Pagos', count: pagos.length }
+                ].map(tab => (
+                  <button
+                    key={tab.key}
+                    onClick={() => setActiveTab(tab.key as 'invitados' | 'productos' | 'pagos' | 'lista-espera')}
+                    className={`py-3 sm:py-4 px-2 sm:px-3 md:px-4 border-b-2 font-medium text-xs sm:text-sm transition-colors whitespace-nowrap flex-shrink-0 ${
+                      activeTab === tab.key
+                        ? 'border-rose-500 text-rose-600'
+                        : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                    }`}
+                  >
+                    <span className="sm:hidden">{tab.shortLabel}</span>
+                    <span className="hidden sm:inline">{tab.label}</span>
+                    <span className="ml-1 sm:ml-2 bg-gray-100 text-gray-900 py-0.5 px-1.5 sm:px-2 rounded-full text-xs">
+                      {tab.count}
+                    </span>
+                  </button>
+                ))}
+              </div>
             </nav>
           </div>
 
           {/* Tab Content */}
-          <div className="p-6">
+          <div className="p-3 sm:p-6">
             {activeTab === 'invitados' && (
               <div>
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
@@ -618,31 +629,32 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
                         placeholder="Buscar invitados..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="w-full sm:w-64 px-3 py-2 pl-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                        className="w-full sm:w-64 px-3 py-2 pl-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent text-sm"
                       />
                       <svg className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                       </svg>
                     </div>
-                    <Button onClick={() => setShowAddInvitado(true)}>
-                      Agregar Invitado
+                    <Button onClick={() => setShowAddInvitado(true)} className="w-full sm:w-auto text-sm px-4">
+                      <span className="sm:hidden">+ Invitado</span>
+                      <span className="hidden sm:inline">Agregar Invitado</span>
                     </Button>
                   </div>
                 </div>
 
                 {/* Status Filter Cards */}
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mb-6">
                   <Card 
                     className={`cursor-pointer transition-all hover:shadow-md ${statusFilter === 'all' ? 'ring-2 ring-blue-500 bg-blue-50' : ''}`}
                     onClick={() => setStatusFilter('all')}
                   >
-                    <CardContent className="p-4">
+                    <CardContent className="p-3 sm:p-4">
                       <div className="flex items-center space-x-2">
-                        <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                        <div className="w-6 h-6 sm:w-8 sm:h-8 bg-blue-100 rounded-full flex items-center justify-center text-xs sm:text-base">
                           👥
                         </div>
                         <div>
-                          <div className="text-2xl font-bold text-blue-600">{stats.totalPersonas}</div>
+                          <div className="text-lg sm:text-2xl font-bold text-blue-600">{stats.totalPersonas}</div>
                           <p className="text-xs text-gray-600">Total Personas</p>
                         </div>
                       </div>
@@ -653,13 +665,13 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
                     className={`cursor-pointer transition-all hover:shadow-md ${statusFilter === 'confirmados' ? 'ring-2 ring-green-500 bg-green-50' : ''}`}
                     onClick={() => setStatusFilter(statusFilter === 'confirmados' ? 'all' : 'confirmados')}
                   >
-                    <CardContent className="p-4">
+                    <CardContent className="p-3 sm:p-4">
                       <div className="flex items-center space-x-2">
-                        <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                        <div className="w-6 h-6 sm:w-8 sm:h-8 bg-green-100 rounded-full flex items-center justify-center text-xs sm:text-base">
                           ✅
                         </div>
                         <div>
-                          <div className="text-2xl font-bold text-green-600">{stats.confirmados}</div>
+                          <div className="text-lg sm:text-2xl font-bold text-green-600">{stats.confirmados}</div>
                           <p className="text-xs text-gray-600">Confirmados</p>
                         </div>
                       </div>
@@ -670,13 +682,13 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
                     className={`cursor-pointer transition-all hover:shadow-md ${statusFilter === 'pendientes' ? 'ring-2 ring-yellow-500 bg-yellow-50' : ''}`}
                     onClick={() => setStatusFilter(statusFilter === 'pendientes' ? 'all' : 'pendientes')}
                   >
-                    <CardContent className="p-4">
+                    <CardContent className="p-3 sm:p-4">
                       <div className="flex items-center space-x-2">
-                        <div className="w-8 h-8 bg-yellow-100 rounded-full flex items-center justify-center">
+                        <div className="w-6 h-6 sm:w-8 sm:h-8 bg-yellow-100 rounded-full flex items-center justify-center text-xs sm:text-base">
                           🟡
                         </div>
                         <div>
-                          <div className="text-2xl font-bold text-yellow-600">{stats.pendientes}</div>
+                          <div className="text-lg sm:text-2xl font-bold text-yellow-600">{stats.pendientes}</div>
                           <p className="text-xs text-gray-600">Pendientes</p>
                         </div>
                       </div>
@@ -687,13 +699,13 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
                     className={`cursor-pointer transition-all hover:shadow-md ${statusFilter === 'no-asisten' ? 'ring-2 ring-red-500 bg-red-50' : ''}`}
                     onClick={() => setStatusFilter(statusFilter === 'no-asisten' ? 'all' : 'no-asisten')}
                   >
-                    <CardContent className="p-4">
+                    <CardContent className="p-3 sm:p-4">
                       <div className="flex items-center space-x-2">
-                        <div className="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center">
+                        <div className="w-6 h-6 sm:w-8 sm:h-8 bg-red-100 rounded-full flex items-center justify-center text-xs sm:text-base">
                           ❌
                         </div>
                         <div>
-                          <div className="text-2xl font-bold text-red-600">{stats.noAsisten}</div>
+                          <div className="text-lg sm:text-2xl font-bold text-red-600">{stats.noAsisten}</div>
                           <p className="text-xs text-gray-600">No Asisten</p>
                         </div>
                       </div>
@@ -707,7 +719,7 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
                     className={`cursor-pointer transition-all hover:shadow-md ${whatsappFilter === 'pendientes' ? 'ring-2 ring-orange-500 bg-orange-50' : ''}`}
                     onClick={() => setWhatsappFilter(whatsappFilter === 'pendientes' ? 'all' : 'pendientes')}
                   >
-                    <CardContent className="p-4">
+                    <CardContent className="p-3 sm:p-4">
                       <div className="flex items-center space-x-2">
                         <div className="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center">
                           ⏳
@@ -726,7 +738,7 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
                     className={`cursor-pointer transition-all hover:shadow-md ${whatsappFilter === 'enviadas' ? 'ring-2 ring-blue-500 bg-blue-50' : ''}`}
                     onClick={() => setWhatsappFilter(whatsappFilter === 'enviadas' ? 'all' : 'enviadas')}
                   >
-                    <CardContent className="p-4">
+                    <CardContent className="p-3 sm:p-4">
                       <div className="flex items-center space-x-2">
                         <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
                           ✓
@@ -1019,7 +1031,7 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
                 <div className="block lg:hidden space-y-4">
                   {filteredInvitados.map((invitado) => (
                     <Card key={invitado.id} className="border border-gray-200">
-                      <CardContent className="p-4">
+                      <CardContent className="p-3 sm:p-4">
                         <div className="space-y-4">
                           {/* Names and Link */}
                           <div>
@@ -1373,7 +1385,7 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
                     <div className="lg:hidden space-y-4">
                       {pagos.map((pago) => (
                         <Card key={pago.id} className="overflow-hidden hover:shadow-md transition-shadow">
-                          <CardContent className="p-4">
+                          <CardContent className="p-3 sm:p-4">
                             <div className="flex items-start justify-between mb-3">
                               <div className="flex items-center space-x-3">
                                 {pago.producto?.imagen_url && (
@@ -1590,7 +1602,7 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
                 {/* Summary Statistics */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                   <Card>
-                    <CardContent className="p-4">
+                    <CardContent className="p-3 sm:p-4">
                       <div className="flex items-center space-x-3">
                         <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
                           <span className="text-lg">👥</span>
@@ -1606,7 +1618,7 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
                   </Card>
 
                   <Card>
-                    <CardContent className="p-4">
+                    <CardContent className="p-3 sm:p-4">
                       <div className="flex items-center space-x-3">
                         <div className="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center">
                           <span className="text-lg">⏳</span>
@@ -1781,7 +1793,7 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
                     <div className="lg:hidden space-y-4">
                       {filteredListaEspera.map((item) => (
                         <Card key={item.id} className="border border-gray-200">
-                          <CardContent className="p-4">
+                          <CardContent className="p-3 sm:p-4">
                             <div className="space-y-3">
                               {/* Header with names and badges */}
                               <div className="flex justify-between items-start">

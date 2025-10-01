@@ -17,6 +17,19 @@ interface ContribucionModalProps {
   producto: Producto | null
 }
 
+// Función para generar mensaje personalizado de comisión según el producto
+function generarMensajeComision(productoTitulo: string): string {
+  const mensajesComision: Record<string, string> = {
+    '🐱 Alimentación y bienestar gatuno': '🙏 Perdón por esta comisión bancaria, pero preferimos que nuestros gatos se coman el salmón y no que el banco se lo lleve 😸',
+    '🌴 Operación: sol, arena y descanso': '🙏 Perdón por esta comisión bancaria, pero no queremos que el banco se vaya de luna de miel con nosotros 😅',
+    '🎶 Conciertos y festivales': '🙏 Perdón por esta comisión bancaria, pero preferimos que la música suene en nuestros oídos y no en los del banco 🎵',
+    '⚽ Clásicos de amor: Pillos vs. Santuco': '🙏 Perdón por esta comisión bancaria, pero preferimos que los goles los celebremos nosotros y no el banco ⚽',
+    '👓 Gafas vitalicias (porque somos gafufos)': '🙏 Perdón por esta comisión bancaria, pero queremos ver claro nuestro futuro, no el del banco 👓'
+  }
+  
+  return mensajesComision[productoTitulo] || '🙏 Perdón por esta comisión bancaria, pero no queremos que el banco se vaya de luna de miel con nosotros 😅'
+}
+
 export default function ContribucionModal({ isOpen, onClose, producto }: ContribucionModalProps) {
   const [formData, setFormData] = useState({
     monto: '',
@@ -234,7 +247,7 @@ export default function ContribucionModal({ isOpen, onClose, producto }: Contrib
                   Total a pagar: {formatCurrency(calculateTotal(parseFloat(formData.monto)).toString())}
                 </p>
                 <p className="text-xs text-gray-600 italic">
-                  🙏 Perdón por esta comisión bancaria, pero no queremos que el banco se vaya de luna de miel con nosotros 😅
+                  {generarMensajeComision(producto.titulo)}
                 </p>
               </div>
             )}

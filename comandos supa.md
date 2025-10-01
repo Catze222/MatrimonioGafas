@@ -15,4 +15,3 @@ git push
 npx tsc --noEmit
 npx eslint . --ext .ts,.tsx
 
-npx eslint . --ext .ts,.tsx

@@ -29,6 +29,24 @@ export default function RSVPPage() {
     restriccion_1: '',
     restriccion_2: ''
   })
+  const [companionName, setCompanionName] = useState('')
+
+  // Function to detect if nombre_2 is a generic companion term
+  const isGenericCompanion = (nombre: string | null | undefined): boolean => {
+    if (!nombre) return false
+    const genericTerms = [
+      'acompañante', 'novio', 'novia', 'esposo', 'esposa',
+      'pareja', 'compañero', 'compañera'
+    ]
+    return genericTerms.some(term => 
+      nombre.toLowerCase().includes(term.toLowerCase())
+    )
+  }
+
+  // Check if we need to show companion name field
+  const shouldShowCompanionNameField = invitado && 
+    isGenericCompanion(invitado.nombre_2) && 
+    formData.asistencia_2 === 'si'
 
 
   useEffect(() => {
@@ -56,6 +74,7 @@ export default function RSVPPage() {
           restriccion_1: data.restriccion_1 || '',
           restriccion_2: data.restriccion_2 || ''
         })
+        setCompanionName('') // Reset companion name on load
       } catch (error) {
         console.error('Error loading invitado:', error)
         setError('Error al cargar la invitación. Intenta de nuevo.')
@@ -73,26 +92,44 @@ export default function RSVPPage() {
     e.preventDefault()
     if (!invitado) return
 
+    // Validate companion name if required
+    if (shouldShowCompanionNameField && !companionName.trim()) {
+      setError('Por favor ingresa el nombre y apellido de tu acompañante.')
+      return
+    }
+
     setSaving(true)
     setError(null)
 
     try {
+      // Prepare update data
+      const updateData: Partial<Invitado> = {
+        asistencia_1: formData.asistencia_1,
+        asistencia_2: formData.asistencia_2,
+        restriccion_1: formData.restriccion_1 || null,
+        restriccion_2: formData.restriccion_2 || null,
+        updated_at: new Date().toISOString()
+      }
+
+      // If companion name was provided, update nombre_2
+      if (shouldShowCompanionNameField && companionName.trim()) {
+        updateData.nombre_2 = companionName.trim()
+      }
+
       const { error } = await supabase
         .from('invitados')
-        .update({
-          asistencia_1: formData.asistencia_1,
-          asistencia_2: formData.asistencia_2,
-          restriccion_1: formData.restriccion_1 || null,
-          restriccion_2: formData.restriccion_2 || null,
-          updated_at: new Date().toISOString()
-        })
+        .update(updateData)
         .eq('id', invitado.id)
 
       if (error) throw error
 
       setSuccess(true)
       // Update local state
-      setInvitado(prev => prev ? { ...prev, ...formData } : null)
+      const updatedInvitado = { ...invitado, ...formData }
+      if (shouldShowCompanionNameField && companionName.trim()) {
+        updatedInvitado.nombre_2 = companionName.trim()
+      }
+      setInvitado(updatedInvitado)
     } catch (error) {
       console.error('Error saving RSVP:', error)
       setError('Error al guardar la confirmación. Intenta de nuevo.')
@@ -103,7 +140,7 @@ export default function RSVPPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen" style={{ fontFamily: '"EB Garamond", "Libre Baskerville", "Circular", "Helvetica", sans-serif', backgroundColor: '#FFFFFF', color: '#000000' }}>
+      <div className="min-h-screen" style={{ fontFamily: '"EB Garamond", "Libre Baskerville", "Circular", "Helvetica", sans-serif', backgroundColor: '#f8f6f0', color: '#1e3a8a' }}>
         <div className="flex items-center justify-center min-h-screen">
           <div className="text-center">
             <div className="animate-pulse">
@@ -119,7 +156,7 @@ export default function RSVPPage() {
 
   if (error) {
     return (
-      <div className="min-h-screen" style={{ fontFamily: '"EB Garamond", "Libre Baskerville", "Circular", "Helvetica", sans-serif', backgroundColor: '#FFFFFF', color: '#000000' }}>
+      <div className="min-h-screen" style={{ fontFamily: '"EB Garamond", "Libre Baskerville", "Circular", "Helvetica", sans-serif', backgroundColor: '#f8f6f0', color: '#1e3a8a' }}>
         <div className="flex items-center justify-center min-h-screen">
           <div className="text-center max-w-md mx-auto px-4">
             <h1 className="text-3xl font-medium text-gray-900 mb-4" style={{ fontFamily: '"EB Garamond", serif', fontWeight: 400 }}>
@@ -153,42 +190,42 @@ export default function RSVPPage() {
   }
 
   return (
-    <div className="min-h-screen" style={{ fontFamily: '"EB Garamond", "Libre Baskerville", "Circular", "Helvetica", sans-serif', margin: 0, backgroundColor: '#FFFFFF', color: '#000000', boxSizing: 'border-box' }}>
+    <div className="min-h-screen overflow-x-hidden" style={{ fontFamily: '"EB Garamond", "Libre Baskerville", "Circular", "Helvetica", sans-serif', margin: 0, backgroundColor: '#f8f6f0', color: '#1e3a8a', boxSizing: 'border-box', width: '100%', maxWidth: '100vw' }}>
       {/* Simple Header - Solo branding */}
-      <header className="bg-white border-b border-gray-100 py-4">
-        <div className="max-w-4xl mx-auto px-4 text-center">
-          <div className="text-gray-500 text-sm" style={{ fontFamily: '"Libre Baskerville", serif' }}>
+      <header className="border-b border-gray-100 py-4" style={{ backgroundColor: '#f8f6f0' }}>
+        <div className="max-w-4xl mx-auto px-2 sm:px-4 text-center">
+          <div className="text-sm" style={{ fontFamily: '"Libre Baskerville", serif', color: '#1e3a8a' }}>
             Alejandra &amp; Jaime
           </div>
         </div>
       </header>
 
       {/* Page Content */}
-      <main className="py-8">
-        <div className="max-w-4xl mx-auto px-4">
+      <main className="py-4 sm:py-8">
+        <div className="max-w-4xl mx-auto px-2 sm:px-4">
           {/* Page Header - Súper compacto */}
           <div className="text-center mb-6">
             <h1 style={{ 
               fontFamily: '"EB Garamond", serif', 
-              color: '#000000', 
+              color: '#1e3a8a', 
               fontWeight: 400, 
               textTransform: 'uppercase', 
               lineHeight: 1.3, 
               letterSpacing: '2px', 
-              fontSize: 'clamp(24px, 4vw, 32px)',
+              fontSize: 'clamp(20px, 4vw, 32px)',
               marginBottom: '8px'
             }}>
               Confirma tu asistencia
             </h1>
-            <p className="text-gray-600" style={{ fontFamily: '"Libre Baskerville", serif', fontSize: '14px' }}>
+            <p style={{ fontFamily: '"Libre Baskerville", serif', fontSize: '14px', color: '#1e3a8a' }}>
               Tu presencia hace que este día sea aún más especial
             </p>
           </div>
 
           {/* Guest Welcome Card - Compacto con foto grande */}
-          <div className="bg-white border border-gray-100 p-6 mb-6 text-center">
+          <div className="border border-gray-100 p-3 sm:p-6 mb-6 text-center" style={{ backgroundColor: '#f8f6f0' }}>
             {invitado.foto_url && (
-              <div className="relative w-40 h-40 mx-auto mb-4 ring-2 ring-gray-100 overflow-hidden">
+              <div className="relative w-32 h-32 sm:w-40 sm:h-40 mx-auto mb-4 ring-2 ring-gray-100 overflow-hidden" style={{ backgroundColor: '#ffffff' }}>
                 <Image
                   src={invitado.foto_url}
                   alt={`Foto de ${invitado.nombre_1}${invitado.nombre_2 ? ` y ${invitado.nombre_2}` : ''}`}
@@ -198,14 +235,14 @@ export default function RSVPPage() {
               </div>
             )}
             
-            <h2 className="text-xl lg:text-2xl font-medium text-gray-900 mb-3" style={{ fontFamily: '"EB Garamond", serif', fontWeight: 400 }}>
+            <h2 className="text-lg sm:text-xl lg:text-2xl font-medium mb-3 break-words" style={{ fontFamily: '"EB Garamond", serif', fontWeight: 400, color: '#1e3a8a' }}>
               {invitado.nombre_1}
               {invitado.nombre_2 && (
                 <span> & {invitado.nombre_2}</span>
               )}
             </h2>
             
-            <p className="text-gray-600 text-sm" style={{ fontFamily: '"Libre Baskerville", serif' }}>
+            <p className="text-sm break-words" style={{ fontFamily: '"Libre Baskerville", serif', color: '#1e3a8a' }}>
               Esperamos celebrar {invitado.nombre_2 ? 'con ustedes' : 'contigo'} este día tan especial
             </p>
           </div>
@@ -223,16 +260,16 @@ export default function RSVPPage() {
           )}
 
           {/* RSVP Form */}
-          <div className="bg-white border border-gray-100 p-6">
+          <div className="border border-gray-100 p-3 sm:p-6" style={{ backgroundColor: '#f8f6f0' }}>
             <div className="text-center mb-6">
-              <h3 className="font-medium text-gray-900 mb-2" style={{ fontFamily: '"EB Garamond", serif', fontWeight: 400 }}>
+              <h3 className="font-medium mb-2" style={{ fontFamily: '"EB Garamond", serif', fontWeight: 400, color: '#1e3a8a' }}>
                 Detalles de asistencia
               </h3>
               <div className="w-8 h-px bg-gray-300 mx-auto"></div>
             </div>
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Primera persona */}
-              <div className={`p-4 border-l-4 ${
+              <div className={`p-2 sm:p-4 border-l-4 ${
                 invitado.asistencia_1 === 'pendiente' 
                   ? 'bg-gray-50 border-black' 
                   : invitado.asistencia_1 === 'si'
@@ -240,10 +277,10 @@ export default function RSVPPage() {
                     : 'bg-red-50 border-red-500'
               }`}>
                 <label className="block text-center mb-4">
-                  <span className="text-sm text-gray-600" style={{ fontFamily: '"Libre Baskerville", serif' }}>
+                  <span className="text-sm" style={{ fontFamily: '"Libre Baskerville", serif', color: '#1e3a8a' }}>
                     Asistencia de
                   </span>
-                  <div className="text-xl font-bold text-gray-900 mt-1" style={{ fontFamily: '"EB Garamond", serif', fontWeight: 600 }}>
+                  <div className="text-lg sm:text-xl font-bold mt-1 break-words" style={{ fontFamily: '"EB Garamond", serif', fontWeight: 600, color: '#1e3a8a' }}>
                     {invitado.nombre_1}
                   </div>
                   {invitado.asistencia_1 !== 'pendiente' && (
@@ -255,7 +292,7 @@ export default function RSVPPage() {
                   )}
                 </label>
                 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4">
                   {(['si', 'no'] as const).map((option) => (
                     <label key={option} className="relative">
                       <input
@@ -267,7 +304,7 @@ export default function RSVPPage() {
                         disabled={invitado.asistencia_1 !== 'pendiente'}
                         className="sr-only"
                       />
-                      <div className={`p-4 text-center border transition-colors ${
+                      <div className={`p-2 sm:p-4 text-center border transition-colors text-sm sm:text-base ${
                         invitado.asistencia_1 !== 'pendiente' 
                           ? 'opacity-60 cursor-not-allowed border-gray-200 bg-gray-100 text-gray-500'
                           : formData.asistencia_1 === option
@@ -283,7 +320,7 @@ export default function RSVPPage() {
                 
                 {/* Restricciones primera persona */}
                 {formData.asistencia_1 === 'si' && (
-                  <div className="mt-4 p-4 bg-green-50 border-l-4 border-green-400 rounded-r-lg">
+                  <div className="mt-4 p-2 sm:p-4 bg-green-50 border-l-4 border-green-400 rounded-r-lg">
                     <div className="flex items-center mb-3">
                       <span className="text-green-600 mr-2">🍽️</span>
                       <label htmlFor="restriccion_1" className="block font-semibold text-green-800" style={{ fontFamily: '"Libre Baskerville", serif' }}>
@@ -297,7 +334,7 @@ export default function RSVPPage() {
                       onChange={(e) => setFormData(prev => ({ ...prev, restriccion_1: e.target.value }))}
                       disabled={invitado.asistencia_1 !== 'pendiente'}
                       placeholder="Ej: Vegetariano, sin gluten, alergias..."
-                      className={`w-full px-4 py-3 border-2 focus:ring-2 focus:ring-green-300 focus:border-green-400 rounded-lg ${
+                      className={`w-full px-2 sm:px-4 py-2 sm:py-3 border-2 focus:ring-2 focus:ring-green-300 focus:border-green-400 rounded-lg text-sm sm:text-base ${
                         invitado.asistencia_1 !== 'pendiente' 
                           ? 'bg-gray-100 text-gray-500 cursor-not-allowed border-gray-200' 
                           : 'border-green-300 bg-white'
@@ -310,7 +347,7 @@ export default function RSVPPage() {
 
               {/* Segunda persona (si existe) */}
               {invitado.nombre_2 && (
-                <div className={`p-4 border-l-4 ${
+                <div className={`p-2 sm:p-4 border-l-4 ${
                   invitado.asistencia_2 === 'pendiente' 
                     ? 'bg-gray-50 border-black' 
                     : invitado.asistencia_2 === 'si'
@@ -318,10 +355,10 @@ export default function RSVPPage() {
                       : 'bg-red-50 border-red-500'
                 }`}>
                   <label className="block text-center mb-4">
-                    <span className="text-sm text-gray-600" style={{ fontFamily: '"Libre Baskerville", serif' }}>
+                    <span className="text-sm" style={{ fontFamily: '"Libre Baskerville", serif', color: '#1e3a8a' }}>
                       Asistencia de
                     </span>
-                    <div className="text-xl font-bold text-gray-900 mt-1" style={{ fontFamily: '"EB Garamond", serif', fontWeight: 600 }}>
+                    <div className="text-lg sm:text-xl font-bold mt-1 break-words" style={{ fontFamily: '"EB Garamond", serif', fontWeight: 600, color: '#1e3a8a' }}>
                       {invitado.nombre_2}
                     </div>
                     {invitado.asistencia_2 !== 'pendiente' && (
@@ -333,7 +370,7 @@ export default function RSVPPage() {
                     )}
                   </label>
                   
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4">
                     {(['si', 'no'] as const).map((option) => (
                       <label key={option} className="relative">
                         <input
@@ -345,7 +382,7 @@ export default function RSVPPage() {
                           disabled={invitado.asistencia_2 !== 'pendiente'}
                           className="sr-only"
                         />
-                        <div className={`p-4 text-center border transition-colors ${
+                        <div className={`p-2 sm:p-4 text-center border transition-colors text-sm sm:text-base ${
                           invitado.asistencia_2 !== 'pendiente' 
                             ? 'opacity-60 cursor-not-allowed border-gray-200 bg-gray-100 text-gray-500'
                             : formData.asistencia_2 === option
@@ -359,9 +396,34 @@ export default function RSVPPage() {
                     ))}
                   </div>
                     
+                    {/* Companion Name Field (for generic companions) */}
+                    {shouldShowCompanionNameField && (
+                      <div className="mt-4 p-2 sm:p-4 bg-blue-50 border-l-4 border-blue-400 rounded-r-lg">
+                        <div className="flex items-center mb-3">
+                          <span className="text-blue-600 mr-2">👤</span>
+                          <label htmlFor="companion_name" className="block font-semibold text-blue-800" style={{ fontFamily: '"Libre Baskerville", serif' }}>
+                            Nombre y Apellido *
+                          </label>
+                        </div>
+                        <input
+                          type="text"
+                          id="companion_name"
+                          value={companionName}
+                          onChange={(e) => setCompanionName(e.target.value)}
+                          placeholder="Ej: María González"
+                          className="w-full px-2 sm:px-4 py-2 sm:py-3 border-2 focus:ring-2 focus:ring-blue-300 focus:border-blue-400 rounded-lg border-blue-300 bg-white text-sm sm:text-base"
+                          style={{ fontFamily: '"Libre Baskerville", serif' }}
+                          required
+                        />
+                        <p className="text-xs text-blue-700 mt-2 break-words" style={{ fontFamily: '"Libre Baskerville", serif' }}>
+                          * Campo obligatorio - Ingresa el nombre completo de tu acompañante
+                        </p>
+                      </div>
+                    )}
+                    
                     {/* Restricciones segunda persona */}
                     {formData.asistencia_2 === 'si' && (
-                      <div className="mt-4 p-4 bg-green-50 border-l-4 border-green-400 rounded-r-lg">
+                      <div className="mt-4 p-2 sm:p-4 bg-green-50 border-l-4 border-green-400 rounded-r-lg">
                         <div className="flex items-center mb-3">
                           <span className="text-green-600 mr-2">🍽️</span>
                           <label htmlFor="restriccion_2" className="block font-semibold text-green-800" style={{ fontFamily: '"Libre Baskerville", serif' }}>
@@ -375,7 +437,7 @@ export default function RSVPPage() {
                           onChange={(e) => setFormData(prev => ({ ...prev, restriccion_2: e.target.value }))}
                           disabled={invitado.asistencia_2 !== 'pendiente'}
                           placeholder="Ej: Vegetariano, sin gluten, alergias..."
-                          className={`w-full px-4 py-3 border-2 focus:ring-2 focus:ring-green-300 focus:border-green-400 rounded-lg ${
+                          className={`w-full px-2 sm:px-4 py-2 sm:py-3 border-2 focus:ring-2 focus:ring-green-300 focus:border-green-400 rounded-lg text-sm sm:text-base ${
                             invitado.asistencia_2 !== 'pendiente' 
                               ? 'bg-gray-100 text-gray-500 cursor-not-allowed border-gray-200' 
                               : 'border-green-300 bg-white'
@@ -400,7 +462,7 @@ export default function RSVPPage() {
                   <Button
                     type="submit"
                     loading={saving}
-                    className="w-full py-3 px-6 text-white transition-colors"
+                            className="w-full py-2 sm:py-3 px-4 sm:px-6 text-white transition-colors text-sm sm:text-base"
                     style={{ 
                       fontFamily: '"Libre Baskerville", serif', 
                       fontSize: '16px', 
@@ -499,11 +561,11 @@ export default function RSVPPage() {
           </div>
 
           {/* Event Info Footer - Fecha corregida */}
-          <div className="text-center mt-8 p-4 bg-gray-50">
-            <h3 className="font-medium text-gray-900 mb-3" style={{ fontFamily: '"EB Garamond", serif', fontWeight: 400 }}>
+          <div className="text-center mt-8 p-2 sm:p-4" style={{ backgroundColor: '#f8f6f0' }}>
+            <h3 className="font-medium mb-3" style={{ fontFamily: '"EB Garamond", serif', fontWeight: 400, color: '#1e3a8a' }}>
               Información del evento
             </h3>
-            <div className="space-y-1 text-gray-600 text-sm" style={{ fontFamily: '"Libre Baskerville", serif' }}>
+            <div className="space-y-1 text-sm" style={{ fontFamily: '"Libre Baskerville", serif', color: '#1e3a8a' }}>
               <p><strong>Fecha:</strong> 13 de diciembre de 2025 • <strong>Hora:</strong> 3:30 PM</p>
               <p><strong>Lugar:</strong> Hacienda San Rafael, Bogotá</p>
               <p><strong>Celebración:</strong> Hasta las 3:00 AM</p>

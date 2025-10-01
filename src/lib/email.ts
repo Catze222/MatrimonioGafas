@@ -34,16 +34,25 @@ export interface EmailData {
   mensaje?: string
 }
 
+// Función para generar mensaje personalizado según el producto
+function generarMensajePersonalizado(productoTitulo: string): string {
+  const mensajesPorProducto: Record<string, string> = {
+    '🐱 Alimentación y bienestar gatuno': 'Nuestros gatos ya están planeando cómo ignorarnos con más estilo mientras devoran salmón gourmet en sus nuevos cojines de terciopelo.',
+    '🌴 Operación: sol, arena y descanso': 'Gracias a ti evitamos terminar en Mesitas del Colegio con piscina inflable y nos acercamos más a las Maldivas (o al menos a una playa decente).',
+    '🎶 Conciertos y festivales': 'Ya estamos practicando nuestros pasos de baile más vergonzosos para seguir acumulando recuerdos y fotos movidas en festivales por el mundo.',
+    '⚽ Clásicos de amor: Pillos vs. Santuco': 'Ahora tenemos presupuesto asegurado para lechona y palitos de queso en el Campín, y para seguir demostrando que el amor puede sobrevivir incluso a los clásicos capitalinos.',
+    '👓 Gafas vitalicias (porque somos gafufos)': 'Ahora podremos seguir viendo la vida con claridad y un poquito más de estilo, en lugar de andar por ahí con monturas que ya son patrimonio histórico.'
+  }
+  
+  return mensajesPorProducto[productoTitulo] || 'lo valoramos mucho y prometemos darle un gran uso.'
+}
+
 export async function enviarCorreoAgradecimiento(data: EmailData): Promise<boolean> {
   try {
-    const { quien_regala, email_contribuyente, producto_titulo, monto, mensaje } = data
+    const { quien_regala, email_contribuyente, producto_titulo } = data
 
-    // Formatear el monto en pesos colombianos
-    const montoFormateado = new Intl.NumberFormat('es-CO', {
-      style: 'currency',
-      currency: 'COP',
-      minimumFractionDigits: 0
-    }).format(monto)
+    // Obtener mensaje personalizado según el producto
+    const mensajePersonalizado = generarMensajePersonalizado(producto_titulo)
 
     // Plantilla HTML del correo
     const htmlContent = `
@@ -57,20 +66,17 @@ export async function enviarCorreoAgradecimiento(data: EmailData): Promise<boole
     <body style="margin: 0; padding: 0; font-family: 'Arial', sans-serif; background-color: #f8f9fa;">
       <div style="max-width: 600px; margin: 0 auto; background-color: white; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
         
-        <!-- Header con gradiente romántico -->
-        <div style="background: linear-gradient(135deg, #ff6b9d, #c44569); padding: 40px 20px; text-align: center;">
-          <h1 style="color: white; margin: 0; font-size: 28px; font-weight: bold;">
+        <!-- Header con gradiente azul oscuro -->
+        <div style="background: linear-gradient(135deg, #0c1e3f, #1e2a5a); padding: 15px 15px; text-align: center;">
+          <h1 style="color: white; margin: 0; font-size: 20px; font-weight: bold; line-height: 1.2;">
             ${quien_regala}, ¡qué regalazo!
           </h1>
-          <p style="color: rgba(255,255,255,0.9); margin: 10px 0 0 0; font-size: 16px;">
-            Jaime y Alejandra (Los Gafufos)
-          </p>
         </div>
 
         <!-- Contenido principal -->
-        <div style="padding: 40px 30px;">
+        <div style="padding: 30px 25px;">
           <p style="font-size: 18px; color: #2c3e50; margin-bottom: 25px; line-height: 1.6;">
-            Hola, <strong style="color: #c44569;">${quien_regala}</strong>.
+            Hola <strong style="color: #1e2a5a;">${quien_regala}</strong>.
           </p>
 
           <p style="font-size: 16px; color: #34495e; line-height: 1.8; margin-bottom: 25px;">
@@ -82,29 +88,9 @@ export async function enviarCorreoAgradecimiento(data: EmailData): Promise<boole
           </p>
 
           <p style="font-size: 16px; color: #34495e; line-height: 1.8; margin-bottom: 25px;">
-            Prometemos sacarle provecho al regalo, pero sobre todo a seguir acumulando recuerdos divertidos a tu lado.
+            Gracias por <strong>${producto_titulo}</strong>, lo valoramos mucho y prometemos darle un gran uso. ${mensajePersonalizado}
           </p>
 
-          <!-- Detalles de la contribución -->
-          <div style="background-color: #f8f9fa; border-left: 4px solid #c44569; padding: 20px; margin: 25px 0; border-radius: 0 8px 8px 0;">
-            <h3 style="color: #c44569; margin: 0 0 15px 0; font-size: 18px;">
-              Detalles de tu contribución:
-            </h3>
-            <p style="margin: 8px 0; color: #2c3e50;">
-              <strong>Regalo:</strong> ${producto_titulo}
-            </p>
-            <p style="margin: 8px 0; color: #2c3e50;">
-              <strong>Contribución:</strong> <span style="color: #27ae60; font-weight: bold; font-size: 18px;">${montoFormateado}</span>
-            </p>
-            ${mensaje ? `
-            <p style="margin: 15px 0 8px 0; color: #2c3e50;">
-              <strong>Tu mensaje:</strong>
-            </p>
-            <p style="font-style: italic; color: #7f8c8d; background-color: white; padding: 15px; border-radius: 6px; margin: 8px 0;">
-              "${mensaje}"
-            </p>
-            ` : ''}
-          </div>
 
           <!-- Firma -->
           <div style="text-align: center; padding: 20px 0; border-top: 2px solid #ecf0f1;">
@@ -118,10 +104,7 @@ export async function enviarCorreoAgradecimiento(data: EmailData): Promise<boole
         </div>
 
         <!-- Footer -->
-        <div style="background-color: #2c3e50; padding: 20px; text-align: center;">
-          <p style="color: #bdc3c7; margin: 0; font-size: 14px;">
-            Este correo fue enviado automáticamente con mucho amor 💌
-          </p>
+        <div style="background-color: #0c1e3f; padding: 10px; text-align: center;">
         </div>
       </div>
     </body>
@@ -132,24 +115,15 @@ export async function enviarCorreoAgradecimiento(data: EmailData): Promise<boole
     const textContent = `
 ${quien_regala}, ¡qué regalazo!
 
-Hola, ${quien_regala}.
+Hola ${quien_regala}.
 
 ¡Gracias por el regalo! Nos encantó y ya estamos celebrando el hecho de tener gente como tú en este momento tan especial.
 
 Lo bueno de todo esto no es solo lo que recibimos, sino poder compartirlo contigo. Tu presencia y tu energía hacen que la fiesta sea aún mejor (y eso ya es decir bastante).
 
-Prometemos sacarle provecho al regalo, pero sobre todo a seguir acumulando recuerdos divertidos a tu lado.
-
-Detalles de tu contribución:
-
-Regalo: ${producto_titulo}
-
-Contribución: ${montoFormateado}
-
-${mensaje ? `Tu mensaje: "${mensaje}"` : ''}
+Gracias por ${producto_titulo}, lo valoramos mucho y prometemos darle un gran uso. ${mensajePersonalizado}
 
 Con todo nuestro agradecimiento (y muchas ganas de seguir celebrando),
-
 Alejandra & Jaime (Los Gafufos)
     `
 
@@ -162,9 +136,7 @@ Alejandra & Jaime (Los Gafufos)
       to: email_contribuyente || process.env.SMTP_FROM_EMAIL, // Si no hay email del contribuyente, enviarlo a nosotros
       subject: `${quien_regala}, ¡qué regalazo!`,
       text: textContent,
-      html: htmlContent,
-      // Copia oculta para los novios
-      bcc: process.env.SMTP_FROM_EMAIL
+      html: htmlContent
     }
 
     // Enviar el correo

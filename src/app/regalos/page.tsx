@@ -49,22 +49,22 @@ export default function RegalosPage() {
   }
 
   return (
-    <div className="min-h-screen" style={{ fontFamily: '"EB Garamond", "Libre Baskerville", "Circular", "Helvetica", sans-serif', margin: 0, backgroundColor: '#FFFFFF', color: '#000000', boxSizing: 'border-box' }}>
+    <div className="min-h-screen" style={{ fontFamily: '"EB Garamond", "Libre Baskerville", "Circular", "Helvetica", sans-serif', margin: 0, backgroundColor: '#f8f6f0', color: '#1e3a8a', boxSizing: 'border-box' }}>
       {/* Navigation Header - Same as home */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-white shadow-sm">
+      <header className="fixed top-0 left-0 right-0 z-50 shadow-sm" style={{ backgroundColor: '#f8f6f0' }}>
         <div className="max-w-6xl mx-auto px-2 md:px-4">
           {/* Top brand bar like Zola */}
-          <div className="text-center py-2 text-gray-500 text-xs md:text-sm border-b border-gray-100">
+          <div className="text-center py-2 text-xs md:text-sm border-b border-gray-100" style={{ color: '#1e3a8a' }}>
             <Link href="/" className="hover:text-gray-700">Alejandra &amp; Jaime</Link>
           </div>
           
           {/* Main navigation */}
           <nav className="flex justify-center items-center py-2 md:py-4">
-            <ul className="flex flex-wrap justify-center gap-2 md:gap-4 lg:gap-8 text-xs md:text-sm lg:text-base" style={{ fontFamily: '"Libre Baskerville", serif', fontWeight: 400, lineHeight: 1.6, letterSpacing: 'normal' }}>
-              <li><Link href="/" className="text-black hover:text-gray-600 transition-colors px-1 md:px-2 py-1">Inicio</Link></li>
-              <li><Link href="/ceremonia" className="text-black hover:text-gray-600 transition-colors px-1 md:px-2 py-1">Día del evento</Link></li>
-              <li><Link href="/regalos" className="text-black hover:text-gray-600 transition-colors underline px-1 md:px-2 py-1">Regalos</Link></li>
-              <li><Link href="/vestimenta" className="text-black hover:text-gray-600 transition-colors px-1 md:px-2 py-1">Vestimenta</Link></li>
+            <ul className="flex flex-wrap justify-center gap-2 md:gap-4 lg:gap-8 text-xs md:text-sm lg:text-base" style={{ fontFamily: '"Libre Baskerville", serif', fontWeight: 400, lineHeight: 1.6, letterSpacing: 'normal', color: '#1e3a8a' }}>
+              <li><Link href="/" className="hover:opacity-70 transition-colors px-1 md:px-2 py-1" style={{ color: '#1e3a8a' }}>Inicio</Link></li>
+              <li><Link href="/ceremonia" className="hover:opacity-70 transition-colors px-1 md:px-2 py-1" style={{ color: '#1e3a8a' }}>Día del evento</Link></li>
+              <li><Link href="/regalos" className="hover:opacity-70 transition-colors underline px-1 md:px-2 py-1" style={{ color: '#1e3a8a' }}>Regalos</Link></li>
+              <li><Link href="/vestimenta" className="hover:opacity-70 transition-colors px-1 md:px-2 py-1" style={{ color: '#1e3a8a' }}>Vestimenta</Link></li>
             </ul>
           </nav>
         </div>
@@ -77,7 +77,7 @@ export default function RegalosPage() {
           <div className="text-center mb-16 md:mb-20">
             <h1 style={{ 
               fontFamily: '"EB Garamond", serif', 
-              color: '#000000', 
+              color: '#1e3a8a', 
               fontWeight: 400, 
               textTransform: 'uppercase', 
               lineHeight: 1.3, 
@@ -88,7 +88,7 @@ export default function RegalosPage() {
               Lista de Regalos
             </h1>
             <div className="w-24 h-px bg-black mx-auto mb-8"></div>
-            <p className="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed" style={{ fontFamily: '"Libre Baskerville", serif', fontWeight: 400 }}>
+            <p className="text-lg md:text-xl max-w-3xl mx-auto leading-relaxed" style={{ fontFamily: '"Libre Baskerville", serif', fontWeight: 400, color: '#1e3a8a' }}>
               <strong>Tu presencia es nuestro mejor regalo</strong>, pero si deseas contribuir a nuestro futuro juntos, 
               aquí encontrarás algunos proyectos especiales que tenemos en mente.
             </p>
@@ -99,7 +99,7 @@ export default function RegalosPage() {
             <div className="space-y-8">
               {[1, 2, 3].map((i) => (
                 <div key={i} className="animate-pulse">
-                  <div className="bg-white border border-gray-100 overflow-hidden">
+                  <div className="border border-gray-100 overflow-hidden" style={{ backgroundColor: '#f8f6f0' }}>
                     <div className="md:flex">
                       {/* Image skeleton */}
                       <div className="md:w-80 lg:w-96 aspect-[4/3] md:aspect-square bg-gray-100"></div>
@@ -122,10 +122,10 @@ export default function RegalosPage() {
             <div className="space-y-8">
               {productos.map((producto) => (
                 <div key={producto.id} className="group">
-                  <div className="bg-white border border-gray-100 hover:shadow-lg transition-all duration-300 overflow-hidden">
+                  <div className="border border-gray-100 hover:shadow-lg transition-all duration-300 overflow-hidden" style={{ backgroundColor: '#f8f6f0' }}>
                     <div className="md:flex">
                       {/* Product Image - Fixed width on larger screens */}
-                      <div className="md:w-80 lg:w-96 aspect-[4/3] md:aspect-square relative overflow-hidden bg-gray-50 md:flex-shrink-0">
+                      <div className="md:w-80 lg:w-96 aspect-[4/3] md:aspect-square relative overflow-hidden md:flex-shrink-0" style={{ backgroundColor: '#ffffff' }}>
                         <Image
                           src={producto.imagen_url}
                           alt={producto.titulo}
@@ -137,10 +137,10 @@ export default function RegalosPage() {
                       {/* Product Info - Takes remaining space */}
                       <div className="flex-1 p-6 lg:p-8 flex flex-col justify-between">
                         <div>
-                          <h3 className="text-2xl lg:text-3xl font-medium text-gray-900 mb-4" style={{ fontFamily: '"EB Garamond", serif', fontWeight: 400 }}>
+                          <h3 className="text-2xl lg:text-3xl font-medium mb-4" style={{ fontFamily: '"EB Garamond", serif', fontWeight: 400, color: '#1e3a8a' }}>
                             {producto.titulo}
                           </h3>
-                          <p className="text-gray-600 mb-8 leading-relaxed text-lg" style={{ fontFamily: '"Libre Baskerville", serif', fontSize: '18px', lineHeight: 1.6 }}>
+                          <p className="mb-8 leading-relaxed text-lg" style={{ fontFamily: '"Libre Baskerville", serif', fontSize: '18px', lineHeight: 1.6, color: '#1e3a8a' }}>
                             {producto.descripcion}
                           </p>
                         </div>
@@ -169,15 +169,15 @@ export default function RegalosPage() {
             </div>
           ) : (
             <div className="text-center py-20">
-              <div className="w-32 h-32 mx-auto mb-12 bg-gray-50 rounded-lg flex items-center justify-center">
-                <svg className="w-16 h-16 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="w-32 h-32 mx-auto mb-12 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#f8f6f0' }}>
+                <svg className="w-16 h-16" fill="none" stroke="#1e3a8a" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" />
                 </svg>
               </div>
-              <h3 className="text-2xl font-light text-gray-800 mb-6" style={{ fontFamily: '"EB Garamond", serif' }}>
+              <h3 className="text-2xl font-light mb-6" style={{ fontFamily: '"EB Garamond", serif', color: '#1e3a8a' }}>
                 Próximamente
               </h3>
-              <p className="text-gray-600 text-lg max-w-lg mx-auto mb-12 leading-relaxed" style={{ fontFamily: '"Libre Baskerville", serif' }}>
+              <p className="text-lg max-w-lg mx-auto mb-12 leading-relaxed" style={{ fontFamily: '"Libre Baskerville", serif', color: '#1e3a8a' }}>
                 Estamos preparando con mucho amor nuestra lista de regalos especial. 
                 ¡Vuelve pronto para descubrir las opciones disponibles!
               </p>
