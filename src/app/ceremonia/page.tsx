@@ -57,7 +57,7 @@ export default function CeremoniaPage() {
           <div className="mb-16 md:mb-20">
             <div className="relative h-64 md:h-80 lg:h-96 rounded-lg overflow-hidden shadow-lg" style={{ backgroundColor: '#ffffff' }}>
               <Image
-                src="https://elhwpjjmfjlkpibyxuje.supabase.co/storage/v1/object/public/productos/san%20rafael%201.png"
+                src="https://elhwpjjmfjlkpibyxuje.supabase.co/storage/v1/object/public/productos/hacienda%204.png"
                 alt="Hacienda San Rafael - Lugar de la ceremonia"
                 fill
                 className="object-cover"

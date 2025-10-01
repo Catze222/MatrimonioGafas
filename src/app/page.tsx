@@ -63,27 +63,12 @@ export default function Home() {
 
       {/* Hero Section - Exactly like Zola layout */}
       <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden" style={{ backgroundColor: '#f8f6f0' }}>
-        {/* Decorative floral elements - positioned like Zola */}
-        <div className="absolute top-0 right-0 w-80 h-80 opacity-20">
-          <svg viewBox="0 0 200 200" className="w-full h-full">
-            <path d="M50,100 Q100,50 150,100 Q100,150 50,100" fill="none" stroke="#1e3a8a" strokeWidth="1" opacity="0.3"/>
-            <path d="M70,80 Q100,60 130,80 Q100,100 70,80" fill="none" stroke="#1e3a8a" strokeWidth="0.8" opacity="0.3"/>
-            <path d="M70,120 Q100,140 130,120 Q100,100 70,120" fill="none" stroke="#1e3a8a" strokeWidth="0.8" opacity="0.3"/>
-          </svg>
-        </div>
-        
-        <div className="absolute bottom-0 left-0 w-64 h-64 opacity-20">
-          <svg viewBox="0 0 200 200" className="w-full h-full">
-            <path d="M50,100 Q100,50 150,100 Q100,150 50,100" fill="none" stroke="#1e3a8a" strokeWidth="1" opacity="0.3"/>
-            <path d="M30,120 Q60,90 90,120 Q60,150 30,120" fill="none" stroke="#1e3a8a" strokeWidth="0.8" opacity="0.3"/>
-          </svg>
-        </div>
         
         {/* Hero Content - Responsive like Zola */}
         <div className="relative z-10 text-center px-4 w-full max-w-4xl mx-auto">
           {/* Names - responsive like Zola structure */}
-          <div className="mb-6 md:mb-8">
-            <h1 className="mb-3 md:mb-4" style={{ 
+          <div className="mb-6 md:mb-8 pt-0 lg:pt-16 xl:pt-24">
+            <h1 className="mb-2 md:mb-3" style={{ 
               fontFamily: '"EB Garamond", serif', 
               color: '#1e3a8a', 
               fontWeight: 400, 
@@ -94,18 +79,17 @@ export default function Home() {
             }}>
               Alejandra Vidaurre
             </h1>
-            <div className="my-4 md:my-6" style={{ 
-              fontFamily: '"EB Garamond", serif', 
-              color: '#1e3a8a', 
-              fontWeight: 400, 
-              textTransform: 'none', 
-              lineHeight: 1.6, 
-              letterSpacing: 'normal', 
-              fontSize: 'clamp(24px, 6vw, 48px)' 
-            }}>
-              &
+            <div className="my-2 md:my-3 lg:my-4 flex justify-center">
+              <img 
+                src="https://elhwpjjmfjlkpibyxuje.supabase.co/storage/v1/object/public/productos/ChatGPT%20Image%2030%20sept%202025,%2009_31_09%20p.m..png"
+                alt="Gafas de sol"
+                className="w-24 h-24 md:w-32 md:h-32 lg:w-40 lg:h-40 xl:w-48 xl:h-48 object-contain"
+                style={{ 
+                  filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.1))'
+                }}
+              />
             </div>
-            <h1 style={{ 
+            <h1 className="mt-2 md:mt-3" style={{ 
               fontFamily: '"EB Garamond", serif', 
               color: '#1e3a8a', 
               fontWeight: 400, 
