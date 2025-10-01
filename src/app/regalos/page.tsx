@@ -60,11 +60,11 @@ export default function RegalosPage() {
           
           {/* Main navigation */}
           <nav className="flex justify-center items-center py-2 md:py-4">
-            <ul className="flex flex-wrap justify-center gap-2 md:gap-4 lg:gap-8 text-xs md:text-sm lg:text-base" style={{ fontFamily: '"Libre Baskerville", serif', fontWeight: 400, lineHeight: 1.6, letterSpacing: 'normal', color: '#1e3a8a' }}>
-              <li><Link href="/" className="hover:opacity-70 transition-colors px-1 md:px-2 py-1" style={{ color: '#1e3a8a' }}>Inicio</Link></li>
-              <li><Link href="/ceremonia" className="hover:opacity-70 transition-colors px-1 md:px-2 py-1" style={{ color: '#1e3a8a' }}>Día del evento</Link></li>
-              <li><Link href="/regalos" className="hover:opacity-70 transition-colors underline px-1 md:px-2 py-1" style={{ color: '#1e3a8a' }}>Regalos</Link></li>
-              <li><Link href="/vestimenta" className="hover:opacity-70 transition-colors px-1 md:px-2 py-1" style={{ color: '#1e3a8a' }}>Vestimenta</Link></li>
+            <ul className="flex flex-wrap justify-center gap-2 md:gap-4 lg:gap-8 text-sm md:text-base lg:text-lg" style={{ fontFamily: '"Libre Baskerville", serif', fontWeight: 700, lineHeight: 1.6, letterSpacing: 'normal', color: '#1e3a8a' }}>
+              <li><Link href="/" className="hover:opacity-70 transition-colors px-1 md:px-2 py-1" style={{ color: '#1e3a8a', fontWeight: 700 }}>Inicio</Link></li>
+              <li><Link href="/ceremonia" className="hover:opacity-70 transition-colors px-1 md:px-2 py-1" style={{ color: '#1e3a8a', fontWeight: 700 }}>Día del evento</Link></li>
+              <li><Link href="/regalos" className="hover:opacity-70 transition-colors underline px-1 md:px-2 py-1" style={{ color: '#1e3a8a', fontWeight: 700 }}>Regalos</Link></li>
+              <li><Link href="/vestimenta" className="hover:opacity-70 transition-colors px-1 md:px-2 py-1" style={{ color: '#1e3a8a', fontWeight: 700 }}>Vestimenta</Link></li>
             </ul>
           </nav>
         </div>
@@ -89,7 +89,7 @@ export default function RegalosPage() {
             </h1>
             <div className="w-24 h-px bg-black mx-auto mb-8"></div>
             <p className="text-lg md:text-xl max-w-3xl mx-auto leading-relaxed" style={{ fontFamily: '"Libre Baskerville", serif', fontWeight: 400, color: '#1e3a8a' }}>
-              <strong>Tu presencia es nuestro mejor regalo</strong>, pero si deseas contribuir a nuestro futuro juntos, 
+              <strong>Tu presencia es nuestro mejor regalo</strong>, pero si deseas regalarnos algo para nuestro futuro juntos, 
               aquí encontrarás algunos proyectos especiales que tenemos en mente.
             </p>
           </div>
@@ -158,7 +158,7 @@ export default function RegalosPage() {
                               letterSpacing: '1px'
                             }}
                           >
-                            Contribuir
+                            Regalar
                           </Button>
                         </div>
                       </div>

@@ -141,7 +141,7 @@ export default function ContribucionModal({ isOpen, onClose, producto }: Contrib
       
     } catch (error: unknown) {
       console.error('Error creating pago:', error)
-      setError('Error al procesar tu contribución. Intenta de nuevo.')
+      setError('Error al procesar tu regalo. Intenta de nuevo.')
     } finally {
       setLoading(false)
     }
@@ -210,7 +210,7 @@ export default function ContribucionModal({ isOpen, onClose, producto }: Contrib
             />
           </div>
           <h2 className="text-xl font-bold text-gray-900 mb-1">
-            Contribuir a: {producto.titulo}
+            Regalar: {producto.titulo}
           </h2>
         </div>
 
@@ -219,7 +219,7 @@ export default function ContribucionModal({ isOpen, onClose, producto }: Contrib
           {/* Amount Input */}
           <div>
             <label htmlFor="monto" className="block text-sm font-medium text-gray-900 mb-1">
-              Monto a contribuir <span className="text-red-500">*</span>
+              Monto a regalar <span className="text-red-500">*</span>
             </label>
             <div className="relative">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 font-medium">
@@ -238,7 +238,7 @@ export default function ContribucionModal({ isOpen, onClose, producto }: Contrib
             {formData.monto && !isNaN(parseFloat(formData.monto)) && (
               <div className="mt-2 space-y-1">
                 <p className="text-sm text-purple-600 font-medium">
-                  Tu contribución: {formatCurrency(formData.monto)}
+                  Tu regalo: {formatCurrency(formData.monto)}
                 </p>
                 <p className="text-sm text-orange-600">
                   Comisión bancaria: {formatCurrency(calculateCommission(parseFloat(formData.monto)).toString())}
@@ -334,8 +334,8 @@ export default function ContribucionModal({ isOpen, onClose, producto }: Contrib
                 </>
               ) : (
                 <>
-                  <span className="mr-2">💳</span>
-                  Ir a Pagar
+                  <span className="mr-2">🎁</span>
+                  Regalar
                 </>
               )}
             </Button>

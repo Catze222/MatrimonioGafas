@@ -41,14 +41,14 @@ export default function VestimentaPage() {
             subtitle: 'Vestido Largo',
             category: 'mujeres',
             images: mujeresResult.images,
-            description: 'Vestidos largos elegantes, evitar blanco y colores muy vibrantes. Colores pasteles y tonos tierra son perfectos.'
+            description: 'Cualquier tipo de vestido largo es bienvenido. Pueden ser elegantes, con estampados o colorines, ¡lo importante es que te sientas cómoda! Recomendamos evitar tacones altos ya que el lugar tiene pasto. Si prefieres tenis, ¡también son bienvenidos!'
           },
           {
             title: 'Hombres',
-            subtitle: 'Casual Elegante',
+            subtitle: 'Business Casual',
             category: 'hombres',
             images: hombresResult.images,
-            description: 'Sugerimos camisa de vestir, pantalón formal y opcionalmente blazer. Colores neutros preferidos.'
+            description: 'Business casual, pero sobre todo cómodo. Si te gusta la corbata, úsala. Si prefieres tenis, ¡también son bienvenidos! Queremos que disfrutes la celebración con tu propio estilo.'
           }
         ]
 
@@ -139,11 +139,11 @@ export default function VestimentaPage() {
             Alejandra &amp; Jaime
           </div>
           <nav className="flex justify-center items-center py-2 md:py-4">
-            <ul className="flex flex-wrap justify-center gap-2 md:gap-4 lg:gap-8 text-xs md:text-sm lg:text-base" style={{ fontFamily: '"Libre Baskerville", serif', color: '#1e3a8a' }}>
-              <li><Link href="/" className="hover:opacity-70 transition-colors px-1 md:px-2 py-1" style={{ color: '#1e3a8a' }}>Inicio</Link></li>
-              <li><Link href="/ceremonia" className="hover:opacity-70 transition-colors px-1 md:px-2 py-1" style={{ color: '#1e3a8a' }}>Día del evento</Link></li>
-              <li><Link href="/regalos" className="hover:opacity-70 transition-colors px-1 md:px-2 py-1" style={{ color: '#1e3a8a' }}>Regalos</Link></li>
-              <li><Link href="/vestimenta" className="hover:opacity-70 transition-colors underline px-1 md:px-2 py-1" style={{ color: '#1e3a8a' }}>Vestimenta</Link></li>
+            <ul className="flex flex-wrap justify-center gap-2 md:gap-4 lg:gap-8 text-sm md:text-base lg:text-lg" style={{ fontFamily: '"Libre Baskerville", serif', fontWeight: 700, lineHeight: 1.6, letterSpacing: 'normal', color: '#1e3a8a' }}>
+              <li><Link href="/" className="hover:opacity-70 transition-colors px-1 md:px-2 py-1" style={{ color: '#1e3a8a', fontWeight: 700 }}>Inicio</Link></li>
+              <li><Link href="/ceremonia" className="hover:opacity-70 transition-colors px-1 md:px-2 py-1" style={{ color: '#1e3a8a', fontWeight: 700 }}>Día del evento</Link></li>
+              <li><Link href="/regalos" className="hover:opacity-70 transition-colors px-1 md:px-2 py-1" style={{ color: '#1e3a8a', fontWeight: 700 }}>Regalos</Link></li>
+              <li><Link href="/vestimenta" className="hover:opacity-70 transition-colors underline px-1 md:px-2 py-1" style={{ color: '#1e3a8a', fontWeight: 700 }}>Vestimenta</Link></li>
             </ul>
           </nav>
         </div>
@@ -218,8 +218,8 @@ export default function VestimentaPage() {
                   </p>
                 </div>
 
-                {/* Masonry Grid */}
-                {section.images.length > 0 ? (
+                {/* Masonry Grid - COMENTADO: Descomentar si se desean mostrar fotos de referencia */}
+                {/* {section.images.length > 0 ? (
                   <div className="masonry-grid">
                     <style jsx>{`
                       .masonry-grid {
@@ -281,7 +281,7 @@ export default function VestimentaPage() {
                       No hay imágenes disponibles para esta categoría
                     </p>
                   </div>
-                )}
+                )} */}
               </section>
             ))}
           </div>
