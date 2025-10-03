@@ -30,11 +30,19 @@ function PaymentSuccessContent() {
   const [pago, setPago] = useState<Pago | null>(null)
   const [loading, setLoading] = useState(true)
   const [retryCount, setRetryCount] = useState(0)
+  const [debugLogs, setDebugLogs] = useState<string[]>([])
   const MAX_RETRIES = 10 // 10 intentos × 3 segundos = ~30 segundos de espera
+
+  const addDebugLog = (message: string) => {
+    const timestamp = new Date().toLocaleTimeString()
+    const logMessage = `[${timestamp}] ${message}`
+    console.log(logMessage)
+    setDebugLogs(prev => [...prev, logMessage])
+  }
 
   const loadPagoDetails = useCallback(async () => {
     try {
-      console.log(`🔍 Consultando pago... (intento ${retryCount + 1}/${MAX_RETRIES + 1})`)
+      addDebugLog(`🔍 Consultando pago... (intento ${retryCount + 1}/${MAX_RETRIES + 1})`)
       
       const { data, error } = await supabase
         .from('pagos')
@@ -49,24 +57,33 @@ function PaymentSuccessContent() {
         .eq('id', pagoId)
         .single()
 
-      if (error) throw error
+      if (error) {
+        addDebugLog(`❌ Error consultando pago: ${error.message}`)
+        throw error
+      }
       
       const pagoData = data as unknown as Pago
-      console.log('✅ Pago cargado, estado:', pagoData.estado)
+      addDebugLog(`✅ Pago cargado, estado: ${pagoData.estado}`)
       
       // Si el pago está pendiente y aún tenemos reintentos, volver a consultar
       if (pagoData.estado === 'pendiente' && retryCount < MAX_RETRIES) {
-        console.log('⏳ Pago aún pendiente, reintentando en 3 segundos...')
+        addDebugLog(`⏳ Pago aún pendiente, reintentando en 3 segundos...`)
         setRetryCount(prev => prev + 1)
         setTimeout(() => {
           loadPagoDetails()
         }, 3000) // Esperar 3 segundos antes de reintentar
       } else {
         // Ya está aprobado o se acabaron los reintentos
+        if (pagoData.estado === 'aprobado') {
+          addDebugLog(`🎉 ¡Pago aprobado detectado!`)
+        } else {
+          addDebugLog(`⚠️ Se acabaron los reintentos. Estado final: ${pagoData.estado}`)
+        }
         setPago(pagoData)
         setLoading(false)
       }
     } catch (error) {
+      addDebugLog(`❌ Error cargando pago: ${error}`)
       console.error('Error loading payment details:', error)
       setLoading(false)
     }
@@ -75,14 +92,17 @@ function PaymentSuccessContent() {
   useEffect(() => {
     // Debug: mostrar todos los parámetros que envía MP
     console.log('🔍 MP Success URL params:', Object.fromEntries(searchParams.entries()))
+    addDebugLog(`📥 Parámetros recibidos - pago_id: ${pagoId}`)
     
     if (pagoId) {
       // Esperar 3 segundos antes de la primera consulta
       // para dar tiempo al webhook de MercadoPago
-      console.log('⏳ Esperando 3 segundos para que el webhook procese el pago...')
+      addDebugLog('⏳ Esperando 3 segundos para que el webhook procese el pago...')
       setTimeout(() => {
         loadPagoDetails()
       }, 3000)
+    } else {
+      addDebugLog('❌ No se encontró pago_id en los parámetros de URL')
     }
   }, [pagoId, searchParams]) // Removido loadPagoDetails de dependencias para evitar loops
 
@@ -108,6 +128,9 @@ function PaymentSuccessContent() {
 
   // Determinar el estado visual del pago
   const pagoAprobado = pago?.estado === 'aprobado'
+  
+  // Modo debug (activar con ?debug=true en la URL)
+  const debugMode = searchParams.get('debug') === 'true'
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4" style={{ backgroundColor: '#f8f6f0' }}>
@@ -253,6 +276,35 @@ function PaymentSuccessContent() {
             }
           </p>
         </div>
+
+        {/* Debug Panel - Solo visible con ?debug=true */}
+        {debugMode && (
+          <div className="mt-8 bg-gray-900 text-green-400 rounded-lg p-4 font-mono text-xs max-h-96 overflow-y-auto">
+            <div className="flex justify-between items-center mb-3 pb-2 border-b border-gray-700">
+              <span className="font-bold text-white">🐛 DEBUG LOGS (Solo visible con ?debug=true)</span>
+              <span className="text-gray-500">Total: {debugLogs.length}</span>
+            </div>
+            {debugLogs.length === 0 ? (
+              <p className="text-gray-500">No hay logs todavía...</p>
+            ) : (
+              <div className="space-y-1">
+                {debugLogs.map((log, index) => (
+                  <div key={index} className="leading-relaxed">
+                    {log}
+                  </div>
+                ))}
+              </div>
+            )}
+            {pago && (
+              <div className="mt-4 pt-3 border-t border-gray-700">
+                <p className="text-white font-bold mb-2">📊 Estado del Pago:</p>
+                <p>ID: {pago.id}</p>
+                <p>Estado: <span className={pagoAprobado ? 'text-green-400' : 'text-yellow-400'}>{pago.estado}</span></p>
+                <p>Reintentos realizados: {retryCount}</p>
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   )
