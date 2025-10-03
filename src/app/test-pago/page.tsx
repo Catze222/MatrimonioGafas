@@ -128,7 +128,7 @@ export default function TestPagoPage() {
                 style={{ borderColor: '#1e3a8a40', fontFamily: 'var(--font-montserrat)' }}
               />
               <p className="mt-1 text-xs" style={{ color: '#1e3a8a', opacity: 0.6 }}>
-                Tiempo que tardará el "webhook" en aprobar el pago
+                Tiempo que tardará el &quot;webhook&quot; en aprobar el pago
               </p>
             </div>
 

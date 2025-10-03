@@ -80,6 +80,7 @@ export default function Home() {
               Alejandra Vidaurre Tugues
             </h1>
             <div className="my-2 md:my-3 lg:my-4 flex justify-center">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img 
                 src="https://elhwpjjmfjlkpibyxuje.supabase.co/storage/v1/object/public/productos/ChatGPT%20Image%2030%20sept%202025,%2009_31_09%20p.m..png"
                 alt="Gafas de sol"
