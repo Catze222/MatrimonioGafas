@@ -40,7 +40,7 @@ export default function Home() {
   // No necesitamos esta función porque usaremos Link directo
 
   return (
-    <div className="min-h-screen" style={{ fontFamily: '"EB Garamond", "Libre Baskerville", "Circular", "Helvetica", sans-serif', margin: 0, backgroundColor: '#f8f6f0', color: '#1e3a8a', boxSizing: 'border-box' }}>
+    <div className="min-h-screen" style={{ margin: 0, backgroundColor: '#f8f6f0', color: '#1e3a8a', boxSizing: 'border-box' }}>
       {/* Navigation Header - Responsive like Zola */}
       <header className="fixed top-0 left-0 right-0 z-50 shadow-sm" style={{ backgroundColor: '#f8f6f0' }}>
         <div className="max-w-6xl mx-auto px-2 md:px-4">
@@ -51,7 +51,7 @@ export default function Home() {
           
           {/* Main navigation */}
           <nav className="flex justify-center items-center py-2 md:py-4">
-            <ul className="flex flex-wrap justify-center gap-2 md:gap-4 lg:gap-8 text-sm md:text-base lg:text-lg" style={{ fontFamily: '"Libre Baskerville", serif', fontWeight: 700, lineHeight: 1.6, letterSpacing: 'normal', color: '#1e3a8a' }}>
+            <ul className="flex flex-wrap justify-center gap-1 sm:gap-2 md:gap-4 lg:gap-8 text-xs sm:text-sm md:text-base lg:text-lg" style={{ fontFamily: 'var(--font-playfair)', fontWeight: 700, lineHeight: 1.4, letterSpacing: 'normal', color: '#1e3a8a' }}>
               <li><Link href="/" className="hover:opacity-70 transition-colors underline px-1 md:px-2 py-1" style={{ color: '#1e3a8a', fontWeight: 700 }}>Inicio</Link></li>
               <li><Link href="/ceremonia" className="hover:opacity-70 transition-colors px-1 md:px-2 py-1" style={{ color: '#1e3a8a', fontWeight: 700 }}>Día del evento</Link></li>
               <li><Link href="/regalos" className="hover:opacity-70 transition-colors px-1 md:px-2 py-1" style={{ color: '#1e3a8a', fontWeight: 700 }}>Regalos</Link></li>
@@ -69,13 +69,13 @@ export default function Home() {
           {/* Names - responsive like Zola structure */}
           <div className="mb-6 md:mb-8 pt-0 lg:pt-16 xl:pt-24">
             <h1 className="mb-2 md:mb-3" style={{ 
-              fontFamily: '"EB Garamond", serif', 
+              fontFamily: 'var(--font-playfair)', 
               color: '#1e3a8a', 
-              fontWeight: 400, 
-              textTransform: 'uppercase', 
+              fontWeight: 900, 
+              textTransform: 'none', 
               lineHeight: 1.3, 
-              letterSpacing: '3px', 
-              fontSize: 'clamp(32px, 8vw, 72px)' 
+              letterSpacing: '1px', 
+              fontSize: 'clamp(28px, 7vw, 64px)' 
             }}>
               Alejandra Vidaurre Tugues
             </h1>
@@ -90,13 +90,13 @@ export default function Home() {
               />
             </div>
             <h1 className="mt-2 md:mt-3" style={{ 
-              fontFamily: '"EB Garamond", serif', 
+              fontFamily: 'var(--font-playfair)', 
               color: '#1e3a8a', 
-              fontWeight: 400, 
-              textTransform: 'uppercase', 
+              fontWeight: 900, 
+              textTransform: 'none', 
               lineHeight: 1.3, 
-              letterSpacing: '3px', 
-              fontSize: 'clamp(32px, 8vw, 72px)' 
+              letterSpacing: '1px', 
+              fontSize: 'clamp(28px, 7vw, 64px)' 
             }}>
               Jaime Canal Schlesinger
             </h1>
@@ -105,21 +105,21 @@ export default function Home() {
           {/* Date - responsive */}
           <div className="mb-6 md:mb-8">
             <h3 style={{ 
-              fontFamily: '"EB Garamond", serif', 
+              fontFamily: 'var(--font-montserrat)', 
               color: '#1e3a8a', 
-              fontWeight: 400, 
-              textTransform: 'uppercase', 
+              fontWeight: 300, 
+              textTransform: 'none', 
               lineHeight: 1.3, 
-              letterSpacing: '2px', 
-              fontSize: 'clamp(24px, 5vw, 40px)' 
+              letterSpacing: '1px', 
+              fontSize: 'clamp(16px, 3vw, 24px)' 
             }}>
-              13 DE DICIEMBRE DE 2025
+              13 de diciembre de 2025
             </h3>
           </div>
           
           {/* Countdown Timer - Solo días */}
           <div className="mb-8 md:mb-12" style={{ 
-            fontFamily: '"Libre Baskerville", serif', 
+            fontFamily: 'var(--font-montserrat)', 
             color: '#1e3a8a', 
             fontWeight: 400, 
             textTransform: 'none', 

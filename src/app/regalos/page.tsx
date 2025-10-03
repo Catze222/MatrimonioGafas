@@ -49,7 +49,7 @@ export default function RegalosPage() {
   }
 
   return (
-    <div className="min-h-screen" style={{ fontFamily: '"EB Garamond", "Libre Baskerville", "Circular", "Helvetica", sans-serif', margin: 0, backgroundColor: '#f8f6f0', color: '#1e3a8a', boxSizing: 'border-box' }}>
+    <div className="min-h-screen" style={{ margin: 0, backgroundColor: '#f8f6f0', color: '#1e3a8a', boxSizing: 'border-box' }}>
       {/* Navigation Header - Same as home */}
       <header className="fixed top-0 left-0 right-0 z-50 shadow-sm" style={{ backgroundColor: '#f8f6f0' }}>
         <div className="max-w-6xl mx-auto px-2 md:px-4">
@@ -60,7 +60,7 @@ export default function RegalosPage() {
           
           {/* Main navigation */}
           <nav className="flex justify-center items-center py-2 md:py-4">
-            <ul className="flex flex-wrap justify-center gap-2 md:gap-4 lg:gap-8 text-sm md:text-base lg:text-lg" style={{ fontFamily: '"Libre Baskerville", serif', fontWeight: 700, lineHeight: 1.6, letterSpacing: 'normal', color: '#1e3a8a' }}>
+            <ul className="flex flex-wrap justify-center gap-1 sm:gap-2 md:gap-4 lg:gap-8 text-xs sm:text-sm md:text-base lg:text-lg" style={{ fontFamily: 'var(--font-playfair)', fontWeight: 700, lineHeight: 1.4, letterSpacing: 'normal', color: '#1e3a8a' }}>
               <li><Link href="/" className="hover:opacity-70 transition-colors px-1 md:px-2 py-1" style={{ color: '#1e3a8a', fontWeight: 700 }}>Inicio</Link></li>
               <li><Link href="/ceremonia" className="hover:opacity-70 transition-colors px-1 md:px-2 py-1" style={{ color: '#1e3a8a', fontWeight: 700 }}>Día del evento</Link></li>
               <li><Link href="/regalos" className="hover:opacity-70 transition-colors underline px-1 md:px-2 py-1" style={{ color: '#1e3a8a', fontWeight: 700 }}>Regalos</Link></li>
@@ -76,7 +76,7 @@ export default function RegalosPage() {
           {/* Page Header - Zola Style */}
           <div className="text-center mb-16 md:mb-20">
             <h1 style={{ 
-              fontFamily: '"EB Garamond", serif', 
+              fontFamily: 'var(--font-playfair)', 
               color: '#1e3a8a', 
               fontWeight: 400, 
               textTransform: 'uppercase', 
@@ -88,7 +88,7 @@ export default function RegalosPage() {
               Lista de Regalos
             </h1>
             <div className="w-24 h-px bg-black mx-auto mb-8"></div>
-            <p className="text-lg md:text-xl max-w-3xl mx-auto leading-relaxed" style={{ fontFamily: '"Libre Baskerville", serif', fontWeight: 400, color: '#1e3a8a' }}>
+            <p className="text-lg md:text-xl max-w-3xl mx-auto leading-relaxed" style={{ fontFamily: 'var(--font-montserrat)', fontWeight: 400, color: '#1e3a8a' }}>
               <strong>Tu presencia es nuestro mejor regalo</strong>, pero si deseas regalarnos algo para nuestro futuro juntos, 
               aquí encontrarás algunos proyectos especiales que tenemos en mente.
             </p>
@@ -137,10 +137,10 @@ export default function RegalosPage() {
                       {/* Product Info - Takes remaining space */}
                       <div className="flex-1 p-6 lg:p-8 flex flex-col justify-between">
                         <div>
-                          <h3 className="text-2xl lg:text-3xl font-medium mb-4" style={{ fontFamily: '"EB Garamond", serif', fontWeight: 400, color: '#1e3a8a' }}>
+                          <h3 className="text-2xl lg:text-3xl font-medium mb-4" style={{ fontFamily: 'var(--font-playfair)', fontWeight: 400, color: '#1e3a8a' }}>
                             {producto.titulo}
                           </h3>
-                          <p className="mb-8 leading-relaxed text-lg" style={{ fontFamily: '"Libre Baskerville", serif', fontSize: '18px', lineHeight: 1.6, color: '#1e3a8a' }}>
+                          <p className="mb-8 leading-relaxed text-lg" style={{ fontFamily: 'var(--font-montserrat)', fontSize: '18px', lineHeight: 1.6, color: '#1e3a8a' }}>
                             {producto.descripcion}
                           </p>
                         </div>
@@ -150,7 +150,7 @@ export default function RegalosPage() {
                             onClick={() => handleContribuir(producto)}
                             className="bg-black hover:bg-gray-800 text-white py-3 px-8 transition-colors duration-200"
                             style={{ 
-                              fontFamily: '"Libre Baskerville", serif', 
+                              fontFamily: 'var(--font-montserrat)', 
                               fontSize: '14px', 
                               fontWeight: 400,
                               borderRadius: '0',
@@ -174,10 +174,10 @@ export default function RegalosPage() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" />
                 </svg>
               </div>
-              <h3 className="text-2xl font-light mb-6" style={{ fontFamily: '"EB Garamond", serif', color: '#1e3a8a' }}>
+              <h3 className="text-2xl font-light mb-6" style={{ fontFamily: 'var(--font-playfair)', color: '#1e3a8a' }}>
                 Próximamente
               </h3>
-              <p className="text-lg max-w-lg mx-auto mb-12 leading-relaxed" style={{ fontFamily: '"Libre Baskerville", serif', color: '#1e3a8a' }}>
+              <p className="text-lg max-w-lg mx-auto mb-12 leading-relaxed" style={{ fontFamily: 'var(--font-montserrat)', color: '#1e3a8a' }}>
                 Estamos preparando con mucho amor nuestra lista de regalos especial. 
                 ¡Vuelve pronto para descubrir las opciones disponibles!
               </p>

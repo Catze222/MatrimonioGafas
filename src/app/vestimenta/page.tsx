@@ -65,7 +65,7 @@ export default function VestimentaPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen" style={{ fontFamily: '"EB Garamond", "Libre Baskerville", "Circular", "Helvetica", sans-serif' }}>
+      <div className="min-h-screen" style={{ fontFamily: 'var(--font-montserrat)' }}>
         {/* Navigation Header */}
         <header className="fixed top-0 left-0 right-0 z-50 bg-white shadow-sm">
           <div className="max-w-6xl mx-auto px-2 md:px-4">
@@ -73,7 +73,7 @@ export default function VestimentaPage() {
               Alejandra &amp; Jaime
             </div>
             <nav className="flex justify-center items-center py-2 md:py-4">
-              <ul className="flex flex-wrap justify-center gap-2 md:gap-4 lg:gap-8 text-xs md:text-sm lg:text-base" style={{ fontFamily: '"Libre Baskerville", serif' }}>
+              <ul className="flex flex-wrap justify-center gap-2 md:gap-4 lg:gap-8 text-xs md:text-sm lg:text-base" style={{ fontFamily: 'var(--font-montserrat)' }}>
                 <li><Link href="/" className="text-black hover:text-gray-600 transition-colors px-1 md:px-2 py-1">Inicio</Link></li>
                 <li><Link href="/ceremonia" className="text-black hover:text-gray-600 transition-colors px-1 md:px-2 py-1">Día del evento</Link></li>
                 <li><Link href="/regalos" className="text-black hover:text-gray-600 transition-colors px-1 md:px-2 py-1">Regalos</Link></li>
@@ -96,7 +96,7 @@ export default function VestimentaPage() {
 
   if (error) {
     return (
-      <div className="min-h-screen" style={{ fontFamily: '"EB Garamond", "Libre Baskerville", "Circular", "Helvetica", sans-serif' }}>
+      <div className="min-h-screen" style={{ fontFamily: 'var(--font-montserrat)' }}>
         {/* Navigation Header */}
         <header className="fixed top-0 left-0 right-0 z-50 bg-white shadow-sm">
           <div className="max-w-6xl mx-auto px-2 md:px-4">
@@ -104,7 +104,7 @@ export default function VestimentaPage() {
               Alejandra &amp; Jaime
             </div>
             <nav className="flex justify-center items-center py-2 md:py-4">
-              <ul className="flex flex-wrap justify-center gap-2 md:gap-4 lg:gap-8 text-xs md:text-sm lg:text-base" style={{ fontFamily: '"Libre Baskerville", serif' }}>
+              <ul className="flex flex-wrap justify-center gap-2 md:gap-4 lg:gap-8 text-xs md:text-sm lg:text-base" style={{ fontFamily: 'var(--font-montserrat)' }}>
                 <li><Link href="/" className="text-black hover:text-gray-600 transition-colors px-1 md:px-2 py-1">Inicio</Link></li>
                 <li><Link href="/ceremonia" className="text-black hover:text-gray-600 transition-colors px-1 md:px-2 py-1">Día del evento</Link></li>
                 <li><Link href="/regalos" className="text-black hover:text-gray-600 transition-colors px-1 md:px-2 py-1">Regalos</Link></li>
@@ -131,7 +131,7 @@ export default function VestimentaPage() {
   }
 
   return (
-    <div className="min-h-screen" style={{ fontFamily: '"EB Garamond", "Libre Baskerville", "Circular", "Helvetica", sans-serif', backgroundColor: '#f8f6f0', color: '#1e3a8a' }}>
+    <div className="min-h-screen" style={{ fontFamily: 'var(--font-montserrat)', backgroundColor: '#f8f6f0', color: '#1e3a8a' }}>
       {/* Navigation Header */}
       <header className="fixed top-0 left-0 right-0 z-50 shadow-sm" style={{ backgroundColor: '#f8f6f0' }}>
         <div className="max-w-6xl mx-auto px-2 md:px-4">
@@ -139,7 +139,7 @@ export default function VestimentaPage() {
             Alejandra &amp; Jaime
           </div>
           <nav className="flex justify-center items-center py-2 md:py-4">
-            <ul className="flex flex-wrap justify-center gap-2 md:gap-4 lg:gap-8 text-sm md:text-base lg:text-lg" style={{ fontFamily: '"Libre Baskerville", serif', fontWeight: 700, lineHeight: 1.6, letterSpacing: 'normal', color: '#1e3a8a' }}>
+            <ul className="flex flex-wrap justify-center gap-1 sm:gap-2 md:gap-4 lg:gap-8 text-xs sm:text-sm md:text-base lg:text-lg" style={{ fontFamily: 'var(--font-playfair)', fontWeight: 700, lineHeight: 1.4, letterSpacing: 'normal', color: '#1e3a8a' }}>
               <li><Link href="/" className="hover:opacity-70 transition-colors px-1 md:px-2 py-1" style={{ color: '#1e3a8a', fontWeight: 700 }}>Inicio</Link></li>
               <li><Link href="/ceremonia" className="hover:opacity-70 transition-colors px-1 md:px-2 py-1" style={{ color: '#1e3a8a', fontWeight: 700 }}>Día del evento</Link></li>
               <li><Link href="/regalos" className="hover:opacity-70 transition-colors px-1 md:px-2 py-1" style={{ color: '#1e3a8a', fontWeight: 700 }}>Regalos</Link></li>
@@ -157,7 +157,7 @@ export default function VestimentaPage() {
             <h1 
               className="text-4xl md:text-5xl lg:text-6xl mb-4"
               style={{ 
-                fontFamily: '"EB Garamond", serif', 
+                fontFamily: 'var(--font-playfair)', 
                 fontWeight: 400, 
                 textTransform: 'uppercase', 
                 letterSpacing: '2px',
@@ -169,7 +169,7 @@ export default function VestimentaPage() {
             <p 
               className="text-lg md:text-xl max-w-2xl mx-auto"
               style={{ 
-                fontFamily: '"Libre Baskerville", serif', 
+                fontFamily: 'var(--font-montserrat)', 
                 lineHeight: 1.6 
               }}
             >
@@ -186,7 +186,7 @@ export default function VestimentaPage() {
                   <h2 
                     className="text-3xl md:text-4xl lg:text-5xl mb-2"
                     style={{ 
-                      fontFamily: '"EB Garamond", serif', 
+                      fontFamily: 'var(--font-playfair)', 
                       fontWeight: 400, 
                       textTransform: 'uppercase', 
                       letterSpacing: '2px',
@@ -198,7 +198,7 @@ export default function VestimentaPage() {
                   <h3 
                     className="text-xl md:text-2xl mb-4"
                     style={{ 
-                      fontFamily: '"Libre Baskerville", serif', 
+                      fontFamily: 'var(--font-montserrat)', 
                       fontWeight: 400,
                       fontStyle: 'italic',
                       color: '#1e3a8a'
@@ -209,7 +209,7 @@ export default function VestimentaPage() {
                   <p 
                     className="text-base md:text-lg max-w-xl mx-auto"
                     style={{ 
-                      fontFamily: '"Libre Baskerville", serif', 
+                      fontFamily: 'var(--font-montserrat)', 
                       lineHeight: 1.6,
                       color: '#1e3a8a'
                     }}
@@ -277,7 +277,7 @@ export default function VestimentaPage() {
                   </div>
                 ) : (
                   <div className="text-center py-12">
-                    <p style={{ fontFamily: '"Libre Baskerville", serif', color: '#1e3a8a' }}>
+                    <p style={{ fontFamily: 'var(--font-montserrat)', color: '#1e3a8a' }}>
                       No hay imágenes disponibles para esta categoría
                     </p>
                   </div>
@@ -291,7 +291,7 @@ export default function VestimentaPage() {
             <p 
               className="max-w-2xl mx-auto"
               style={{ 
-                fontFamily: '"Libre Baskerville", serif', 
+                fontFamily: 'var(--font-montserrat)', 
                 lineHeight: 1.6,
                 color: '#1e3a8a'
               }}
