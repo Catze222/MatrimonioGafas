@@ -33,30 +33,17 @@ function PaymentPendingContent() {
   const [pago, setPago] = useState<Pago | null>(null)
   const [loading, setLoading] = useState(true)
   const [retryCount, setRetryCount] = useState(0)
-  const [debugLogs, setDebugLogs] = useState<string[]>([])
   const MAX_RETRIES = 10 // 10 intentos × 3 segundos = ~30 segundos de espera
-
-  const addDebugLog = (message: string) => {
-    const timestamp = new Date().toLocaleTimeString()
-    const logMessage = `[${timestamp}] ${message}`
-    console.log(logMessage)
-    setDebugLogs(prev => [...prev, logMessage])
-  }
 
   const loadPagoDetails = useCallback(async () => {
     if (!pagoId) {
-      addDebugLog('❌ No hay pago_id para consultar')
       setLoading(false)
       return
     }
 
     try {
-      addDebugLog(`🔍 Consultando pago... (intento ${retryCount + 1}/${MAX_RETRIES + 1})`)
-      addDebugLog(`🔑 Buscando pago con ID: ${pagoId}`)
-      
       // Determinar si es un UUID (nuestro ID) o un payment_id de MercadoPago
       const isUUID = pagoId.includes('-')
-      addDebugLog(`🔍 Tipo de ID detectado: ${isUUID ? 'UUID (nuestro)' : 'Payment ID de MercadoPago'}`)
       
       const { data, error } = await supabase
         .from('pagos')
@@ -72,59 +59,41 @@ function PaymentPendingContent() {
         .eq(isUUID ? 'id' : 'mercadopago_payment_id', pagoId)
         .single()
 
-      if (error) {
-        addDebugLog(`❌ Error consultando pago: ${error.message}`)
-        throw error
-      }
+      if (error) throw error
       
       const pagoData = data as unknown as Pago
-      addDebugLog(`✅ Pago cargado, estado: ${pagoData.estado}`)
       
       // Si el pago se aprobó, redirigir a la página de success
       if (pagoData.estado === 'aprobado') {
-        addDebugLog(`🎉 ¡Pago aprobado! Redirigiendo a /pago/success...`)
         setTimeout(() => {
-          router.push(`/pago/success?pago_id=${pagoId}&debug=true`)
+          router.push(`/pago/success?pago_id=${pagoId}`)
         }, 1000)
         return
       }
       
       // Si el pago está pendiente y aún tenemos reintentos, volver a consultar
       if (pagoData.estado === 'pendiente' && retryCount < MAX_RETRIES) {
-        addDebugLog(`⏳ Pago aún pendiente, reintentando en 3 segundos...`)
         setRetryCount(prev => prev + 1)
         setTimeout(() => {
           loadPagoDetails()
         }, 3000) // Esperar 3 segundos antes de reintentar
       } else {
         // Ya está aprobado o se acabaron los reintentos
-        if (pagoData.estado !== 'aprobado' && pagoData.estado !== 'pendiente') {
-          addDebugLog(`⚠️ Estado final: ${pagoData.estado}`)
-        } else {
-          addDebugLog(`⚠️ Se acabaron los reintentos. Estado final: ${pagoData.estado}`)
-        }
         setPago(pagoData)
         setLoading(false)
       }
     } catch (error) {
-      addDebugLog(`❌ Error cargando pago: ${error}`)
       console.error('Error loading payment details:', error)
       setLoading(false)
     }
   }, [pagoId, retryCount, MAX_RETRIES, router])
 
   useEffect(() => {
-    console.log('🔍 Pending page - URL params:', Object.fromEntries(searchParams.entries()))
-    addDebugLog(`📥 Parámetros recibidos - pago_id: ${pagoId}`)
-    addDebugLog(`📍 Página: /pago/pending`)
-    
     if (pagoId) {
-      addDebugLog('⏳ Esperando 3 segundos para que el webhook procese el pago...')
       setTimeout(() => {
         loadPagoDetails()
       }, 3000)
     } else {
-      addDebugLog('❌ No se encontró pago_id en los parámetros de URL')
       setLoading(false)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -138,8 +107,6 @@ function PaymentPendingContent() {
     }).format(amount)
   }
 
-  // Modo debug (activar con ?debug=true en la URL)
-  const debugMode = searchParams.get('debug') === 'true'
 
   if (loading) {
     return (
@@ -188,7 +155,7 @@ function PaymentPendingContent() {
               opacity: 0.9
             }}
           >
-            Tu pago está siendo procesado por MercadoPago. Esto puede tomar unos minutos 
+            Tu regalo está siendo procesado por MercadoPago. Esto puede tomar unos minutos 
             dependiendo del método de pago seleccionado.
           </p>
 
@@ -208,7 +175,7 @@ function PaymentPendingContent() {
                   letterSpacing: '1px'
                 }}
               >
-                Resumen de tu contribución
+                Resumen de tu regalo
               </h3>
               
               <div className="space-y-4">
@@ -220,7 +187,7 @@ function PaymentPendingContent() {
                 )}
                 
                 <div className="flex justify-between items-center py-2 border-b" style={{ borderColor: '#1e3a8a20' }}>
-                  <span style={{ fontFamily: 'var(--font-montserrat)', fontSize: '14px', color: '#1e3a8a', opacity: 0.7 }}>Contribución:</span>
+                  <span style={{ fontFamily: 'var(--font-montserrat)', fontSize: '14px', color: '#1e3a8a', opacity: 0.7 }}>Monto:</span>
                   <span style={{ fontFamily: 'var(--font-playfair)', fontSize: '20px', fontWeight: 600, color: '#ca8a04' }}>{formatCurrency(pago.monto)}</span>
                 </div>
                 
@@ -296,7 +263,7 @@ function PaymentPendingContent() {
               </li>
               <li className="flex items-start">
                 <span className="mr-2 font-bold">3.</span>
-                <span>Tu contribución aparecerá como confirmada en nuestro sistema</span>
+                <span>Tu regalo aparecerá como confirmado en nuestro sistema</span>
               </li>
             </ol>
           </div>
@@ -333,7 +300,7 @@ function PaymentPendingContent() {
         {/* Additional Info */}
         <div className="mt-6 text-center">
           <p style={{ fontFamily: 'var(--font-montserrat)', fontSize: '13px', color: '#1e3a8a', opacity: 0.7 }}>
-            No es necesario que hagas nada más. Te mantendremos informado sobre el estado de tu contribución.
+            No es necesario que hagas nada más. Te mantendremos informado sobre el estado de tu regalo.
           </p>
           {pagoId && (
             <div className="mt-4 bg-white rounded-lg p-4 shadow-sm">
@@ -344,34 +311,6 @@ function PaymentPendingContent() {
           )}
         </div>
 
-        {/* Debug Panel - Solo visible con ?debug=true */}
-        {debugMode && (
-          <div className="mt-8 bg-gray-900 text-green-400 rounded-lg p-4 font-mono text-xs max-h-96 overflow-y-auto">
-            <div className="flex justify-between items-center mb-3 pb-2 border-b border-gray-700">
-              <span className="font-bold text-white">🐛 DEBUG LOGS (Solo visible con ?debug=true)</span>
-              <span className="text-gray-500">Total: {debugLogs.length}</span>
-            </div>
-            {debugLogs.length === 0 ? (
-              <p className="text-gray-500">No hay logs todavía...</p>
-            ) : (
-              <div className="space-y-1">
-                {debugLogs.map((log, index) => (
-                  <div key={index} className="leading-relaxed">
-                    {log}
-                  </div>
-                ))}
-              </div>
-            )}
-            {pago && (
-              <div className="mt-4 pt-3 border-t border-gray-700">
-                <p className="text-white font-bold mb-2">📊 Estado del Pago:</p>
-                <p>ID: {pago.id}</p>
-                <p>Estado: <span className="text-yellow-400">{pago.estado}</span></p>
-                <p>Reintentos realizados: {retryCount}</p>
-              </div>
-            )}
-          </div>
-        )}
       </div>
     </div>
   )
