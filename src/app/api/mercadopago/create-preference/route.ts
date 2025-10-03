@@ -51,12 +51,13 @@ export async function POST(request: NextRequest) {
         })
       },
       back_urls: {
-        success: `${process.env.NEXT_PUBLIC_APP_URL}/pago/success`,
-        failure: `${process.env.NEXT_PUBLIC_APP_URL}/pago/failure`,
-        pending: `${process.env.NEXT_PUBLIC_APP_URL}/pago/pending`
+        success: `${process.env.NEXT_PUBLIC_APP_URL}/pago/success?pago_id=${pagoId}`,
+        failure: `${process.env.NEXT_PUBLIC_APP_URL}/pago/failure?pago_id=${pagoId}`,
+        pending: `${process.env.NEXT_PUBLIC_APP_URL}/pago/pending?pago_id=${pagoId}`
       },
       external_reference: pagoId,
-      auto_return: 'approved'
+      auto_return: 'approved',
+      notification_url: `${process.env.NEXT_PUBLIC_APP_URL}/api/mercadopago/webhook`
     }
 
     console.log('📤 Sending to MP:', JSON.stringify(preferenceData, null, 2))

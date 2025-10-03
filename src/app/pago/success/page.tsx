@@ -43,6 +43,11 @@ function PaymentSuccessContent() {
   const loadPagoDetails = useCallback(async () => {
     try {
       addDebugLog(`🔍 Consultando pago... (intento ${retryCount + 1}/${MAX_RETRIES + 1})`)
+      addDebugLog(`🔑 Buscando pago con ID: ${pagoId}`)
+      
+      // Determinar si es un UUID (nuestro ID) o un payment_id de MercadoPago
+      const isUUID = pagoId?.includes('-') || false
+      addDebugLog(`🔍 Tipo de ID detectado: ${isUUID ? 'UUID (nuestro)' : 'Payment ID de MercadoPago'}`)
       
       const { data, error } = await supabase
         .from('pagos')
@@ -52,9 +57,10 @@ function PaymentSuccessContent() {
           monto,
           mensaje,
           estado,
+          mercadopago_payment_id,
           producto:productos(titulo, imagen_url)
         `)
-        .eq('id', pagoId)
+        .eq(isUUID ? 'id' : 'mercadopago_payment_id', pagoId)
         .single()
 
       if (error) {
