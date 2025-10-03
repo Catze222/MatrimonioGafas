@@ -187,10 +187,10 @@ export default function CeremoniaPage() {
                   Mujeres
                 </h3>
                 <p className="text-center mb-6" style={{ fontFamily: 'var(--font-montserrat)', fontSize: '16px', color: '#1e3a8a', fontWeight: 500 }}>
-                  Vestido largo
+                  Traje formal
                 </p>
                 <p className="leading-relaxed text-center" style={{ fontFamily: 'var(--font-montserrat)', fontSize: '15px', color: '#1e3a8a' }}>
-                  Cualquier tipo de vestido largo es bienvenido. Pueden ser elegantes, con estampados o del color que más te guste, ¡lo importante es que te sientas cómoda! Si prefieres usar tenis, ¡también son bienvenidos!
+                  Puede ser vestido largo, enterizo o pantalón elegante. Los colores y estilos son libres, lo importante es que te sientas cómoda. Si prefieres usar tenis, también son bienvenidos.
                 </p>
               </div>
 
