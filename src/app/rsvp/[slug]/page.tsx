@@ -195,7 +195,7 @@ export default function RSVPPage() {
       <header className="border-b border-gray-100 py-4" style={{ backgroundColor: '#f8f6f0' }}>
         <div className="max-w-4xl mx-auto px-2 sm:px-4 text-center">
           <div className="text-sm" style={{ fontFamily: 'var(--font-montserrat)', color: '#1e3a8a' }}>
-            Alejandra &amp; Jaime
+            Alejandra & Jaime
           </div>
         </div>
       </header>
@@ -238,7 +238,7 @@ export default function RSVPPage() {
             <h2 className="text-lg sm:text-xl lg:text-2xl font-medium mb-3 break-words" style={{ fontFamily: 'var(--font-playfair)', fontWeight: 400, color: '#1e3a8a' }}>
               {invitado.nombre_1}
               {invitado.nombre_2 && (
-                <span> & {invitado.nombre_2}</span>
+                <span> <span style={{ fontFamily: 'var(--font-montserrat)' }}>&</span> {invitado.nombre_2}</span>
               )}
             </h2>
             
@@ -568,7 +568,6 @@ export default function RSVPPage() {
             <div className="space-y-1 text-sm" style={{ fontFamily: 'var(--font-montserrat)', color: '#1e3a8a' }}>
               <p><strong>Fecha:</strong> 13 de diciembre de 2025 • <strong>Hora:</strong> 3:30 PM</p>
               <p><strong>Lugar:</strong> Hacienda San Rafael, Bogotá</p>
-              <p><strong>Celebración:</strong> Hasta las 3:00 AM</p>
             </div>
           </div>
         </div>

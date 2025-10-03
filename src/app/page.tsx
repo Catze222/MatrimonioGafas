@@ -53,9 +53,9 @@ export default function Home() {
           <nav className="flex justify-center items-center py-2 md:py-4">
             <ul className="flex flex-wrap justify-center gap-1 sm:gap-2 md:gap-4 lg:gap-8 text-xs sm:text-sm md:text-base lg:text-lg" style={{ fontFamily: 'var(--font-playfair)', fontWeight: 700, lineHeight: 1.4, letterSpacing: 'normal', color: '#1e3a8a' }}>
               <li><Link href="/" className="hover:opacity-70 transition-colors underline px-1 md:px-2 py-1" style={{ color: '#1e3a8a', fontWeight: 700 }}>Inicio</Link></li>
+              <li><Link href="/novios" className="hover:opacity-70 transition-colors px-1 md:px-2 py-1" style={{ color: '#1e3a8a', fontWeight: 700 }}>Los novios</Link></li>
               <li><Link href="/ceremonia" className="hover:opacity-70 transition-colors px-1 md:px-2 py-1" style={{ color: '#1e3a8a', fontWeight: 700 }}>Día del evento</Link></li>
               <li><Link href="/regalos" className="hover:opacity-70 transition-colors px-1 md:px-2 py-1" style={{ color: '#1e3a8a', fontWeight: 700 }}>Regalos</Link></li>
-              <li><Link href="/vestimenta" className="hover:opacity-70 transition-colors px-1 md:px-2 py-1" style={{ color: '#1e3a8a', fontWeight: 700 }}>Vestimenta</Link></li>
             </ul>
           </nav>
         </div>
@@ -83,7 +83,7 @@ export default function Home() {
               <img 
                 src="https://elhwpjjmfjlkpibyxuje.supabase.co/storage/v1/object/public/productos/ChatGPT%20Image%2030%20sept%202025,%2009_31_09%20p.m..png"
                 alt="Gafas de sol"
-                className="w-24 h-24 md:w-32 md:h-32 lg:w-40 lg:h-40 xl:w-48 xl:h-48 object-contain"
+                className="w-32 h-32 md:w-44 md:h-44 lg:w-52 lg:h-52 xl:w-64 xl:h-64 object-contain"
                 style={{ 
                   filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.1))'
                 }}

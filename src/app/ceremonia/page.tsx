@@ -22,9 +22,9 @@ export default function CeremoniaPage() {
           <nav className="flex justify-center items-center py-2 md:py-4">
             <ul className="flex flex-wrap justify-center gap-1 sm:gap-2 md:gap-4 lg:gap-8 text-xs sm:text-sm md:text-base lg:text-lg" style={{ fontFamily: 'var(--font-playfair)', fontWeight: 700, lineHeight: 1.4, letterSpacing: 'normal', color: '#1e3a8a' }}>
               <li><Link href="/" className="hover:opacity-70 transition-colors px-1 md:px-2 py-1" style={{ color: '#1e3a8a', fontWeight: 700 }}>Inicio</Link></li>
+              <li><Link href="/novios" className="hover:opacity-70 transition-colors px-1 md:px-2 py-1" style={{ color: '#1e3a8a', fontWeight: 700 }}>Los novios</Link></li>
               <li><Link href="/ceremonia" className="hover:opacity-70 transition-colors underline px-1 md:px-2 py-1" style={{ color: '#1e3a8a', fontWeight: 700 }}>Día del evento</Link></li>
               <li><Link href="/regalos" className="hover:opacity-70 transition-colors px-1 md:px-2 py-1" style={{ color: '#1e3a8a', fontWeight: 700 }}>Regalos</Link></li>
-              <li><Link href="/vestimenta" className="hover:opacity-70 transition-colors px-1 md:px-2 py-1" style={{ color: '#1e3a8a', fontWeight: 700 }}>Vestimenta</Link></li>
             </ul>
           </nav>
         </div>
@@ -38,10 +38,10 @@ export default function CeremoniaPage() {
             <h1 style={{ 
               fontFamily: 'var(--font-playfair)', 
               color: '#1e3a8a', 
-              fontWeight: 900, 
-              textTransform: 'none', 
+              fontWeight: 400, 
+              textTransform: 'uppercase', 
               lineHeight: 1.3, 
-              letterSpacing: '1px', 
+              letterSpacing: '3px', 
               fontSize: 'clamp(32px, 6vw, 48px)',
               marginBottom: '32px'
             }}>
@@ -110,24 +110,6 @@ export default function CeremoniaPage() {
                     </p>
                   </div>
                 </div>
-                
-                <div className="flex items-start space-x-4">
-                  <div className="w-2 h-2 bg-black rounded-full mt-3 flex-shrink-0"></div>
-                  <div>
-                    <p className="font-medium mb-1" style={{ fontFamily: 'var(--font-montserrat)', color: '#1e3a8a' }}>
-                      <strong>5:00 PM</strong> - Recepción
-                    </p>
-                  </div>
-                </div>
-                
-                <div className="flex items-start space-x-4">
-                  <div className="w-2 h-2 bg-black rounded-full mt-3 flex-shrink-0"></div>
-                  <div>
-                    <p className="font-medium mb-1" style={{ fontFamily: 'var(--font-montserrat)', color: '#1e3a8a' }}>
-                      <strong>7:00 PM</strong> - Cena y fiesta
-                    </p>
-                  </div>
-                </div>
               </div>
             </div>
 
@@ -147,7 +129,7 @@ export default function CeremoniaPage() {
               
               <div className="space-y-6">
                 <div>
-                  <p className="font-medium mb-2 text-sm" style={{ fontFamily: 'var(--font-montserrat)', color: '#1e3a8a' }}>
+                  <p className="font-bold mb-2 text-sm" style={{ fontFamily: 'var(--font-montserrat)', color: '#1e3a8a' }}>
                     Dirección
                   </p>
                   <p className="leading-relaxed text-sm" style={{ color: '#1e3a8a' }}>
@@ -157,7 +139,7 @@ export default function CeremoniaPage() {
                 </div>
                 
                 <div>
-                  <p className="font-medium mb-2 text-sm" style={{ fontFamily: 'var(--font-montserrat)', color: '#1e3a8a' }}>
+                  <p className="font-bold mb-2 text-sm" style={{ fontFamily: 'var(--font-montserrat)', color: '#1e3a8a' }}>
                     Sobre el lugar
                   </p>
                   <p className="leading-relaxed text-sm" style={{ color: '#1e3a8a' }}>
@@ -167,46 +149,61 @@ export default function CeremoniaPage() {
                 </div>
                 
                 <div>
-                  <p className="font-medium mb-2 text-sm" style={{ fontFamily: 'var(--font-montserrat)', color: '#1e3a8a' }}>
+                  <p className="font-bold mb-2 text-sm" style={{ fontFamily: 'var(--font-montserrat)', color: '#1e3a8a' }}>
                     Parqueadero
                   </p>
                   <p className="leading-relaxed text-sm" style={{ color: '#1e3a8a' }}>
                     Hay parqueadero disponible. No te preocupes por dónde dejar el carro.
                   </p>
                 </div>
-                
-                <div>
-                  <p className="font-medium mb-2 text-sm" style={{ fontFamily: 'var(--font-montserrat)', color: '#1e3a8a' }}>
-                    Hasta que el cuerpo aguante
-                  </p>
-                  <p className="leading-relaxed text-sm" style={{ color: '#1e3a8a' }}>
-                    La fiesta va hasta las <strong>3:00 AM</strong>. 
-                    Descansa bien el día anterior porque vamos a bailar toda la noche.
-                  </p>
-                </div>
               </div>
             </div>
           </div>
 
-          {/* Fun Section */}
-          <div className="text-center p-12 lg:p-16 rounded-lg mb-16" style={{ backgroundColor: '#f8f6f0' }}>
-            <h3 className="text-3xl font-medium mb-8" style={{ fontFamily: 'var(--font-playfair)', fontWeight: 400, color: '#1e3a8a' }}>
-              Datos curiosos de los Gafufos
-            </h3>
-            <div className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
-              <div className="text-center">
-                <p className="leading-relaxed" style={{ fontFamily: 'var(--font-montserrat)', fontSize: '16px', color: '#1e3a8a' }}>
-                  Alejandra come como tres Jaimes juntos… pero cuando se trata de tecnología, sin su ingeniero personal no prende ni el televisor.
+          {/* Dress Code Section */}
+          <div className="mb-16 md:mb-20">
+            <div className="text-center mb-12">
+              <h2 style={{ 
+                fontFamily: 'var(--font-playfair)', 
+                color: '#1e3a8a', 
+                fontWeight: 400, 
+                textTransform: 'uppercase', 
+                lineHeight: 1.3, 
+                letterSpacing: '3px', 
+                fontSize: 'clamp(28px, 5vw, 40px)',
+                marginBottom: '16px'
+              }}>
+                Código de Vestimenta
+              </h2>
+              <p className="text-lg max-w-2xl mx-auto" style={{ fontFamily: 'var(--font-montserrat)', color: '#1e3a8a' }}>
+                <strong>Te sugerimos estos estilos</strong> para acompañarnos en nuestro día especial
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-12 lg:gap-16">
+              {/* Mujeres */}
+              <div className="border border-gray-100 p-8" style={{ backgroundColor: '#f8f6f0' }}>
+                <h3 className="text-2xl font-medium mb-2 text-center" style={{ fontFamily: 'var(--font-playfair)', fontWeight: 600, color: '#1e3a8a' }}>
+                  Mujeres
+                </h3>
+                <p className="text-center mb-6" style={{ fontFamily: 'var(--font-montserrat)', fontSize: '16px', color: '#1e3a8a', fontWeight: 500 }}>
+                  Vestido largo
+                </p>
+                <p className="leading-relaxed text-center" style={{ fontFamily: 'var(--font-montserrat)', fontSize: '15px', color: '#1e3a8a' }}>
+                  Cualquier tipo de vestido largo es bienvenido. Pueden ser elegantes, con estampados o del color que más te guste, ¡lo importante es que te sientas cómoda! Si prefieres usar tenis, ¡también son bienvenidos!
                 </p>
               </div>
-              <div className="text-center">
-                <p className="leading-relaxed" style={{ fontFamily: 'var(--font-montserrat)', fontSize: '16px', color: '#1e3a8a' }}>
-                  Jaime alguna vez se hizo pasar por merideño para cruzar la frontera a Venezuela. Desde entonces no se baja del veredicto: la arepa es más rica en Venezuela, pero la empanada colombiana rompe a la venezolana sin discusión.
+
+              {/* Hombres */}
+              <div className="border border-gray-100 p-8" style={{ backgroundColor: '#f8f6f0' }}>
+                <h3 className="text-2xl font-medium mb-2 text-center" style={{ fontFamily: 'var(--font-playfair)', fontWeight: 600, color: '#1e3a8a' }}>
+                  Hombres
+                </h3>
+                <p className="text-center mb-6" style={{ fontFamily: 'var(--font-montserrat)', fontSize: '16px', color: '#1e3a8a', fontWeight: 500 }}>
+                  Traje formal
                 </p>
-              </div>
-              <div className="text-center">
-                <p className="leading-relaxed" style={{ fontFamily: 'var(--font-montserrat)', fontSize: '16px', color: '#1e3a8a' }}>
-                  Nos conocimos gracias a unos amigos que casi arruinan la historia. Y aquí seguimos, porque somos igual de tercos que de inseparables.
+                <p className="leading-relaxed text-center" style={{ fontFamily: 'var(--font-montserrat)', fontSize: '15px', color: '#1e3a8a' }}>
+                  Traje sin corbata, pero si prefieres llevar corbata también es bienvenido. Y si te sientes más cómodo con tenis, ¡adelante! Lo importante es que disfrutes la celebración con tu estilo.
                 </p>
               </div>
             </div>

@@ -62,9 +62,9 @@ export default function RegalosPage() {
           <nav className="flex justify-center items-center py-2 md:py-4">
             <ul className="flex flex-wrap justify-center gap-1 sm:gap-2 md:gap-4 lg:gap-8 text-xs sm:text-sm md:text-base lg:text-lg" style={{ fontFamily: 'var(--font-playfair)', fontWeight: 700, lineHeight: 1.4, letterSpacing: 'normal', color: '#1e3a8a' }}>
               <li><Link href="/" className="hover:opacity-70 transition-colors px-1 md:px-2 py-1" style={{ color: '#1e3a8a', fontWeight: 700 }}>Inicio</Link></li>
+              <li><Link href="/novios" className="hover:opacity-70 transition-colors px-1 md:px-2 py-1" style={{ color: '#1e3a8a', fontWeight: 700 }}>Los novios</Link></li>
               <li><Link href="/ceremonia" className="hover:opacity-70 transition-colors px-1 md:px-2 py-1" style={{ color: '#1e3a8a', fontWeight: 700 }}>Día del evento</Link></li>
               <li><Link href="/regalos" className="hover:opacity-70 transition-colors underline px-1 md:px-2 py-1" style={{ color: '#1e3a8a', fontWeight: 700 }}>Regalos</Link></li>
-              <li><Link href="/vestimenta" className="hover:opacity-70 transition-colors px-1 md:px-2 py-1" style={{ color: '#1e3a8a', fontWeight: 700 }}>Vestimenta</Link></li>
             </ul>
           </nav>
         </div>
@@ -78,10 +78,10 @@ export default function RegalosPage() {
             <h1 style={{ 
               fontFamily: 'var(--font-playfair)', 
               color: '#1e3a8a', 
-              fontWeight: 900, 
-              textTransform: 'none', 
+              fontWeight: 400, 
+              textTransform: 'uppercase', 
               lineHeight: 1.3, 
-              letterSpacing: '1px', 
+              letterSpacing: '3px', 
               fontSize: 'clamp(32px, 6vw, 48px)',
               marginBottom: '32px'
             }}>

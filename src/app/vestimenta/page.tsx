@@ -38,17 +38,17 @@ export default function VestimentaPage() {
         const sectionsData: VestimentaSection[] = [
           {
             title: 'Mujeres',
-            subtitle: 'Vestido Largo',
+            subtitle: 'Vestido largo',
             category: 'mujeres',
             images: mujeresResult.images,
-            description: 'Cualquier tipo de vestido largo es bienvenido. Pueden ser elegantes, con estampados o colorines, ¡lo importante es que te sientas cómoda! Recomendamos evitar tacones altos ya que el lugar tiene pasto. Si prefieres tenis, ¡también son bienvenidos!'
+            description: 'Cualquier tipo de vestido largo es bienvenido. Pueden ser elegantes, con estampados o del color que más te guste, ¡lo importante es que te sientas cómoda! Si prefieres usar tenis, ¡también son bienvenidos!'
           },
           {
             title: 'Hombres',
-            subtitle: 'Business Casual',
+            subtitle: 'Traje formal',
             category: 'hombres',
             images: hombresResult.images,
-            description: 'Business casual, pero sobre todo cómodo. Si te gusta la corbata, úsala. Si prefieres tenis, ¡también son bienvenidos! Queremos que disfrutes la celebración con tu propio estilo.'
+            description: 'Traje sin corbata, pero si prefieres llevar corbata también es bienvenido. Y si te sientes más cómodo con tenis, ¡adelante! Lo importante es que disfrutes la celebración con tu estilo.'
           }
         ]
 
@@ -142,8 +142,8 @@ export default function VestimentaPage() {
             <ul className="flex flex-wrap justify-center gap-1 sm:gap-2 md:gap-4 lg:gap-8 text-xs sm:text-sm md:text-base lg:text-lg" style={{ fontFamily: 'var(--font-playfair)', fontWeight: 700, lineHeight: 1.4, letterSpacing: 'normal', color: '#1e3a8a' }}>
               <li><Link href="/" className="hover:opacity-70 transition-colors px-1 md:px-2 py-1" style={{ color: '#1e3a8a', fontWeight: 700 }}>Inicio</Link></li>
               <li><Link href="/ceremonia" className="hover:opacity-70 transition-colors px-1 md:px-2 py-1" style={{ color: '#1e3a8a', fontWeight: 700 }}>Día del evento</Link></li>
-              <li><Link href="/regalos" className="hover:opacity-70 transition-colors px-1 md:px-2 py-1" style={{ color: '#1e3a8a', fontWeight: 700 }}>Regalos</Link></li>
               <li><Link href="/vestimenta" className="hover:opacity-70 transition-colors underline px-1 md:px-2 py-1" style={{ color: '#1e3a8a', fontWeight: 700 }}>Vestimenta</Link></li>
+              <li><Link href="/regalos" className="hover:opacity-70 transition-colors px-1 md:px-2 py-1" style={{ color: '#1e3a8a', fontWeight: 700 }}>Regalos</Link></li>
             </ul>
           </nav>
         </div>
@@ -155,13 +155,15 @@ export default function VestimentaPage() {
           {/* Page Header */}
           <div className="text-center mb-12 md:mb-16">
             <h1 
-              className="text-4xl md:text-5xl lg:text-6xl mb-4"
+              className="mb-4"
               style={{ 
                 fontFamily: 'var(--font-playfair)', 
-                fontWeight: 900, 
-                textTransform: 'none', 
-                letterSpacing: '1px',
-                color: '#1e3a8a' 
+                fontWeight: 400, 
+                textTransform: 'uppercase', 
+                letterSpacing: '3px',
+                color: '#1e3a8a',
+                fontSize: 'clamp(32px, 6vw, 48px)',
+                lineHeight: 1.3
               }}
             >
               Código de Vestimenta
@@ -287,19 +289,6 @@ export default function VestimentaPage() {
           </div>
 
           {/* Footer Note */}
-          <div className="text-center mt-16 md:mt-20 pt-8 border-t border-gray-200">
-            <p 
-              className="max-w-2xl mx-auto"
-              style={{ 
-                fontFamily: 'var(--font-montserrat)', 
-                lineHeight: 1.6,
-                color: '#1e3a8a'
-              }}
-            >
-              Estas son solo sugerencias para ayudarte a elegir el outfit perfecto. 
-              Lo más importante es que te sientas cómodo y elegante para celebrar con nosotros.
-            </p>
-          </div>
         </div>
       </main>
     </div>
