@@ -179,10 +179,10 @@ export default function TestPagoPage() {
               📋 Cómo funciona esta prueba:
             </h3>
             <ol className="text-sm space-y-1 ml-4 list-decimal" style={{ fontFamily: 'var(--font-montserrat)', color: '#854d0e' }}>
-              <li>Crea un pago con estado "pendiente"</li>
+              <li>Crea un pago con estado &quot;pendiente&quot;</li>
               <li>Te redirige inmediatamente a /pago/success (como MercadoPago)</li>
-              <li>Después de {testConfig.delaySeconds} segundos, actualiza el estado a "aprobado"</li>
-              <li>La página de success debería detectar el cambio y mostrar "Pago Exitoso"</li>
+              <li>Después de {testConfig.delaySeconds} segundos, actualiza el estado a &quot;aprobado&quot;</li>
+              <li>La página de success debería detectar el cambio y mostrar &quot;Pago Exitoso&quot;</li>
             </ol>
           </div>
 
@@ -217,7 +217,7 @@ export default function TestPagoPage() {
           <ul className="text-sm space-y-2 ml-4 list-disc" style={{ fontFamily: 'var(--font-montserrat)', color: '#1e3a8a' }}>
             <li>Verás logs de cuándo consulta la base de datos</li>
             <li>Verás el estado del pago en cada intento</li>
-            <li>Deberías ver el cambio de "pendiente" a "aprobado"</li>
+            <li>Deberías ver el cambio de &quot;pendiente&quot; a &quot;aprobado&quot;</li>
             <li>La UI debería cambiar de amarillo (procesando) a verde (exitoso)</li>
           </ul>
         </div>

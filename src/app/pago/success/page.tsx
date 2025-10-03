@@ -104,6 +104,7 @@ function PaymentSuccessContent() {
     } else {
       addDebugLog('❌ No se encontró pago_id en los parámetros de URL')
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pagoId, searchParams]) // Removido loadPagoDetails de dependencias para evitar loops
 
   const formatCurrency = (amount: number): string => {
