@@ -173,7 +173,7 @@ export default function RSVPPage() {
                 fontSize: '14px', 
                 fontWeight: 400,
                 borderRadius: '0',
-                textTransform: 'uppercase',
+                textTransform: 'none',
                 letterSpacing: '1px'
               }}
             >
@@ -208,10 +208,10 @@ export default function RSVPPage() {
             <h1 style={{ 
               fontFamily: 'var(--font-playfair)', 
               color: '#1e3a8a', 
-              fontWeight: 400, 
-              textTransform: 'uppercase', 
+              fontWeight: 900, 
+              textTransform: 'none', 
               lineHeight: 1.3, 
-              letterSpacing: '2px', 
+              letterSpacing: '1px', 
               fontSize: 'clamp(20px, 4vw, 32px)',
               marginBottom: '8px'
             }}>

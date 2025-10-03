@@ -158,9 +158,9 @@ export default function VestimentaPage() {
               className="text-4xl md:text-5xl lg:text-6xl mb-4"
               style={{ 
                 fontFamily: 'var(--font-playfair)', 
-                fontWeight: 400, 
-                textTransform: 'uppercase', 
-                letterSpacing: '2px',
+                fontWeight: 900, 
+                textTransform: 'none', 
+                letterSpacing: '1px',
                 color: '#1e3a8a' 
               }}
             >
@@ -188,7 +188,7 @@ export default function VestimentaPage() {
                     style={{ 
                       fontFamily: 'var(--font-playfair)', 
                       fontWeight: 400, 
-                      textTransform: 'uppercase', 
+                      textTransform: 'none', 
                       letterSpacing: '2px',
                       color: '#1e3a8a' 
                     }}

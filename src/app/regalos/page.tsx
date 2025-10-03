@@ -78,10 +78,10 @@ export default function RegalosPage() {
             <h1 style={{ 
               fontFamily: 'var(--font-playfair)', 
               color: '#1e3a8a', 
-              fontWeight: 400, 
-              textTransform: 'uppercase', 
+              fontWeight: 900, 
+              textTransform: 'none', 
               lineHeight: 1.3, 
-              letterSpacing: '3px', 
+              letterSpacing: '1px', 
               fontSize: 'clamp(32px, 6vw, 48px)',
               marginBottom: '32px'
             }}>
@@ -154,7 +154,7 @@ export default function RegalosPage() {
                               fontSize: '14px', 
                               fontWeight: 400,
                               borderRadius: '0',
-                              textTransform: 'uppercase',
+                              textTransform: 'none',
                               letterSpacing: '1px'
                             }}
                           >

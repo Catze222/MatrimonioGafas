@@ -98,7 +98,7 @@ export default function Home() {
               letterSpacing: '1px', 
               fontSize: 'clamp(28px, 7vw, 64px)' 
             }}>
-              Jaime Canal Schlesinger
+              Jaime Canal <span className="block md:inline">Schlesinger</span>
             </h1>
           </div>
           
@@ -107,7 +107,7 @@ export default function Home() {
             <h3 style={{ 
               fontFamily: 'var(--font-montserrat)', 
               color: '#1e3a8a', 
-              fontWeight: 300, 
+              fontWeight: 500, 
               textTransform: 'none', 
               lineHeight: 1.3, 
               letterSpacing: '1px', 
@@ -120,8 +120,8 @@ export default function Home() {
           {/* Countdown Timer - Solo días */}
           <div className="mb-8 md:mb-12" style={{ 
             fontFamily: 'var(--font-montserrat)', 
-            color: '#1e3a8a', 
-            fontWeight: 400, 
+            color: '#5a7bb8', 
+            fontWeight: 300, 
             textTransform: 'none', 
             lineHeight: 1.6, 
             letterSpacing: 'normal', 
