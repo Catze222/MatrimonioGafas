@@ -40,7 +40,11 @@ Catalog of symbolic gifts that guests can contribute to.
 | titulo | TEXT | NOT NULL | Gift title/name |
 | descripcion | TEXT | NOT NULL | Gift description |
 | imagen_url | TEXT | NOT NULL | Product image URL from Supabase Storage |
+| orden | INTEGER | NOT NULL | Manual sort order (lower number = displayed first) |
 | created_at | TIMESTAMP | DEFAULT NOW() | Record creation time |
+
+**Indexes:**
+- `idx_productos_orden` ON orden
 
 ### `pagos` - Gift Payments
 Records of guest contributions to gift products.

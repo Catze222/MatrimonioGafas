@@ -24,7 +24,7 @@ export default function RegalosPage() {
         const { data, error } = await supabase
           .from('productos')
           .select('*')
-          .order('created_at', { ascending: true })
+          .order('orden', { ascending: true })
 
         if (error) throw error
         setProductos(data || [])

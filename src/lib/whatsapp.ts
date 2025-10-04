@@ -13,16 +13,15 @@ interface WhatsAppTemplateData {
  * @returns Formatted message ready to copy
  */
 export function generateWhatsAppMessage({ slug, baseUrl }: WhatsAppTemplateData): string {
-  const domain = baseUrl || process.env.NEXT_PUBLIC_APP_URL || 'https://tu-dominio.com'
+  const domain = baseUrl || process.env.NEXT_PUBLIC_APP_URL || 'https://matrimonio-gafas.vercel.app'
   
-  const message = `Hola XXXXX, queremos invitarte a nuestro matrimonio el 13 de Diciembre, 2025.
+  const message = `✨ Por favor, confirma tu asistencia aquí: ${domain}/rsvp/${slug}
 
-🎉 Confirma tu asistencia: ${domain}/rsvp/${slug}
-📍 Información del evento: ${domain}
+📍 Toda la información del evento (ceremonia, código de vestimenta y lista de regalos) la encuentras aquí: ${domain}
 
-Aquí podrás ver dónde es la ceremonia, el código de vestimenta y nuestra lista de regalos.
+Nos encantaría contar contigo en este momento tan importante de nuestras vidas.
 
-¡Esperamos verte ese día tan especial!
+Con mucho cariño,
 Alejandra & Jaime`
 
   return message

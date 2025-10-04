@@ -53,7 +53,12 @@ export default function NoviosPage() {
 
           {/* Datos curiosos */}
           <div className="text-center p-12 lg:p-16 rounded-lg mb-16" style={{ backgroundColor: '#f8f6f0' }}>
-            <div className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+              <div className="text-center">
+                <p className="leading-relaxed" style={{ fontFamily: 'var(--font-montserrat)', fontSize: '16px', color: '#1e3a8a' }}>
+                  Nos conocimos gracias a unos amigos que casi arruinan la historia. Y aquí seguimos, porque somos igual de tercos que de inseparables.
+                </p>
+              </div>
               <div className="text-center">
                 <p className="leading-relaxed" style={{ fontFamily: 'var(--font-montserrat)', fontSize: '16px', color: '#1e3a8a' }}>
                   Alejandra come como tres Jaimes juntos… pero cuando se trata de tecnología, sin su ingeniero de sistemas de cabecera no prende ni el televisor.
@@ -61,12 +66,17 @@ export default function NoviosPage() {
               </div>
               <div className="text-center">
                 <p className="leading-relaxed" style={{ fontFamily: 'var(--font-montserrat)', fontSize: '16px', color: '#1e3a8a' }}>
-                  Jaime alguna vez se hizo pasar por merideño para cruzar la frontera a Venezuela. Desde entonces no se baja del veredicto: la arepa es más rica en Venezuela, pero la empanada colombiana rompe a la venezolana sin discusión.
+                  Jaime alguna vez, por culpa de Carolina (la mamá de Alejandra) se hizo pasar por merideño para cruzar la frontera a Venezuela. Desde entonces no se baja del veredicto: la arepa es más rica en Venezuela, pero la empanada colombiana rompe a la venezolana sin discusión.
                 </p>
               </div>
               <div className="text-center">
                 <p className="leading-relaxed" style={{ fontFamily: 'var(--font-montserrat)', fontSize: '16px', color: '#1e3a8a' }}>
-                  Nos conocimos gracias a unos amigos que casi arruinan la historia. Y aquí seguimos, porque somos igual de tercos que de inseparables.
+                  En Venezuela absolutamente todo se toma con hielo; en Bogotá, en cambio, no tanto. Desde que Alicia (la mamá de Jaime) conoció a Alejandra, su nevera no ha tenido un día libre… hoy funciona como una pequeña planta de hielo artesanal.
+                </p>
+              </div>
+              <div className="text-center">
+                <p className="leading-relaxed" style={{ fontFamily: 'var(--font-montserrat)', fontSize: '16px', color: '#1e3a8a' }}>
+                  Aunque Jaime dice que lo suyo es el punk, su canción más escuchada en Spotify fue nada menos que La Bachata de Manuel Turizo. Y aunque Alejandra asegura ser fan de la salsa, la verdad es que en esa casa lo que más suena (y se baila) es ¡Chayanne!
                 </p>
               </div>
             </div>
