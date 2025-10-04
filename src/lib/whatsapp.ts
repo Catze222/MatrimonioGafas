@@ -15,7 +15,9 @@ interface WhatsAppTemplateData {
 export function generateWhatsAppMessage({ slug, baseUrl }: WhatsAppTemplateData): string {
   const domain = baseUrl || process.env.NEXT_PUBLIC_APP_URL || 'https://matrimonio-gafas.vercel.app'
   
-  const message = `✨ Por favor, confirma tu asistencia aquí: ${domain}/rsvp/${slug}
+  const message = `Hola XXXXXX,
+
+✨ Por favor, confirma tu asistencia aquí: ${domain}/rsvp/${slug}
 
 📍 Toda la información del evento (ceremonia, código de vestimenta y lista de regalos) la encuentras aquí: ${domain}
 
