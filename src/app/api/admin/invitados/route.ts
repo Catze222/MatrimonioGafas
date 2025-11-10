@@ -33,7 +33,7 @@ export async function GET(request: NextRequest) {
     const { data, error } = await supabaseAdmin
       .from('invitados')
       .select('*')
-      .order('created_at', { ascending: false })
+      .order('updated_at', { ascending: false })
 
     if (error) throw error
 

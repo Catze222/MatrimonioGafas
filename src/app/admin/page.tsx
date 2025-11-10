@@ -239,7 +239,13 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
       if (statusFilter === 'confirmados') {
         matchesStatus = invitado.asistencia_1 === 'si' || invitado.asistencia_2 === 'si'
       } else if (statusFilter === 'pendientes') {
-        matchesStatus = invitado.asistencia_1 === 'pendiente' || invitado.asistencia_2 === 'pendiente'
+        // Si no tiene pareja (nombre_2 es null), solo considerar asistencia_1
+        if (!invitado.nombre_2) {
+          matchesStatus = invitado.asistencia_1 === 'pendiente'
+        } else {
+          // Si tiene pareja, mostrar si cualquiera de los dos está pendiente
+          matchesStatus = invitado.asistencia_1 === 'pendiente' || invitado.asistencia_2 === 'pendiente'
+        }
       } else if (statusFilter === 'no-asisten') {
         matchesStatus = invitado.asistencia_1 === 'no' || invitado.asistencia_2 === 'no'
       }
