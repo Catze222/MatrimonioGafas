@@ -63,7 +63,7 @@ export default function MesasTab() {
     .sort((a, b) => a.orden_display - b.orden_display) // Always sorted by orden_display
     .map(config => {
       const numero = config.numero_mesa
-      const mesaAsignaciones = asignaciones.filter(a => a.numero_mesa === numero)
+      let mesaAsignaciones = asignaciones.filter(a => a.numero_mesa === numero)
       
       // Apply filter
       if (deQuienFilter !== 'all') {
@@ -214,27 +214,29 @@ export default function MesasTab() {
 
       // Check if it's a PersonaSinAsignar (from sidebar)
       if (data.invitado_id && data.persona_index !== undefined && data.nombre) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const dataTyped = data as any
         const assignData: Record<string, unknown> = {
-          invitado_id: data.invitado_id,
+          invitado_id: dataTyped.invitado_id,
           numero_mesa: numeroMesa,
           posicion_silla: posicionSilla, // Send specific position
-          persona_index: data.persona_index,
-          nombre_persona: data.nombre.includes(' & ') ? data.nombre.split(' & ')[0] : data.nombre,
-          restriccion_alimentaria: data.restriccion_alimentaria,
+          persona_index: dataTyped.persona_index,
+          nombre_persona: dataTyped.nombre.includes(' & ') ? dataTyped.nombre.split(' & ')[0] : dataTyped.nombre,
+          restriccion_alimentaria: dataTyped.restriccion_alimentaria,
         }
 
         // If it's a couple (es_pareja = true), assign both
-        if (data.es_pareja && data.nombre_acompanante) {
-          const [nombre1, nombre2] = data.nombre.split(' & ')
+        if (dataTyped.es_pareja && dataTyped.nombre_acompanante) {
+          const [nombre1, nombre2] = dataTyped.nombre.split(' & ')
           assignData.nombre_persona = nombre1
           
           // Find companion data
-          const companionIndex = data.persona_index === 1 ? 2 : 1
+          const companionIndex = dataTyped.persona_index === 1 ? 2 : 1
           assignData.acompanante_data = {
-            invitado_id: data.invitado_id,
+            invitado_id: dataTyped.invitado_id,
             persona_index: companionIndex,
             nombre_persona: nombre2,
-            restriccion_alimentaria: data.restriccion_alimentaria,
+            restriccion_alimentaria: dataTyped.restriccion_alimentaria,
           }
         }
 

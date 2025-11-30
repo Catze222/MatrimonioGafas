@@ -117,7 +117,8 @@ export default function AsignarPersonaModal({
         console.log('📝 Asignando persona individual:', { nombre: selectedPersona.nombre, mesa: numeroMesa, posicion: posicionSilla })
       }
 
-      await onAsignar(data)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      await onAsignar(data as any)
       onClose()
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Error al asignar persona')

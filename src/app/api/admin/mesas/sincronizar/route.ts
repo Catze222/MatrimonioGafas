@@ -2,7 +2,7 @@
  * API Route to synchronize guests with table assignments
  * Creates PersonaSinAsignar list from invitados table
  */
-import { NextRequest, NextResponse } from 'next/server'
+import { NextResponse } from 'next/server'
 import { supabase } from '@/lib/supabase'
 
 // POST /api/admin/mesas/sincronizar - Get unassigned people
