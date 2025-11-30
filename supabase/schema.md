@@ -93,6 +93,39 @@ Manages potential guests before converting to official invitados.
 - `idx_lista_espera_prioridad` ON prioridad
 - `idx_lista_espera_created_at` ON created_at
 
+### `asignaciones_mesas` - Wedding Table Assignments
+Manages the seating distribution of guests across 23 tables (8 people each).
+
+| Column | Type | Constraints | Description |
+|--------|------|-------------|-------------|
+| id | UUID | PRIMARY KEY, DEFAULT gen_random_uuid() | Unique identifier |
+| invitado_id | UUID | NOT NULL, FK to invitados.id | Reference to guest record |
+| numero_mesa | INTEGER | NOT NULL, CHECK (1-23) | Table number assignment |
+| posicion_silla | INTEGER | NOT NULL, CHECK (1-8) | Chair position in circular table |
+| persona_index | INTEGER | NOT NULL, CHECK (1 or 2) | Which person from invitado record |
+| nombre_persona | TEXT | NOT NULL | Person's name (denormalized for performance) |
+| acompanante_id | UUID | NULLABLE, FK to asignaciones_mesas.id | Reference to companion's record |
+| restriccion_alimentaria | TEXT | NULLABLE | Dietary restriction (copied from invitados) |
+| color_pareja | TEXT | CHECK | Visual color code for couple identification |
+| created_at | TIMESTAMP | DEFAULT NOW() | Record creation time |
+| updated_at | TIMESTAMP | DEFAULT NOW() | Last update time |
+
+**Enums:**
+- `color_pareja`: 'blue' | 'green' | 'purple' | 'pink'
+
+**Indexes:**
+- `idx_asignaciones_numero_mesa` ON numero_mesa
+- `idx_asignaciones_invitado_id` ON invitado_id
+- `idx_asignaciones_acompanante_id` ON acompanante_id
+
+**Foreign Keys:**
+- `invitado_id` → `invitados.id` (CASCADE DELETE)
+- `acompanante_id` → `asignaciones_mesas.id` (SET NULL)
+
+**Unique Constraints:**
+- `UNIQUE(numero_mesa, posicion_silla)` - Each chair position can only have one person
+- `UNIQUE(invitado_id, persona_index)` - Each person can only be assigned once
+
 ## Row Level Security (RLS)
 
 All tables have RLS enabled with the following policies:
@@ -133,7 +166,10 @@ vestimenta/
 ### `update_invitados_updated_at`
 Automatically updates the `updated_at` field when an invitado record is modified.
 
+### `update_asignaciones_mesas_updated_at`
+Automatically updates the `updated_at` field when an asignacion_mesa record is modified.
+
 ---
 
-**Last Updated:** Added email field to pagos table for thank you emails
-**Migration:** 013_add_email_to_pagos.sql
+**Last Updated:** Added table assignments (seating chart) for wedding planning
+**Migration:** 015_create_asignaciones_mesas.sql

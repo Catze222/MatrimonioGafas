@@ -17,6 +17,7 @@ import QuickConfirmationModal from '@/components/admin/QuickConfirmationModal'
 import AddProductoModal from '@/components/admin/AddProductoModal'
 import EditProductoModal from '@/components/admin/EditProductoModal'
 import AddListaEsperaForm from '@/components/admin/AddListaEsperaForm'
+import MesasTab from '@/components/admin/mesas/MesasTab'
 import { generateWhatsAppMessage, copyToClipboard, generateRSVPUrl } from '@/lib/whatsapp'
 
 // Login Component
@@ -82,7 +83,7 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
   const [pagos, setPagos] = useState<(Pago & { producto?: Producto })[]>([])
   const [listaEspera, setListaEspera] = useState<ListaEspera[]>([])
   const [loading, setLoading] = useState(true)
-  const [activeTab, setActiveTab] = useState<'invitados' | 'productos' | 'pagos' | 'lista-espera'>('invitados')
+  const [activeTab, setActiveTab] = useState<'invitados' | 'productos' | 'pagos' | 'lista-espera' | 'mesas'>('invitados')
   const [showAddInvitado, setShowAddInvitado] = useState(false)
   const [showEditInvitado, setShowEditInvitado] = useState(false)
   const [editingInvitado, setEditingInvitado] = useState<Invitado | null>(null)
@@ -556,12 +557,13 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
                 {[
                   { key: 'invitados', label: 'Invitados', shortLabel: 'Invitados', count: invitados.length },
                   { key: 'lista-espera', label: 'Lista de Espera', shortLabel: 'Lista', count: listaEspera.length },
+                  { key: 'mesas', label: 'Distribución de Mesas', shortLabel: 'Mesas', count: 23 },
                   { key: 'productos', label: 'Productos', shortLabel: 'Productos', count: productos.length },
                   { key: 'pagos', label: 'Pagos', shortLabel: 'Pagos', count: pagos.length }
                 ].map(tab => (
                   <button
                     key={tab.key}
-                    onClick={() => setActiveTab(tab.key as 'invitados' | 'productos' | 'pagos' | 'lista-espera')}
+                    onClick={() => setActiveTab(tab.key as 'invitados' | 'productos' | 'pagos' | 'lista-espera' | 'mesas')}
                     className={`py-3 sm:py-4 px-2 sm:px-3 md:px-4 border-b-2 font-medium text-xs sm:text-sm transition-colors whitespace-nowrap flex-shrink-0 ${
                       activeTab === tab.key
                         ? 'border-rose-500 text-rose-600'
@@ -1255,6 +1257,12 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
                     ))}
                   </div>
                 )}
+              </div>
+            )}
+
+            {activeTab === 'mesas' && (
+              <div>
+                <MesasTab />
               </div>
             )}
 

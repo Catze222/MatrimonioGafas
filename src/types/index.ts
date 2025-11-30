@@ -51,6 +51,42 @@ export type ListaEspera = {
   created_at?: string
 }
 
+export type AsignacionMesa = {
+  id: string
+  invitado_id: string
+  numero_mesa: number
+  posicion_silla: number
+  persona_index: 1 | 2
+  nombre_persona: string
+  acompanante_id?: string | null
+  restriccion_alimentaria?: string | null
+  color_pareja?: 'blue' | 'green' | 'purple' | 'pink' | null
+  created_at?: string
+  updated_at?: string
+}
+
+export type Mesa = {
+  numero: number // Internal numero_mesa (original ID)
+  numeroDisplay?: number // Display number (orden_display) - what user sees
+  asignaciones: AsignacionMesa[]
+  capacidad: number
+  ocupadas: number
+  disponibles: number
+}
+
+export type PersonaSinAsignar = {
+  id: string
+  invitado_id: string
+  nombre: string
+  asistencia: 'pendiente' | 'si' | 'no'
+  tiene_acompanante: boolean
+  nombre_acompanante?: string | null
+  restriccion_alimentaria?: string | null
+  de_quien: 'jaime' | 'alejandra'
+  persona_index: number
+  es_pareja?: boolean
+}
+
 // Form types for user input
 export type RSVPFormData = {
   asistencia_1: 'pendiente' | 'si' | 'no'
