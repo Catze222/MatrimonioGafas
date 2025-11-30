@@ -4,7 +4,7 @@
  */
 'use client'
 
-import { Mesa } from '@/types'
+import { Mesa, AsignacionMesa } from '@/types'
 import MesaCircular from './MesaCircular'
 import MesaCard from './MesaCard'
 import { useState, useEffect } from 'react'
@@ -13,8 +13,8 @@ interface MesasGridProps {
   mesas: Mesa[]
   onAsignarPersona: (numeroMesa: number, posicionSilla?: number) => void
   onRemoverPersona: (asignacionId: string) => void
-  onDropPersona?: (numeroMesa: number, posicionSilla: number, data: any) => void
-  onSwapPersonas?: (asignacion1: any, asignacion2: any) => void
+  onDropPersona?: (numeroMesa: number, posicionSilla: number, data: Record<string, unknown>) => void
+  onSwapPersonas?: (asignacion1: AsignacionMesa, asignacion2: AsignacionMesa) => void
   onChangeCapacidad?: (numeroMesa: number, nuevaCapacidad: number) => void
   onReordenarMesas?: (draggedMesa: number, targetMesa: number, insertBefore: boolean) => void
 }

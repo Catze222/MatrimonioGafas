@@ -154,10 +154,10 @@ export default function CeremoniaPage() {
                 
                 <div>
                   <p className="font-bold mb-1" style={{ fontFamily: 'var(--font-montserrat)', color: '#1e3a8a' }}>
-                    Parqueadero
+                    Parqueadero y conductor elegido
                   </p>
                   <p className="leading-relaxed font-medium" style={{ fontFamily: 'var(--font-montserrat)', color: '#1e3a8a' }}>
-                    Hay parqueadero disponible. No te preocupes por dónde dejar el carro.
+                    En la Hacienda San Rafael encontrarás parqueaderos disponibles. Además, ese día tendrás la opción de contratar servicio de conductor elegido directamente en la hacienda, para que puedas disfrutar con total tranquilidad.
                   </p>
                 </div>
               </div>

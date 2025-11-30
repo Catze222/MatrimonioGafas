@@ -85,10 +85,10 @@ export async function POST(request: NextRequest) {
       newOrder: updates
     })
 
-  } catch (error: any) {
+  } catch (error) {
     console.error('Error reordering tables:', error)
     return NextResponse.json(
-      { success: false, error: error.message },
+      { success: false, error: error instanceof Error ? error.message : 'Error desconocido' },
       { status: 500 }
     )
   }

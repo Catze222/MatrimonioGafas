@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
 
     // Get companions if they exist
     const companionIds = [persona1.acompanante_id, persona2.acompanante_id].filter(Boolean)
-    let companions: any[] = []
+    let companions: Array<typeof persona1> = []
     
     if (companionIds.length > 0) {
       const { data: companionsData, error: companionsError } = await supabase
@@ -324,10 +324,10 @@ export async function POST(request: NextRequest) {
       message: 'Intercambio realizado con éxito'
     })
 
-  } catch (error: any) {
+  } catch (error) {
     console.error('❌ Error in swap:', error)
     return NextResponse.json(
-      { success: false, error: error.message || 'Error al intercambiar' },
+      { success: false, error: error instanceof Error ? error.message : 'Error al intercambiar' },
       { status: 500 }
     )
   }

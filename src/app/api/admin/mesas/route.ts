@@ -7,7 +7,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { supabase } from '@/lib/supabase'
 
 // GET /api/admin/mesas - Get all table assignments
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     const { data, error } = await supabase
       .from('asignaciones_mesas')
@@ -18,10 +18,10 @@ export async function GET(request: NextRequest) {
     if (error) throw error
 
     return NextResponse.json({ success: true, data })
-  } catch (error: any) {
+  } catch (error) {
     console.error('Error fetching table assignments:', error)
     return NextResponse.json(
-      { success: false, error: error.message },
+      { success: false, error: error instanceof Error ? error.message : 'Error desconocido' },
       { status: 500 }
     )
   }
@@ -201,10 +201,10 @@ export async function POST(request: NextRequest) {
     }
 
     return NextResponse.json({ success: true, data: insertedData })
-  } catch (error: any) {
+  } catch (error) {
     console.error('Error creating table assignment:', error)
     return NextResponse.json(
-      { success: false, error: error.message },
+      { success: false, error: error instanceof Error ? error.message : 'Error desconocido' },
       { status: 500 }
     )
   }

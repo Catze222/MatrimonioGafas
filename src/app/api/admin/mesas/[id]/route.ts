@@ -89,8 +89,8 @@ export async function PUT(
 
     // If person has companion, move both together (only for non-swap moves)
     if (currentAssignment.acompanante_id) {
-      // Get companion
-      const { data: companion, error: companionError } = await supabase
+      // Get companion (validation only, not used but checked for errors)
+      const { error: companionError } = await supabase
         .from('asignaciones_mesas')
         .select('*')
         .eq('id', currentAssignment.acompanante_id)
@@ -224,10 +224,10 @@ export async function PUT(
         message: 'Persona movida exitosamente'
       })
     }
-  } catch (error: any) {
+  } catch (error) {
     console.error('Error updating table assignment:', error)
     return NextResponse.json(
-      { success: false, error: error.message },
+      { success: false, error: error instanceof Error ? error.message : 'Error desconocido' },
       { status: 500 }
     )
   }
@@ -273,10 +273,10 @@ export async function DELETE(
       success: true,
       message: 'Asignación eliminada exitosamente'
     })
-  } catch (error: any) {
+  } catch (error) {
     console.error('Error deleting table assignment:', error)
     return NextResponse.json(
-      { success: false, error: error.message },
+      { success: false, error: error instanceof Error ? error.message : 'Error desconocido' },
       { status: 500 }
     )
   }

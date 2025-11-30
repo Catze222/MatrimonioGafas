@@ -50,9 +50,9 @@ export default function MesasTab() {
       const unassignedData = await unassignedRes.json()
       if (!unassignedData.success) throw new Error(unassignedData.error)
       setPersonasSinAsignar(unassignedData.data || [])
-    } catch (err: any) {
+    } catch (err) {
       console.error('Error loading data:', err)
-      setError(err.message || 'Error al cargar datos')
+      setError(err instanceof Error ? err.message : 'Error al cargar datos')
     } finally {
       setLoading(false)
     }
@@ -66,9 +66,8 @@ export default function MesasTab() {
       const mesaAsignaciones = asignaciones.filter(a => a.numero_mesa === numero)
       
       // Apply filter
-      let filteredAsignaciones = mesaAsignaciones
       if (deQuienFilter !== 'all') {
-        filteredAsignaciones = mesaAsignaciones.filter(a => {
+        mesaAsignaciones = mesaAsignaciones.filter(a => {
           // Find the invitado to check de_quien
           const persona = personasSinAsignar.find(p => p.invitado_id === a.invitado_id)
           return persona?.de_quien === deQuienFilter
@@ -119,7 +118,7 @@ export default function MesasTab() {
   }
 
   // Handle assign from modal
-  const handleAsignarFromModal = async (data: any) => {
+  const handleAsignarFromModal = async (data: Record<string, unknown>) => {
     try {
       const res = await fetch('/api/admin/mesas', {
         method: 'POST',
@@ -132,8 +131,8 @@ export default function MesasTab() {
 
       // Reload data
       await loadData()
-    } catch (err: any) {
-      throw new Error(err.message || 'Error al asignar persona')
+    } catch (err) {
+      throw new Error(err instanceof Error ? err.message : 'Error al asignar persona')
     }
   }
 
@@ -168,14 +167,14 @@ export default function MesasTab() {
 
       // Reload data
       await loadData()
-    } catch (err: any) {
+    } catch (err) {
       console.error('Error removing person:', err)
-      alert(`❌ Error al quitar persona:\n\n${err.message || 'Por favor intenta de nuevo'}`)
+      alert(`❌ Error al quitar persona:\n\n${err instanceof Error ? err.message : 'Por favor intenta de nuevo'}`)
     }
   }
 
   // Handle drop from sidebar or move from another table
-  const handleDropPersona = async (numeroMesa: number, posicionSilla: number, data: any) => {
+  const handleDropPersona = async (numeroMesa: number, posicionSilla: number, data: Record<string, unknown>) => {
     try {
       // Check if it's replacing an existing person (from sidebar over occupied chair)
       if (data.replace_existing) {
@@ -215,7 +214,7 @@ export default function MesasTab() {
 
       // Check if it's a PersonaSinAsignar (from sidebar)
       if (data.invitado_id && data.persona_index !== undefined && data.nombre) {
-        const assignData: any = {
+        const assignData: Record<string, unknown> = {
           invitado_id: data.invitado_id,
           numero_mesa: numeroMesa,
           posicion_silla: posicionSilla, // Send specific position
@@ -253,14 +252,14 @@ export default function MesasTab() {
 
         await loadData()
       }
-    } catch (err: any) {
+    } catch (err) {
       console.error('Error in handleDropPersona:', err)
-      alert(`❌ Error inesperado:\n\n${err.message || 'Por favor intenta de nuevo'}`)
+      alert(`❌ Error inesperado:\n\n${err instanceof Error ? err.message : 'Por favor intenta de nuevo'}`)
     }
   }
 
   // Handle swap between chairs - OPTIMIZED with single API call
-  const handleSwapPersonas = async (asignacion1: any, asignacion2: any) => {
+  const handleSwapPersonas = async (asignacion1: AsignacionMesa, asignacion2: AsignacionMesa) => {
     try {
       // Validate: both must be couples or both must be singles
       const persona1TienePareja = !!asignacion1.acompanante_id
@@ -290,9 +289,9 @@ export default function MesasTab() {
       // Reload data once
       await loadData()
       
-    } catch (err: any) {
+    } catch (err) {
       console.error('❌ ERROR EN SWAP:', err)
-      alert(`❌ Error al intercambiar personas:\n\n${err.message}`)
+      alert(`❌ Error al intercambiar personas:\n\n${err instanceof Error ? err.message : 'Error desconocido'}`)
     }
   }
 
@@ -318,9 +317,9 @@ export default function MesasTab() {
       // Reload data to ensure consistency
       await loadData()
       
-    } catch (err: any) {
+    } catch (err) {
       console.error('Error changing capacity:', err)
-      alert(`❌ Error al cambiar capacidad:\n\n${err.message}`)
+      alert(`❌ Error al cambiar capacidad:\n\n${err instanceof Error ? err.message : 'Error desconocido'}`)
     }
   }
 
@@ -347,9 +346,9 @@ export default function MesasTab() {
       // Reload data to reflect new order
       await loadData()
       
-    } catch (err: any) {
+    } catch (err) {
       console.error('Error reordering tables:', err)
-      alert(`❌ Error al reordenar mesas:\n\n${err.message}`)
+      alert(`❌ Error al reordenar mesas:\n\n${err instanceof Error ? err.message : 'Error desconocido'}`)
     }
   }
 

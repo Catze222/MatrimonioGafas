@@ -4,15 +4,15 @@
  */
 'use client'
 
-import { Mesa } from '@/types'
+import { Mesa, AsignacionMesa } from '@/types'
 import SillaPersona from './SillaPersona'
 
 interface MesaCircularProps {
   mesa: Mesa
   onAsignarPersona: (numeroMesa: number, posicionSilla: number) => void
   onRemoverPersona: (asignacionId: string) => void
-  onDropPersona?: (numeroMesa: number, posicionSilla: number, data: any) => void
-  onSwapPersonas?: (asignacion1: any, asignacion2: any) => void
+  onDropPersona?: (numeroMesa: number, posicionSilla: number, data: Record<string, unknown>) => void
+  onSwapPersonas?: (asignacion1: AsignacionMesa, asignacion2: AsignacionMesa) => void
   onChangeCapacidad?: (numeroMesa: number, nuevaCapacidad: number) => void
   onReordenarMesa?: (draggedMesa: number, targetMesa: number, insertBefore: boolean) => void
 }

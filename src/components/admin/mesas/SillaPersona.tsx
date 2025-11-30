@@ -14,7 +14,7 @@ interface SillaPersonaProps {
   numeroMesa: number
   onRemove?: (id: string) => void
   onClick?: () => void
-  onDrop?: (numeroMesa: number, posicionSilla: number, data: any) => void
+  onDrop?: (numeroMesa: number, posicionSilla: number, data: Record<string, unknown>) => void
   onSwap?: (asignacion1: AsignacionMesa, asignacion2: AsignacionMesa) => void
 }
 

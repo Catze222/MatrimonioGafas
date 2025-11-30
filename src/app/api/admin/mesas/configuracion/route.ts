@@ -7,7 +7,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { supabase } from '@/lib/supabase'
 
 // GET /api/admin/mesas/configuracion - Get all table configurations
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     const { data, error } = await supabase
       .from('configuracion_mesas')
@@ -18,10 +18,10 @@ export async function GET(request: NextRequest) {
 
     // Return full configs array (includes capacidad, orden_display, etc.)
     return NextResponse.json({ success: true, data: data || [] })
-  } catch (error: any) {
+  } catch (error) {
     console.error('Error fetching table configurations:', error)
     return NextResponse.json(
-      { success: false, error: error.message },
+      { success: false, error: error instanceof Error ? error.message : 'Error desconocido' },
       { status: 500 }
     )
   }
@@ -79,10 +79,10 @@ export async function PUT(request: NextRequest) {
       success: true, 
       message: `Capacidad de Mesa ${numero_mesa} actualizada a ${capacidad}` 
     })
-  } catch (error: any) {
+  } catch (error) {
     console.error('Error updating table configuration:', error)
     return NextResponse.json(
-      { success: false, error: error.message },
+      { success: false, error: error instanceof Error ? error.message : 'Error desconocido' },
       { status: 500 }
     )
   }

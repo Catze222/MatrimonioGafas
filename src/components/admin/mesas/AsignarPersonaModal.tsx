@@ -74,7 +74,7 @@ export default function AsignarPersonaModal({
     setError('')
 
     try {
-      let data: any
+      let data: Record<string, unknown>
 
       // If it's a couple (es_pareja = true) - ALWAYS assign both
       if (selectedPersona.es_pareja) {
@@ -119,8 +119,8 @@ export default function AsignarPersonaModal({
 
       await onAsignar(data)
       onClose()
-    } catch (err: any) {
-      setError(err.message || 'Error al asignar persona')
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Error al asignar persona')
     } finally {
       setLoading(false)
     }

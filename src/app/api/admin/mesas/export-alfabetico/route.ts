@@ -59,10 +59,10 @@ export async function GET() {
         'Content-Disposition': 'attachment; filename="lista_alfabetica_invitados.xlsx"'
       }
     })
-  } catch (error: any) {
+  } catch (error) {
     console.error('Error generating Excel:', error)
     return NextResponse.json(
-      { error: error.message || 'Error al generar Excel' },
+      { error: error instanceof Error ? error.message : 'Error al generar Excel' },
       { status: 500 }
     )
   }

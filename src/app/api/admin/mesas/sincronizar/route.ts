@@ -6,7 +6,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { supabase } from '@/lib/supabase'
 
 // POST /api/admin/mesas/sincronizar - Get unassigned people
-export async function POST(request: NextRequest) {
+export async function POST() {
   try {
     // Get all invitados
     const { data: invitados, error: invitadosError } = await supabase
@@ -95,10 +95,10 @@ export async function POST(request: NextRequest) {
       data: personasSinAsignar,
       total: personasSinAsignar.length
     })
-  } catch (error: any) {
+  } catch (error) {
     console.error('Error synchronizing table assignments:', error)
     return NextResponse.json(
-      { success: false, error: error.message },
+      { success: false, error: error instanceof Error ? error.message : 'Error desconocido' },
       { status: 500 }
     )
   }
